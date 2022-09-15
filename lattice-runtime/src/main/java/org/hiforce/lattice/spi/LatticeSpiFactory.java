@@ -58,7 +58,7 @@ public class LatticeSpiFactory {
         Set<T> platformSets = StreamSupport.stream(serializers.spliterator(), false)
                 .collect(Collectors.toSet());
         result.addAll(platformSets);
-        return new ArrayList<T>(platformSets);
+        return new ArrayList<T>(result);
     }
 
     private ClassLoader getClassLoader() {
