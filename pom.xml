@@ -20,6 +20,7 @@
     <modules>
         <module>lattice-model</module>
         <module>lattice-runtime</module>
+        <module>lattice-test</module>
     </modules>
 
     <dependencyManagement>
@@ -27,6 +28,11 @@
             <dependency>
                 <groupId>org.hiforce.lattice</groupId>
                 <artifactId>lattice-model</artifactId>
+                <version>${version.lattice}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hiforce.lattice</groupId>
+                <artifactId>lattice-runtime</artifactId>
                 <version>${version.lattice}</version>
             </dependency>
             <dependency>

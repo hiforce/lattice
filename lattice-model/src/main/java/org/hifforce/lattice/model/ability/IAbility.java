@@ -28,20 +28,39 @@ public interface IAbility<AbilityTarget, ExtensionPoints extends IBusinessExt> {
 
 
     /**
-     * check whether the target is current ability will support.
+     * Checking current ability effective or not.
+     * Default is effective....
      *
-     * @param bizCode the business unique code.
-     * @param target  the target object.
+     * @param bizCode business code.
+     * @param target  the Target.
      * @return true or false.
      */
     boolean supportChecking(String bizCode, AbilityTarget target);
+
+    /**
+     * Whether current ability support customization from plugin's extension realization.
+     *
+     * @return true or false.
+     */
+    boolean supportCustomization(String bizCode, AbilityTarget target);
+
+    /**
+     * Whether current ability invoke getDefaultRealization() if the extension
+     * realizaiton not found in the Plugin.
+     *
+     * @param bizCode business code.
+     * @param target  the Target.
+     * @return true or false.
+     */
+    boolean hasDefaultExtension(String bizCode, AbilityTarget target);
+
 
     /**
      * get the extension points' realization by business code.
      *
      * @return the ExtensionPoints realization.
      */
-    ExtensionPoints getDefaultRealization();
+    ExtensionPoints getDefaultRealization(String bizCode, AbilityTarget target);
 
     /**
      * the current ability whether is enabled.
@@ -50,5 +69,4 @@ public interface IAbility<AbilityTarget, ExtensionPoints extends IBusinessExt> {
      * @return true or false.
      */
     boolean isEnabled(AbilityTarget target, String instanceCode);
-
 }
