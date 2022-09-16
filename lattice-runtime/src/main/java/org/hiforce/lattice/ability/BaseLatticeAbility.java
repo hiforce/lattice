@@ -50,6 +50,17 @@ public abstract class BaseLatticeAbility<Target, BusinessExt extends IBusinessEx
     }
 
     /**
+     * Customization for current ability to judge whether is enabled.
+     *
+     * @param target       The BizObject target.
+     * @param instanceCode current ability's instance code.
+     * @return true or false.
+     */
+    public boolean isEnabled(Target target, String instanceCode) {
+        return true;
+    }
+
+    /**
      * The ability will execute the extension's realization with reducer
      * When multi extension realization found.
      *
