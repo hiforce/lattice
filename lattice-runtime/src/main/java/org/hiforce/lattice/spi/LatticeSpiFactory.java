@@ -1,6 +1,8 @@
 package org.hiforce.lattice.spi;
 
 import org.hifforce.lattice.annotation.parser.AbilityAnnotationParser;
+import org.hifforce.lattice.annotation.parser.ExtensionAnnotationParser;
+import org.hifforce.lattice.annotation.parser.ScanSkipAnnotationParser;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,6 +19,10 @@ public class LatticeSpiFactory {
     private static ClassLoader classLoader;
 
     private List<AbilityAnnotationParser> abilityAnnotationParsers;
+
+    private List<ExtensionAnnotationParser> extensionAnnotationParsers;
+
+    private List<ScanSkipAnnotationParser> scanSkipAnnotationParsers;
 
     private LatticeSpiFactory() {
 
@@ -42,6 +48,21 @@ public class LatticeSpiFactory {
             abilityAnnotationParsers = getCustomAnnotationParsers(AbilityAnnotationParser.class, false);
         }
         return abilityAnnotationParsers;
+    }
+
+    public List<ExtensionAnnotationParser> getExtensionAnnotationParsers() {
+        if (null == extensionAnnotationParsers) {
+            extensionAnnotationParsers =
+                    getCustomAnnotationParsers(ExtensionAnnotationParser.class, false);
+        }
+        return extensionAnnotationParsers;
+    }
+
+    public List<ScanSkipAnnotationParser> getScanSkipAnnotationParsers() {
+        if (null == scanSkipAnnotationParsers) {
+            scanSkipAnnotationParsers = getCustomAnnotationParsers(ScanSkipAnnotationParser.class, true);
+        }
+        return scanSkipAnnotationParsers;
     }
 
     public <T> List<T> getCustomAnnotationParsers(Class<T> spiClass, boolean supportContainer) {

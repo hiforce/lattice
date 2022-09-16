@@ -2,6 +2,8 @@ package org.hifforce.lattice.model.ability;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.hifforce.lattice.cache.LatticeCacheFactory;
+import org.hifforce.lattice.model.ability.cache.IBusinessExtCache;
 
 import java.util.List;
 
@@ -14,11 +16,14 @@ public abstract class BusinessExt implements IBusinessExt {
 
     @Override
     public IBusinessExt getBusinessExtByCode(String extCode, String scenario) {
-        return null;
+        IBusinessExtCache businessExtCache =
+                LatticeCacheFactory.getInstance().getRuntimeCache().getBusinessExtCache();
+        return businessExtCache.getCachedBusinessExt(this, extCode, scenario);
     }
 
     @Override
     public @NonNull List<IBusinessExt> getAllSubBusinessExt() {
-        return null;
+        IBusinessExtCache invokeCache = LatticeCacheFactory.getInstance().getRuntimeCache().getBusinessExtCache();
+        return invokeCache.getAllSubBusinessExt(this);
     }
 }
