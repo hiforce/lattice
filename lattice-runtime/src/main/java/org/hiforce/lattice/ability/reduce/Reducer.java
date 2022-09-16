@@ -13,7 +13,6 @@ import java.util.Collection;
 public abstract class Reducer<T, R> {
 
     @Getter
-    @Setter
     private boolean hasBreak = false;
 
     @Getter
@@ -23,4 +22,9 @@ public abstract class Reducer<T, R> {
     public abstract R reduce(Collection<T> elements);
 
     public abstract boolean willBreak(Collection<T> elements);
+
+
+    public final void setBreak() {
+        this.hasBreak = true;
+    }
 }
