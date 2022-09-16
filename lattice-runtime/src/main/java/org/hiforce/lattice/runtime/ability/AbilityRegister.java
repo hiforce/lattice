@@ -1,4 +1,9 @@
-package org.hiforce.lattice.ability;
+package org.hiforce.lattice.runtime.ability;
+
+import org.hifforce.lattice.model.register.AbilitySpec;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Rocky Yu
@@ -17,5 +22,9 @@ public class AbilityRegister {
             instance = new AbilityRegister();
         }
         return instance;
+    }
+
+    public List<AbilitySpec> register(Collection<Class<?>> allClassSet) {
+        return null;
     }
 }

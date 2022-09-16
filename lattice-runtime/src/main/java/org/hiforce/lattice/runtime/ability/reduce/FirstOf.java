@@ -1,4 +1,4 @@
-package org.hiforce.lattice.ability.reduce;
+package org.hiforce.lattice.runtime.ability.reduce;
 
 import org.apache.commons.collections4.CollectionUtils;
 

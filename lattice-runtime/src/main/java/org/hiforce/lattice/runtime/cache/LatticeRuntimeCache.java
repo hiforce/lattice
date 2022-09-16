@@ -1,9 +1,9 @@
-package org.hiforce.lattice.cache;
+package org.hiforce.lattice.runtime.cache;
 
 import com.google.auto.service.AutoService;
 import org.hifforce.lattice.cache.ILatticeRuntimeCache;
 import org.hifforce.lattice.model.ability.cache.IBusinessExtCache;
-import org.hiforce.lattice.ability.cache.BusinessExtCache;
+import org.hiforce.lattice.runtime.ability.cache.BusinessExtCache;
 
 /**
  * @author Rocky Yu

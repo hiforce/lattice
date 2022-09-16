@@ -1,4 +1,4 @@
-package org.hiforce.lattice.ability.cache;
+package org.hiforce.lattice.runtime.ability.cache;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
@@ -12,8 +12,8 @@ import org.hifforce.lattice.annotation.model.ExtensionAnnotation;
 import org.hifforce.lattice.annotation.model.ScanSkipAnnotation;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.ability.cache.IBusinessExtCache;
-import org.hiforce.lattice.utils.ExtensionUtils;
-import org.hiforce.lattice.utils.LatticeBeanUtils;
+import org.hiforce.lattice.runtime.utils.ExtensionUtils;
+import org.hiforce.lattice.runtime.utils.LatticeBeanUtils;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -22,7 +22,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.hiforce.lattice.utils.LatticeAnnotationUtils.getScanSkipAnnotation;
+import static org.hiforce.lattice.runtime.utils.LatticeAnnotationUtils.getScanSkipAnnotation;
 
 /**
  * @author Rocky Yu

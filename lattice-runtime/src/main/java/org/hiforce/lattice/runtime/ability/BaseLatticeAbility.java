@@ -1,4 +1,4 @@
-package org.hiforce.lattice.ability;
+package org.hiforce.lattice.runtime.ability;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.business.IBizObject;
-import org.hiforce.lattice.ability.reduce.Reducer;
+import org.hiforce.lattice.runtime.ability.reduce.Reducer;
 
 import javax.annotation.Nonnull;
 

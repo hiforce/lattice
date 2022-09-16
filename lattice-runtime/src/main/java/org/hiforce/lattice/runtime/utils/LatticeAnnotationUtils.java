@@ -1,11 +1,11 @@
-package org.hiforce.lattice.utils;
+package org.hiforce.lattice.runtime.utils;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hifforce.lattice.annotation.model.ScanSkipAnnotation;
 import org.hifforce.lattice.annotation.parser.ScanSkipAnnotationParser;
-import org.hiforce.lattice.spi.LatticeSpiFactory;
+import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.annotation.Annotation;

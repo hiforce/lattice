@@ -1,4 +1,4 @@
-package org.hiforce.lattice.ability;
+package org.hiforce.lattice.runtime.ability;
 
 /**
  * @author Rocky Yu

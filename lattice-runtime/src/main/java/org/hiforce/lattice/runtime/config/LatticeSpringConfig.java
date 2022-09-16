@@ -1,4 +1,4 @@
-package org.hiforce.lattice.config;
+package org.hiforce.lattice.runtime.config;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

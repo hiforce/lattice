@@ -1,4 +1,4 @@
-package org.hiforce.lattice.spi;
+package org.hiforce.lattice.runtime.spi;
 
 import org.hifforce.lattice.annotation.parser.AbilityAnnotationParser;
 import org.hifforce.lattice.annotation.parser.ExtensionAnnotationParser;

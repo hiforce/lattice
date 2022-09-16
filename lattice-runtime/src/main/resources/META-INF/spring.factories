@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-    org.hiforce.lattice.config.LatticeSpringConfig
+    org.hiforce.lattice.runtime.config.LatticeSpringConfig

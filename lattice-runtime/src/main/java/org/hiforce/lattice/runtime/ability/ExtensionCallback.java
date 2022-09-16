@@ -1,4 +1,4 @@
-package org.hiforce.lattice.ability;
+package org.hiforce.lattice.runtime.ability;
 
 
 import org.hifforce.lattice.model.ability.IBusinessExt;
