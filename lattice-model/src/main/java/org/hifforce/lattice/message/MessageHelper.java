@@ -1,8 +1,8 @@
 package org.hifforce.lattice.message;
 
 /**
- * @author kuhe
- * @since 15/10/14
+ * @author Rocky Yu
+ * @since 2022/9/16
  */
 public class MessageHelper {
 
