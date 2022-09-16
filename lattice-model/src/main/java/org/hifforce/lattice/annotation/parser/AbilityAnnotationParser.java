@@ -1,38 +1,24 @@
 package org.hifforce.lattice.annotation.parser;
 
-import com.google.auto.service.AutoService;
-import org.hifforce.lattice.annotation.Ability;
 import org.hifforce.lattice.annotation.model.AbilityAnnotation;
+
+import java.lang.annotation.Annotation;
 
 /**
  * @author Rocky Yu
  * @since 2022/9/15
  */
-@AutoService(AbilityAnnotationParser.class)
-public class AbilityAnnotationParser extends LatticeAnnotationParser<Ability, AbilityAnnotation> {
+public abstract class AbilityAnnotationParser<T extends Annotation> extends LatticeAnnotationParser<T, AbilityAnnotation> {
 
-    @Override
-    public Class<Ability> getAnnotationClass() {
-        return Ability.class;
-    }
+    public abstract String getCode(T annotation);
 
-    public String getCode(Ability annotation) {
-        return annotation.code();
-    }
+    public abstract String getName(T annotation);
 
-    public String getName(Ability annotation) {
-        return annotation.name();
-    }
+    public abstract String getDesc(T annotation);
 
-    public String getDesc(Ability annotation) {
-        return annotation.desc();
-    }
+    public abstract String getParent(T annotation);
 
-    public String getParent(Ability annotation) {
-        return annotation.parent();
-    }
-
-    public AbilityAnnotation buildAnnotationInfo(Ability annotation) {
+    public AbilityAnnotation buildAnnotationInfo(T annotation) {
         AbilityAnnotation info = new AbilityAnnotation();
         info.setCode(getCode(annotation));
         info.setName(getName(annotation));
@@ -40,5 +26,4 @@ public class AbilityAnnotationParser extends LatticeAnnotationParser<Ability, Ab
         info.setParent(getParent(annotation));
         return info;
     }
-
 }
