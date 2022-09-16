@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hifforce.lattice.cache.LatticeCacheFactory;
 import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.provider.IAbilityProvider;
+import org.hifforce.lattice.model.register.AbilitySpec;
 import org.hiforce.lattice.runtime.ability.dto.AbilityRegDTO;
 import org.hiforce.lattice.runtime.ability.register.AbilityRegister;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
@@ -19,10 +20,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -58,6 +56,11 @@ public class Lattice {
 
     public final void start() {
         registerAbility();//Register the Ability Instances during runtime.
+    }
+
+
+    public Collection<AbilitySpec> getAllRegisteredAbilities() {
+        return Lattice.getInstance().getLatticeRuntimeCache().getAllCachedAbilities();
     }
 
 

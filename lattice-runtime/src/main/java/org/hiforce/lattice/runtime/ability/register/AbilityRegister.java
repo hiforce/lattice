@@ -97,10 +97,6 @@ public class AbilityRegister {
         return abilityInstanceSpecList;
     }
 
-    public Collection<AbilitySpec> getAllRegisteredAbilities() {
-        return getRuntimeCache().getAllCachedAbilities();
-    }
-
     private List<AbilityInstSpec> registerAbilityInstances(AbilitySpec abilitySpec, Collection<Class> classSet) {
         List<AbilityInstSpec> instanceSpecs = new ArrayList<>();
         for (Class<?> targetClass : classSet) {
@@ -137,14 +133,12 @@ public class AbilityRegister {
                     Object curObject = getAndCreateSpringBeanViaClass(originCls);
                     originAbility = (IAbility) curObject;
                 } catch (Exception e) {
-                    log.error("createPluginConfig origin ability error,class:" + originCls.getName());
                     return AbilityInstBuildResult.failed(Message.code("LATTICE-CORE-RT-0002", originCls.getName()));
                 }
             } else {
                 originAbility = ability;
             }
         } else {
-            log.warn(instanceClass.getName() + " is not IAbility Type");
             return AbilityInstBuildResult.failed(Message.code("LATTICE-CORE-RT-0002", instanceClass.getName()));
         }
         if (null != Lattice.getInstance().getAbilityProvider().getRealization(originAbility.getInstanceCode())) {

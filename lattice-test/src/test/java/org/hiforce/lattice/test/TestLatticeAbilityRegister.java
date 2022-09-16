@@ -1,5 +1,7 @@
 package org.hiforce.lattice.test;
 
+import org.hiforce.lattice.runtime.Lattice;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class TestLatticeAbilityRegister {
 
     @Test
-    public void testAbilityRegister(){
-
+    public void testAbilityRegister() {
+        Assert.assertFalse(Lattice.getInstance().getAllRegisteredAbilities().isEmpty());
     }
 }
