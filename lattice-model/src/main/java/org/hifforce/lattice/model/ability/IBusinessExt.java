@@ -14,15 +14,6 @@ import java.util.List;
 public interface IBusinessExt {
 
     /**
-     * Find the Sub-BusinessExt facade via the extension's code
-     *
-     * @param extCode the code of the extension point.
-     * @return the found Sub-BusinessExt facade realization.
-     */
-    @ScanSkip
-    IBusinessExt getBusinessExtByCode(String extCode);
-
-    /**
      * ind the Sub-BusinessExt facade via the extension's code in specific scenario.
      *
      * @param extCode  the code of the extension point.
