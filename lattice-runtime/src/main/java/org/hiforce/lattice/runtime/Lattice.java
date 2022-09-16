@@ -2,10 +2,16 @@ package org.hiforce.lattice.runtime;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.hifforce.lattice.cache.LatticeCacheFactory;
 import org.hifforce.lattice.model.ability.IAbility;
-import org.hiforce.lattice.runtime.ability.AbilityRegister;
+import org.hifforce.lattice.model.ability.provider.IAbilityProvider;
+import org.hiforce.lattice.runtime.ability.dto.AbilityRegDTO;
+import org.hiforce.lattice.runtime.ability.register.AbilityRegister;
+import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
+import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
 import org.hiforce.lattice.runtime.utils.ClassLoaderUtil;
 
 import java.io.BufferedReader;
@@ -27,14 +33,36 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public class Lattice {
 
-    public final void start() {
+    private static Lattice instance;
 
+
+    @Getter
+    private final LatticeRuntimeCache latticeRuntimeCache = (LatticeRuntimeCache) LatticeCacheFactory.getInstance()
+            .getRuntimeCache(new LatticeRuntimeCache());
+
+    @Getter
+    @SuppressWarnings("all")
+    private final IAbilityProvider abilityProvider = LatticeSpiFactory.getInstance()
+            .getAbilityProviderCreator().createAbilityProvider();
+
+    private Lattice() {
+
+    }
+
+    public static Lattice getInstance() {
+        if (null == instance) {
+            instance = new Lattice();
+        }
+        return instance;
+    }
+
+    public final void start() {
         registerAbility();//Register the Ability Instances during runtime.
     }
 
 
-    public static Set<Class<?>> getServiceProviderClasses(String spiClassName) {
-        Set<Class<?>> classList = Sets.newHashSet();
+    public static Set<Class> getServiceProviderClasses(String spiClassName) {
+        Set<Class> classList = Sets.newHashSet();
         try {
             List<ClassLoader> classLoaders = Lists.newArrayList(Thread.currentThread().getContextClassLoader());
             for (ClassLoader classLoader : classLoaders) {
@@ -73,12 +101,12 @@ public class Lattice {
 
 
     private void registerAbility() {
-        Set<Class<?>> abilityClasses = getServiceProviderClasses(IAbility.class.getName());
-        AbilityRegister.getInstance().register(mergeAbilityInstancePackage(abilityClasses));
+        Set<Class> abilityClasses = getServiceProviderClasses(IAbility.class.getName());
+        AbilityRegister.getInstance().register(new AbilityRegDTO(null, mergeAbilityInstancePackage(abilityClasses)));
     }
 
-    private Set<Class<?>> mergeAbilityInstancePackage(Set<Class<?>> abilityClasses) {
-        Set<Class<?>> classesSet = Sets.newHashSet(abilityClasses);
+    private Set<Class> mergeAbilityInstancePackage(Set<Class> abilityClasses) {
+        Set<Class> classesSet = Sets.newHashSet(abilityClasses);
         Set<String> packageSet = abilityClasses.stream().map(p -> p.getPackage().getName()).collect(Collectors.toSet());
         for (String pkg : packageSet) {
             classesSet.addAll(ClassLoaderUtil.scanLatticeClasses(pkg));

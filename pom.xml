@@ -12,7 +12,7 @@
     <version>1.0.0-SNAPSHOT</version>
     <properties>
         <version.lattice>1.0.0-SNAPSHOT</version.lattice>
-        <version.spring>4.3.30.RELEASE</version.spring>
+        <version.spring.boot>2.3.7.RELEASE</version.spring.boot>
         <springext-plugin-version>1.2</springext-plugin-version>
         <version.jdk>1.8</version.jdk>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -27,6 +27,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-parent</artifactId>
+                <version>${version.spring.boot}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.hiforce.lattice</groupId>
                 <artifactId>lattice-model</artifactId>
                 <version>${version.lattice}</version>
@@ -36,6 +43,7 @@
                 <artifactId>lattice-runtime</artifactId>
                 <version>${version.lattice}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
@@ -68,19 +76,20 @@
                 <version>1.7.30</version>
             </dependency>
             <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>${version.spring}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-                <version>${version.spring}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.reflections</groupId>
                 <artifactId>reflections</artifactId>
                 <version>0.10.2</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.13.1</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>20.1.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

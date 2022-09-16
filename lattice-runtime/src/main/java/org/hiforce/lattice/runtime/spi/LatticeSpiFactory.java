@@ -3,6 +3,8 @@ package org.hiforce.lattice.runtime.spi;
 import org.hifforce.lattice.annotation.parser.AbilityAnnotationParser;
 import org.hifforce.lattice.annotation.parser.ExtensionAnnotationParser;
 import org.hifforce.lattice.annotation.parser.ScanSkipAnnotationParser;
+import org.hifforce.lattice.model.ability.provider.IAbilityProviderCreator;
+import org.hiforce.lattice.runtime.ability.provider.DefaultAbilityProviderCreator;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,6 +25,8 @@ public class LatticeSpiFactory {
     private List<ExtensionAnnotationParser> extensionAnnotationParsers;
 
     private List<ScanSkipAnnotationParser> scanSkipAnnotationParsers;
+
+    private IAbilityProviderCreator abilityProviderCreator;
 
     private LatticeSpiFactory() {
 
@@ -80,6 +84,21 @@ public class LatticeSpiFactory {
                 .collect(Collectors.toSet());
         result.addAll(platformSets);
         return new ArrayList<T>(result);
+    }
+
+    public IAbilityProviderCreator getAbilityProviderCreator() {
+        if (null != abilityProviderCreator) {
+            return abilityProviderCreator;
+        }
+        synchronized (LatticeSpiFactory.class) {
+            if (null == abilityProviderCreator) {
+                ServiceLoader<IAbilityProviderCreator> serializers = ServiceLoader.load(IAbilityProviderCreator.class, classLoader);
+                final Optional<IAbilityProviderCreator> serializer = StreamSupport.stream(serializers.spliterator(), false)
+                        .findFirst();
+                abilityProviderCreator = serializer.orElse(new DefaultAbilityProviderCreator());
+            }
+        }
+        return abilityProviderCreator;
     }
 
     private ClassLoader getClassLoader() {

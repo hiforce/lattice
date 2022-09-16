@@ -1,12 +1,16 @@
 package org.hifforce.lattice.model.register;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Rocky Yu
@@ -40,7 +44,13 @@ public class AbilitySpec extends BaseSpec {
      * For e.g. EyeAbility may have HumanEyeAbilityInst, ElectronicEyeAbilityInst..
      */
     @Getter
-    private final Map<String, AbilityInstSpec> abilityInstSpecMap = Maps.newConcurrentMap();
+    private Map<String, AbilityInstSpec> abilityInstSpecMap = Maps.newConcurrentMap();
+
+    /**
+     * the ability instances create current ability.
+     */
+    @Getter
+    private final Set<AbilityInstSpec> abilityInstances = Sets.newConcurrentHashSet();
 
     public static AbilitySpec of(String code, String name, String desc) {
         AbilitySpec abilitySpec = new AbilitySpec();
@@ -61,6 +71,35 @@ public class AbilitySpec extends BaseSpec {
         }
         abilityInstSpec.setAbilityCode(this.getCode());
         abilityInstSpecMap.put(abilityInstSpec.getCode(), abilityInstSpec);
+    }
+
+    public void addAbilityInstance(List<AbilityInstSpec> instanceSpecs) {
+        if (CollectionUtils.isEmpty(instanceSpecs)) {
+            return;
+        }
+        for (AbilityInstSpec abilityInstanceSpec : instanceSpecs) {
+            if (abilityInstanceSpec.inList(abilityInstances)) {
+                log.debug("[Lattice]AbilityInstance重复注册，[{}-{}]", abilityInstanceSpec.getName(), abilityInstanceSpec.getCode());
+                continue;
+            }
+            abilityInstanceSpec.setAbilityCode(this.getCode());
+            abilityInstances.add(abilityInstanceSpec);
+        }
+        rebuildAbilityInstanceSpecMap();
+    }
+
+    private Map<String, AbilityInstSpec> rebuildAbilityInstanceSpecMap() {
+        this.abilityInstSpecMap = Maps.newConcurrentMap();
+        if (CollectionUtils.isEmpty(abilityInstances)) {
+            return abilityInstSpecMap;
+        }
+        for (AbilityInstSpec abilityInstance : abilityInstances) {
+            if (StringUtils.isBlank(abilityInstance.getInstanceClass())) {
+                continue;
+            }
+            abilityInstSpecMap.put(abilityInstance.getInstanceClass(), abilityInstance);
+        }
+        return abilityInstSpecMap;
     }
 
     @Override
