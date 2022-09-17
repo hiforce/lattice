@@ -26,7 +26,7 @@ import static org.hiforce.lattice.test.ability.ext.SampleBusinessExt.SAMPLE_GET_
 public class TestLatticeAbilityRegister {
 
     @Test
-    public void test_AbilityRegister() {
+    public void test_ability_register_01() {
         Collection<AbilitySpec> abilitySpecList = Lattice.getInstance().getAllRegisteredAbilities();
         Assert.assertFalse(abilitySpecList.isEmpty());
 
