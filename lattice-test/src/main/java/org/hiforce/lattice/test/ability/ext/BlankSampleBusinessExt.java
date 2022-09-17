@@ -9,5 +9,8 @@ import org.hifforce.lattice.model.ability.BusinessExt;
 public class BlankSampleBusinessExt extends BusinessExt
         implements SampleBusinessExt {
 
-
+    @Override
+    public String getSampleExtensionPoint_01(String someInput) {
+        return "Hello Sample Ext 01";
+    }
 }

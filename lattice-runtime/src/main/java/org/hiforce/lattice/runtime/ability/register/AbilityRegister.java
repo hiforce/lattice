@@ -1,14 +1,21 @@
 package org.hiforce.lattice.runtime.ability.register;
 
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hifforce.lattice.annotation.model.AbilityAnnotation;
+import org.hifforce.lattice.annotation.model.ExtensionAnnotation;
+import org.hifforce.lattice.annotation.model.ReduceType;
 import org.hifforce.lattice.annotation.parser.AbilityAnnotationParser;
 import org.hifforce.lattice.exception.LatticeRuntimeException;
 import org.hifforce.lattice.message.Message;
 import org.hifforce.lattice.model.ability.IAbility;
+import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.register.AbilityInstSpec;
 import org.hifforce.lattice.model.register.AbilitySpec;
+import org.hifforce.lattice.model.register.BaseSpec;
+import org.hifforce.lattice.model.register.ExtensionPointSpec;
 import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.runtime.ability.dto.AbilityRegDTO;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
@@ -17,12 +24,14 @@ import org.hiforce.lattice.runtime.utils.LatticeClassUtils;
 import org.springframework.aop.support.AopUtils;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import static org.hiforce.lattice.runtime.utils.ExtensionUtils.getExtensionAnnotation;
 import static org.hiforce.lattice.runtime.utils.LatticeBeanUtils.getAndCreateSpringBeanViaClass;
 
 /**
@@ -31,6 +40,8 @@ import static org.hiforce.lattice.runtime.utils.LatticeBeanUtils.getAndCreateSpr
  */
 @Slf4j
 public class AbilityRegister {
+
+    private static final ThreadLocal<ClassLoader> CLASS_LOADER_THREAD_LOCAL = new ThreadLocal<>();
 
     private static AbilityRegister instance;
 
@@ -50,6 +61,7 @@ public class AbilityRegister {
     }
 
     public List<AbilitySpec> register(AbilityRegDTO regDTO) {
+
         List<AbilitySpec> abilitySpecList = new ArrayList<>();
         for (Class<?> currentClass : regDTO.getClassSet()) {
             Pair<AbilityAnnotation, Class<?>> pair = findAbilityAnnotationAndAbilityClass(currentClass);
@@ -91,8 +103,7 @@ public class AbilityRegister {
 
     public synchronized List<AbilityInstSpec> scanAbilityInstance(AbilitySpec abilitySpec, Collection<Class> classSet) {
 
-        List<AbilityInstSpec> abilityInstanceSpecList = new ArrayList<>();
-        abilityInstanceSpecList.addAll(registerAbilityInstances(abilitySpec, classSet));
+        List<AbilityInstSpec> abilityInstanceSpecList = new ArrayList<>(registerAbilityInstances(abilitySpec, classSet));
         abilityInstanceSpecList.sort(Comparator.comparingInt(AbilityInstSpec::getPriority));
         return abilityInstanceSpecList;
     }
@@ -171,14 +182,116 @@ public class AbilityRegister {
             instanceDesc.setCode(instance.getInstanceCode());
             instanceDesc.setName(instanceClass.getSimpleName());
             instance.setAbilityCode(abilitySpec.getCode());
-
-            //TODO: 注册能力实力下的扩展点信息
-
+            instanceDesc.getExtensions().addAll(scanAbilityExtensions(instance, abilitySpec));
             abilitySpec.addAbilityInstance(instanceDesc);
-
             return AbilityInstBuildResult.success(instanceDesc);
         } catch (Exception e) {
             return AbilityInstBuildResult.failed(Message.code("LATTICE-CORE-RT-0003", instanceClass, e.getMessage()));
         }
+    }
+
+    private Set<ExtensionPointSpec> scanAbilityExtensions(IAbility domainAbility, AbilitySpec abilitySpec) {
+        try {
+            Set<ExtensionPointSpec> extensionPointSpecList = new HashSet<ExtensionPointSpec>();
+
+            Class<?> returnType = findAbilityExtensionDefinition(domainAbility.getClass());
+            if (null != returnType) {
+                //是可扩展点的接口
+                extensionPointSpecList.addAll(scanAbilityExtensions(Sets.newHashSet(), returnType, abilitySpec));
+            }
+
+            Method[] methods = domainAbility.getClass().getMethods();
+            for (Method method : methods) {
+                returnType = method.getReturnType();
+                if (!ClassUtils.isAssignable(returnType, IBusinessExt.class)) {
+                    continue;
+                }
+
+                //是可扩展点的接口
+                extensionPointSpecList.addAll(
+                        scanAbilityExtensions(extensionPointSpecList.stream()
+                                        .map(BaseSpec::getCode).collect(Collectors.toSet()),
+                                returnType, abilitySpec));
+            }
+            return extensionPointSpecList;
+        } catch (Throwable th) {
+            Message message = Message.code("LATTICE-CORE-RT-0004", domainAbility.getClass().getName(),
+                    th.getMessage());
+            log.error(message.getText(), th);
+            throw th;
+        }
+    }
+
+    private Class<?> findAbilityExtensionDefinition(Class abilityClass) {
+        Object genericSuperclass = abilityClass.getGenericSuperclass();
+        if (genericSuperclass instanceof ParameterizedType) {
+            ParameterizedType type = (ParameterizedType) genericSuperclass;
+            for (Type actualType : type.getActualTypeArguments()) {
+                try {
+                    Class<?> returnType;
+                    if (CLASS_LOADER_THREAD_LOCAL.get() != null) {
+                        returnType = Class.forName(actualType.getTypeName(), true, CLASS_LOADER_THREAD_LOCAL.get());
+                    } else {
+                        returnType = Class.forName(actualType.getTypeName());
+                    }
+                    if (ClassUtils.isAssignable(returnType, IBusinessExt.class)) {
+                        return returnType;
+                    }
+                } catch (ClassNotFoundException e) {
+                    log.warn(e.getMessage(), e);
+                    continue;
+                }
+            }
+        }
+        if (ClassUtils.isAssignable(abilityClass.getSuperclass(), IAbility.class)) {
+            return findAbilityExtensionDefinition(abilityClass.getSuperclass());
+        }
+        return null;
+    }
+
+    private Set<ExtensionPointSpec> scanAbilityExtensions(Set<String> existedSet, Class<?> itfClass, AbilitySpec abilitySpec) {
+        Set<ExtensionPointSpec> extensionPointSpecList = new HashSet<>();
+        Method[] methods = itfClass.getMethods();
+        for (Method method : methods) {
+            ExtensionAnnotation annotation = getExtensionAnnotation(method);
+            if (null == annotation) {
+                continue;
+            }
+
+            if (existedSet.contains(annotation.getCode()))
+                continue;
+            ExtensionPointSpec extensionPointSpec = buildExtensionPointSpec(annotation, abilitySpec, itfClass, method);
+            if (null != extensionPointSpec) {
+                extensionPointSpecList.add(extensionPointSpec);
+            }
+        }
+
+        return extensionPointSpecList;
+    }
+
+    public ExtensionPointSpec buildExtensionPointSpec(
+            ExtensionAnnotation annotation,
+            AbilitySpec abilitySpec, Class<?> itfClass, Method method) {
+
+        if (null == annotation)
+            return null;
+
+        return buildExtensionPointSpec(abilitySpec, annotation.getCode(),
+                annotation.getName(), annotation.getDesc(), itfClass, method,
+                annotation.getReduceType());
+    }
+
+    private ExtensionPointSpec buildExtensionPointSpec(AbilitySpec abilitySpec, String extensionCode,
+                                                       String extensionName,
+                                                       String extensionDesc,
+                                                       Class<?> itfClass, Method method,
+                                                       ReduceType reduceType) {
+
+        ExtensionPointSpec extensionPointSpec =
+                ExtensionPointSpec.of(method, abilitySpec.getCode(),
+                        extensionCode, extensionName, extensionDesc);
+        extensionPointSpec.setReduceType(reduceType);
+        extensionPointSpec.setItfClass(itfClass);
+        return extensionPointSpec;
     }
 }

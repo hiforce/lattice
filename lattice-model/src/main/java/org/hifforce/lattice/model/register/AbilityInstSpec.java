@@ -1,8 +1,11 @@
 package org.hifforce.lattice.model.register;
 
+import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Set;
 
 /**
  * @author Rocky Yu
@@ -22,6 +25,8 @@ public class AbilityInstSpec extends BaseSpec {
     @Setter
     private int priority = 2000;
 
+    @Getter
+    private final Set<ExtensionPointSpec> extensions = Sets.newHashSet();
 
     @Override
     public boolean equals(Object obj) {
