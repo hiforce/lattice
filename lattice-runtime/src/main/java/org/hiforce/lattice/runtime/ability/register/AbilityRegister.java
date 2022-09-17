@@ -17,7 +17,6 @@ import org.hifforce.lattice.model.register.AbilitySpec;
 import org.hifforce.lattice.model.register.BaseSpec;
 import org.hifforce.lattice.model.register.ExtensionPointSpec;
 import org.hiforce.lattice.runtime.Lattice;
-import org.hiforce.lattice.runtime.ability.dto.AbilityRegDTO;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
 import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
 import org.hiforce.lattice.runtime.utils.LatticeClassUtils;
@@ -60,7 +59,7 @@ public class AbilityRegister {
         return Lattice.getInstance().getLatticeRuntimeCache();
     }
 
-    public List<AbilitySpec> register(AbilityRegDTO regDTO) {
+    public List<AbilitySpec> register(AbilityBuildRequest regDTO) {
 
         List<AbilitySpec> abilitySpecList = new ArrayList<>();
         for (Class<?> currentClass : regDTO.getClassSet()) {

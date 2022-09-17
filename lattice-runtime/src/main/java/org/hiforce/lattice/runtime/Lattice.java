@@ -9,7 +9,7 @@ import org.hifforce.lattice.cache.LatticeCacheFactory;
 import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.provider.IAbilityProvider;
 import org.hifforce.lattice.model.register.AbilitySpec;
-import org.hiforce.lattice.runtime.ability.dto.AbilityRegDTO;
+import org.hiforce.lattice.runtime.ability.register.AbilityBuildRequest;
 import org.hiforce.lattice.runtime.ability.register.AbilityRegister;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
 import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
@@ -105,7 +105,7 @@ public class Lattice {
 
     private void registerAbility() {
         Set<Class> abilityClasses = getServiceProviderClasses(IAbility.class.getName());
-        AbilityRegister.getInstance().register(new AbilityRegDTO(null, mergeAbilityInstancePackage(abilityClasses)));
+        AbilityRegister.getInstance().register(new AbilityBuildRequest(null, mergeAbilityInstancePackage(abilityClasses)));
     }
 
     private Set<Class> mergeAbilityInstancePackage(Set<Class> abilityClasses) {
