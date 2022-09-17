@@ -23,7 +23,7 @@ import static org.hiforce.lattice.test.ability.ext.SampleBusinessExt.SAMPLE_GET_
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = LatticeTestStarter.class)
 @AutoConfigureMockMvc
-public class TestLatticeAbilityRegister {
+public class LatticeGeneralTest {
 
     @Test
     public void test_ability_register_01() {
