@@ -7,12 +7,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hifforce.lattice.cache.LatticeCacheFactory;
 import org.hifforce.lattice.model.ability.IAbility;
+import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.ability.provider.IAbilityProvider;
 import org.hifforce.lattice.model.register.AbilitySpec;
 import org.hiforce.lattice.runtime.ability.register.AbilityBuildRequest;
 import org.hiforce.lattice.runtime.ability.register.AbilityRegister;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
 import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
+import org.hiforce.lattice.runtime.template.LatticeTemplateManager;
+import org.hiforce.lattice.runtime.template.register.TemplateRegister;
 import org.hiforce.lattice.runtime.utils.ClassLoaderUtil;
 
 import java.io.BufferedReader;
@@ -32,6 +35,9 @@ import java.util.stream.Collectors;
 public class Lattice {
 
     private static Lattice instance;
+
+    @Getter
+    private final LatticeTemplateManager templateManager = new LatticeTemplateManager();
 
 
     @Getter
@@ -55,7 +61,8 @@ public class Lattice {
     }
 
     public final void start() {
-        registerAbility();//Register the Ability Instances during runtime.
+        registerAbilities();//Register the Ability Instances during runtime.
+        registerRealizations();//Register the business extension realization during runtime.
     }
 
 
@@ -64,6 +71,7 @@ public class Lattice {
     }
 
 
+    @SuppressWarnings("rawtypes")
     public static Set<Class> getServiceProviderClasses(String spiClassName) {
         Set<Class> classList = Sets.newHashSet();
         try {
@@ -102,12 +110,19 @@ public class Lattice {
         return contentList;
     }
 
+    @SuppressWarnings("rawtypes")
+    private void registerRealizations() {
+        Set<Class> classSet = getServiceProviderClasses(IBusinessExt.class.getName());
+        TemplateRegister.getInstance().registerRealizations(classSet);
+    }
 
-    private void registerAbility() {
+    @SuppressWarnings("rawtypes")
+    private void registerAbilities() {
         Set<Class> abilityClasses = getServiceProviderClasses(IAbility.class.getName());
         AbilityRegister.getInstance().register(new AbilityBuildRequest(null, mergeAbilityInstancePackage(abilityClasses)));
     }
 
+    @SuppressWarnings("rawtypes")
     private Set<Class> mergeAbilityInstancePackage(Set<Class> abilityClasses) {
         Set<Class> classesSet = Sets.newHashSet(abilityClasses);
         Set<String> packageSet = abilityClasses.stream().map(p -> p.getPackage().getName()).collect(Collectors.toSet());

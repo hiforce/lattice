@@ -94,7 +94,7 @@ public class AbilityRegister {
             if (null == annotation) {
                 continue;
             }
-            AbilityAnnotation annotationInfo = parser.buildAnnotationInfo(annotation);
+            AbilityAnnotation annotationInfo = parser.buildAnnotationInfo(annotation, currentClass);
             return Pair.of(annotationInfo, currentClass);
         }
         return null;

@@ -9,7 +9,7 @@ import java.lang.annotation.Annotation;
  * @author Rocky Yu
  * @since 2022/9/16
  */
-public abstract class ExtensionAnnotationParser<T extends Annotation> extends LatticeAnnotationParser<T, ExtensionAnnotation> {
+public abstract class ExtensionAnnotationParser<T extends Annotation> extends LatticeAnnotationParser<T> {
 
     public abstract String getName(T annotation);
 
@@ -19,7 +19,6 @@ public abstract class ExtensionAnnotationParser<T extends Annotation> extends La
 
     public abstract ReduceType getReduceType(T annotation);
 
-    @Override
     public ExtensionAnnotation buildAnnotationInfo(T annotation) {
         if (null == annotation) {
             return null;
