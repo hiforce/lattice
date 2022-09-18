@@ -3,6 +3,7 @@ package org.hiforce.lattice.test;
 import org.hifforce.lattice.model.register.AbilityInstSpec;
 import org.hifforce.lattice.model.register.AbilitySpec;
 import org.hifforce.lattice.model.register.ExtensionPointSpec;
+import org.hifforce.lattice.model.register.RealizationSpec;
 import org.hiforce.lattice.runtime.Lattice;
 import org.junit.Assert;
 import org.junit.Test;
@@ -45,5 +46,16 @@ public class LatticeGeneralTest {
         Assert.assertNotNull(extensionPointSpec);
 
         Assert.assertEquals(extensionPointSpec.getCode(), SAMPLE_GET_SAMPLE_EXTENSION_POINT_01);
+    }
+
+    @Test
+    public void test_realization_register_01() {
+        Assert.assertFalse(Lattice.getInstance().getRegisteredRealizations().isEmpty());
+
+        RealizationSpec spec = Lattice.getInstance().getRealizationSpecByCode("business.b");
+        Assert.assertNotNull(spec);
+        Assert.assertNotNull(spec.getBusinessExt());
+        Assert.assertFalse(spec.getExtensionCodes().isEmpty());
+
     }
 }

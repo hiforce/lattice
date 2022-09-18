@@ -1,4 +1,4 @@
-package org.hiforce.lattice.runtime.template.register;
+package org.hiforce.lattice.runtime.ability.register;
 
 import com.google.common.collect.Lists;
 import lombok.Getter;
@@ -9,6 +9,7 @@ import org.hifforce.lattice.exception.LatticeRuntimeException;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.register.RealizationSpec;
 import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
+import org.hiforce.lattice.runtime.utils.BusinessExtUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
@@ -53,6 +54,7 @@ public class TemplateRegister {
             } catch (Exception e) {
                 throw new LatticeRuntimeException("LATTICE-CORE-RT-0006", clz.getName());
             }
+            spec.getExtensionCodes().addAll(BusinessExtUtils.supportedExtCodes(spec.getBusinessExt()));
             realizations.add(spec);
         }
         return realizations;

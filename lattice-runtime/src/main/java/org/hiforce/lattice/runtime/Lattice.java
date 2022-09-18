@@ -10,12 +10,13 @@ import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.ability.provider.IAbilityProvider;
 import org.hifforce.lattice.model.register.AbilitySpec;
+import org.hifforce.lattice.model.register.RealizationSpec;
 import org.hiforce.lattice.runtime.ability.register.AbilityBuildRequest;
 import org.hiforce.lattice.runtime.ability.register.AbilityRegister;
+import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
 import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
 import org.hiforce.lattice.runtime.template.LatticeTemplateManager;
-import org.hiforce.lattice.runtime.template.register.TemplateRegister;
 import org.hiforce.lattice.runtime.utils.ClassLoaderUtil;
 
 import java.io.BufferedReader;
@@ -38,6 +39,12 @@ public class Lattice {
 
     @Getter
     private final LatticeTemplateManager templateManager = new LatticeTemplateManager();
+
+    @Getter
+    private final List<AbilitySpec> registeredAbilities = Lists.newArrayList();
+
+    @Getter
+    private final List<RealizationSpec> registeredRealizations = Lists.newArrayList();
 
 
     @Getter
@@ -113,13 +120,14 @@ public class Lattice {
     @SuppressWarnings("rawtypes")
     private void registerRealizations() {
         Set<Class> classSet = getServiceProviderClasses(IBusinessExt.class.getName());
-        TemplateRegister.getInstance().registerRealizations(classSet);
+        registeredRealizations.addAll(TemplateRegister.getInstance().registerRealizations(classSet));
     }
 
     @SuppressWarnings("rawtypes")
     private void registerAbilities() {
         Set<Class> abilityClasses = getServiceProviderClasses(IAbility.class.getName());
-        AbilityRegister.getInstance().register(new AbilityBuildRequest(null, mergeAbilityInstancePackage(abilityClasses)));
+        registeredAbilities.addAll(AbilityRegister.getInstance()
+                .register(new AbilityBuildRequest(null, mergeAbilityInstancePackage(abilityClasses))));
     }
 
     @SuppressWarnings("rawtypes")
@@ -129,7 +137,12 @@ public class Lattice {
         for (String pkg : packageSet) {
             classesSet.addAll(ClassLoaderUtil.scanLatticeClasses(pkg));
         }
-
         return classesSet;
+    }
+
+    public RealizationSpec getRealizationSpecByCode(String code) {
+        return registeredRealizations.stream()
+                .filter(p -> p.isCodeMatched(code))
+                .findFirst().orElse(null);
     }
 }

@@ -12,6 +12,7 @@ import org.hifforce.lattice.annotation.model.ExtensionAnnotation;
 import org.hifforce.lattice.annotation.model.ScanSkipAnnotation;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.ability.cache.IBusinessExtCache;
+import org.hiforce.lattice.runtime.utils.BusinessExtUtils;
 import org.hiforce.lattice.runtime.utils.ExtensionUtils;
 import org.hiforce.lattice.runtime.utils.LatticeBeanUtils;
 
@@ -34,8 +35,6 @@ public class BusinessExtCache implements IBusinessExtCache {
     private static BusinessExtCache instance;
 
     private static final Object lock = new Object();
-
-    private static final Map<Class<?>, Set<String>> CODE_MAP = new ConcurrentHashMap<>();
 
     private static final Table<Class<?>, ExtKey, IBusinessExt> BIZ_EXT_TABLE = HashBasedTable.create();
 
@@ -123,7 +122,7 @@ public class BusinessExtCache implements IBusinessExtCache {
         if (StringUtils.isEmpty(extCode)) {
             return null;
         }
-        boolean isMatch = supportedExtCodes(businessExt).contains(extCode);
+        boolean isMatch = BusinessExtUtils.supportedExtCodes(businessExt).contains(extCode);
         if (!isMatch) {
             return null;
         }
@@ -137,55 +136,6 @@ public class BusinessExtCache implements IBusinessExtCache {
             return extension;
         }
         return businessExt;
-    }
-
-    public Set<String> supportedExtCodes(IBusinessExt businessExt) {
-        if (null == businessExt) {
-            return Sets.newHashSet();
-        }
-        Class<?> key = businessExt.getClass();
-        Set<String> result = CODE_MAP.get(key);
-        if (CollectionUtils.isNotEmpty(result)) {
-            return result;
-        }
-
-        Set<String> supportedCodes = Sets.newConcurrentHashSet();
-        supportedCodes.addAll(distinctSupportCodes(businessExt));
-        try {
-            for (Method method : businessExt.getClass().getMethods()) {
-                ExtensionAnnotation annotation = ExtensionUtils.getExtensionAnnotation(method);
-                if (null == annotation) {
-                    continue;
-                }
-                if (StringUtils.isNotEmpty(annotation.getCode())) {
-                    supportedCodes.add(annotation.getCode());
-                }
-
-            }
-        } catch (Throwable th) {
-            log.warn(th.getMessage(), th);
-        }
-        if (null == CODE_MAP.get(key)) {
-            CODE_MAP.put(key, supportedCodes);
-        } else {
-            CODE_MAP.get(key).addAll(supportedCodes);
-        }
-
-        return supportedCodes;
-    }
-
-    private Set<String> distinctSupportCodes(IBusinessExt businessExt) {
-        Set<String> codes = Sets.newConcurrentHashSet();
-        if (null == businessExt) {
-            return Sets.newHashSet();
-        }
-        List<? extends IBusinessExt> subBusinessLists = businessExt.getAllSubBusinessExt();
-        for (IBusinessExt subBusinessExt : subBusinessLists) {
-            if (null == subBusinessExt)
-                continue;
-            codes.addAll(supportedExtCodes(subBusinessExt));
-        }
-        return codes;
     }
 
 

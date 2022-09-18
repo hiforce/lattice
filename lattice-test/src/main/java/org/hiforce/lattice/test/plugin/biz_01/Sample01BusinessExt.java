@@ -8,5 +8,5 @@ import org.hiforce.lattice.test.ability.ext.BlankSampleBusinessExt;
  * @since 2022/9/18
  */
 @Realization(codes = "business.a")
-public class SampleABusinessExt extends BlankSampleBusinessExt {
+public class Sample01BusinessExt extends BlankSampleBusinessExt {
 }
