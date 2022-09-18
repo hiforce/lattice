@@ -3,9 +3,12 @@ package org.hiforce.lattice.runtime;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hifforce.lattice.cache.LatticeCacheFactory;
+import org.hifforce.lattice.message.Message;
+import org.hifforce.lattice.message.MessageCode;
 import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.ability.provider.IAbilityProvider;
@@ -18,6 +21,7 @@ import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
 import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
 import org.hiforce.lattice.runtime.template.LatticeTemplateManager;
 import org.hiforce.lattice.runtime.utils.ClassLoaderUtil;
+import org.hiforce.lattice.runtime.utils.ClassPathScanHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,7 +39,15 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public class Lattice {
 
+
     private static Lattice instance;
+
+    @Getter
+    @Setter
+    private String uuid = UUID.randomUUID().toString();
+
+    @Getter
+    private boolean initialized = false;
 
     @Getter
     private final LatticeTemplateManager templateManager = new LatticeTemplateManager();
@@ -70,6 +82,11 @@ public class Lattice {
     public final void start() {
         registerAbilities();//Register the Ability Instances during runtime.
         registerRealizations();//Register the business extension realization during runtime.
+
+        MessageCode.init();
+        Message.clean();
+        ClassPathScanHandler.clearCache();
+        initialized = true;
     }
 
 

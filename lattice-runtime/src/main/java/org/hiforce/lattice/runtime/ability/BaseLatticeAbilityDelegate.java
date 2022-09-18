@@ -21,6 +21,10 @@ public class BaseLatticeAbilityDelegate {
 
     public <BusinessExt extends IBusinessExt, R> RunnerCollection<BusinessExt, R> loadExtensionRunners(@Nonnull String extCode) {
         String scenario = ability.getContext().getScenario();
+        String bizCode = ability.getContext().getBizObject().getBizCode();
+
+        boolean supportCustomization = ability.supportCustomization();
+
         return null;
     }
 }

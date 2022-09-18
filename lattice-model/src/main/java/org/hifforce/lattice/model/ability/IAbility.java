@@ -42,7 +42,7 @@ public interface IAbility<AbilityTarget, ExtensionPoints extends IBusinessExt> {
      *
      * @return true or false.
      */
-    boolean supportCustomization(String bizCode, AbilityTarget target);
+    boolean supportCustomization();
 
     /**
      * Whether current ability invoke getDefaultRealization() if the extension

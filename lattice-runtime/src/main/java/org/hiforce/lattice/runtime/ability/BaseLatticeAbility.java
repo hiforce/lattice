@@ -46,7 +46,7 @@ public abstract class BaseLatticeAbility<Target, BusinessExt extends IBusinessEx
     }
 
     @Override
-    public boolean supportCustomization(String bizCode, Target target) {
+    public boolean supportCustomization() {
         return true;
     }
 
