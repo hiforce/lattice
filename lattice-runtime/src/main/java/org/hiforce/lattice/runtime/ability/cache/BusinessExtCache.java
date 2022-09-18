@@ -53,6 +53,7 @@ public class BusinessExtCache implements IBusinessExtCache {
         return instance;
     }
 
+    @SuppressWarnings("SynchronizationOnGetClass")
     public IBusinessExt getCachedBusinessExt(IBusinessExt businessExt, String extCode, String scenario) {
         scenario = StringUtils.isEmpty(scenario) ? "None#" : scenario;
         ExtKey extKey = new ExtKey(scenario, extCode);

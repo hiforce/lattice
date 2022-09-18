@@ -12,6 +12,8 @@ import java.io.Serializable;
  */
 public class BizContext implements Serializable {
 
+    private static final long serialVersionUID = 4886210062129912701L;
+
     @Getter
     @Setter
     private Serializable bizId;

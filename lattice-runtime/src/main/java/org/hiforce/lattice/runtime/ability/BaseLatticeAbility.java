@@ -3,9 +3,13 @@ package org.hiforce.lattice.runtime.ability;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.hifforce.lattice.exception.LatticeRuntimeException;
 import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.IBusinessExt;
-import org.hifforce.lattice.model.business.IBizObject;
+import org.hifforce.lattice.model.context.AbilityContext;
+import org.hiforce.lattice.runtime.ability.execute.ExecuteResult;
+import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 import org.hiforce.lattice.runtime.ability.reduce.Reducer;
 
 import javax.annotation.Nonnull;
@@ -18,7 +22,6 @@ import javax.annotation.Nonnull;
 public abstract class BaseLatticeAbility<Target, BusinessExt extends IBusinessExt>
         implements IAbility<Target, BusinessExt> {
 
-
     @Getter
     @Setter
     private String abilityCode;
@@ -26,12 +29,15 @@ public abstract class BaseLatticeAbility<Target, BusinessExt extends IBusinessEx
     @Getter
     private final String instanceCode;
 
-    private BaseLatticeAbilityDelegate delegate;
+    private final BaseLatticeAbilityDelegate delegate;
 
+    @SuppressWarnings("unused")
     public BaseLatticeAbility() {
         this.instanceCode = this.getClass().getName();
         this.delegate = new BaseLatticeAbilityDelegate(this);
     }
+
+    public abstract AbilityContext getContext();
 
 
     @Override
@@ -64,17 +70,45 @@ public abstract class BaseLatticeAbility<Target, BusinessExt extends IBusinessEx
      * The ability will execute the extension's realization with reducer
      * When multi extension realization found.
      *
-     * @param bizObject
-     * @param extensionCode
-     * @param callback
-     * @param reducer
-     * @return
+     * @param extensionCode the code of extension point.
+     * @param callback      extension point's callback.
+     * @param reducer       The result's reduce policy for multi-realization.
+     * @return The result of extension point execution.
      */
-    public final <T, R> R reduceExecute(@Nonnull IBizObject bizObject,
-                                        String extensionCode,
-                                        ExtensionCallback<BusinessExt, T> callback,
-                                        @Nonnull Reducer<T, R> reducer) {
+    protected final <T, R> R reduceExecute(String extensionCode,
+                                           ExtensionCallback<BusinessExt, T> callback,
+                                           @Nonnull Reducer<T, R> reducer) {
 
+        ExecuteResult<R> result = reduceExecuteWithDetailResult(extensionCode, callback, reducer);
+        if (null == result || null == result.getResult()) {
+            return null;
+        }
+        return result.getResult();
+    }
+
+    protected <T, R> ExecuteResult<R> reduceExecuteWithDetailResult(
+            String extensionCode, ExtensionCallback<BusinessExt, T> callback,
+            @Nonnull Reducer<T, R> reducer) {
+
+        if (null == getContext().getBizObject()) {
+            log.error("[Lattice]bizInstance is null, extensionCode: {}", extensionCode);
+            return ExecuteResult.success(null, null, null);
+        }
+        if (getContext().getBizObject().getBizContext().getBizId() == null) {
+            log.error("[Lattice]bizInstance id is null, extensionCode: {}", extensionCode);
+            return ExecuteResult.success(null, null, null);
+        }
+
+        if (StringUtils.isEmpty(extensionCode)) {
+            throw new LatticeRuntimeException("LATTICE-CORE-RT-0007");
+        }
+
+        String bizCode = getContext().getBizObject().getBizCode();
+        if (StringUtils.isEmpty(bizCode)) {
+            throw new LatticeRuntimeException("LATTICE-CORE-RT-0008");
+        }
+
+        RunnerCollection<BusinessExt, R> runnerCollection = delegate.loadExtensionRunners(extensionCode);
         return null;
     }
 }
