@@ -74,7 +74,7 @@ public class LatticeBeanUtils {
             }
             return (T) beanClass.newInstance();
         } catch (Throwable e) {
-            log.error("[Lattice]Failed to create spring bean instance", e);
+            log.warn("[Lattice]Failed to create spring bean instance", e);
             return createBeanInstance(beanClass, values);
         }
     }
@@ -91,7 +91,7 @@ public class LatticeBeanUtils {
             }
             return (T) constructor.newInstance(values);
         } catch (Throwable e) {
-            log.error("[Lattice]Failed to create spring bean instance", e);
+            log.warn("[Lattice]Failed to create spring bean instance", e);
             return null;
         }
     }
