@@ -17,8 +17,8 @@ import static org.hiforce.lattice.test.ability.ext.SampleBusinessExt.SAMPLE_GET_
 @Ability(name = "SampleAbility")
 public class SampleAbility extends BaseLatticeAbility<BlankSampleBusinessExt> {
 
-    public SampleAbility(IBizObject bizObject, String scenario) {
-        super(bizObject, scenario);
+    public SampleAbility(IBizObject bizObject) {
+        super(bizObject);
     }
 
     @Override

@@ -66,8 +66,9 @@ public class LatticeGeneralTest {
         OrderLine orderLine = new OrderLine();
         orderLine.setOrderLineId(1L);
         orderLine.setBizCode("business.a");
-        SampleAbility ability = new SampleAbility(orderLine, orderLine.getScenario());
+        SampleAbility ability = new SampleAbility(orderLine);
         String value = ability.invokeTheSampleSampleExtensionPoint_01();
+        System.out.println(">>>Lattice extension invoke result: " + value);
         Assert.assertNotNull(value);
     }
 }

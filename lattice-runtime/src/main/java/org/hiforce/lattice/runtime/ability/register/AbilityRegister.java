@@ -12,7 +12,6 @@ import org.hifforce.lattice.exception.LatticeRuntimeException;
 import org.hifforce.lattice.message.Message;
 import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.IBusinessExt;
-import org.hifforce.lattice.model.business.BizContext;
 import org.hifforce.lattice.model.business.IBizObject;
 import org.hifforce.lattice.model.register.AbilityInstSpec;
 import org.hifforce.lattice.model.register.AbilitySpec;
@@ -136,13 +135,13 @@ public class AbilityRegister {
     private AbilityInstBuildResult innerRegisterAbilityInstance(AbilitySpec abilitySpec, Class<?> instanceClass) {
         IAbility ability;
         IAbility originAbility;
-        Object beanViaClass = getAndCreateSpringBeanViaClass(instanceClass, IBizObject.DUMMY, "SAMPLE_SCENARIO");
+        Object beanViaClass = getAndCreateSpringBeanViaClass(instanceClass, IBizObject.DUMMY);
         if (beanViaClass instanceof IAbility) {
             ability = (IAbility) beanViaClass;
             if (AopUtils.isAopProxy(ability)) {
                 Class<?> originCls = AopUtils.getTargetClass(ability);
                 try {
-                    Object curObject = getAndCreateSpringBeanViaClass(originCls, IBizObject.DUMMY, "SAMPLE_SCENARIO");
+                    Object curObject = getAndCreateSpringBeanViaClass(originCls, IBizObject.DUMMY);
                     originAbility = (IAbility) curObject;
                 } catch (Exception e) {
                     return AbilityInstBuildResult.failed(Message.code("LATTICE-CORE-RT-0002", originCls.getName()));

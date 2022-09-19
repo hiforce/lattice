@@ -30,8 +30,6 @@ public class BaseLatticeAbilityDelegate {
     @SuppressWarnings("rawtypes")
     private final BaseLatticeAbility ability;
 
-    public final static Object NULL_OBJECT = new Object();
-
     @SuppressWarnings("rawtypes")
     public BaseLatticeAbilityDelegate(BaseLatticeAbility ability) {
         this.ability = ability;
@@ -64,7 +62,7 @@ public class BaseLatticeAbilityDelegate {
 
         if (loadBizExt) {
 
-            RunnerCollection.Producer producer = getDefaultRunnerProducer(bizCode ,extCode, scenario);
+            RunnerCollection.Producer producer = getDefaultRunnerProducer(bizCode, extCode, scenario);
             return RunnerCollection.combine(runnerCollection, producer, loadBizExt, loadDefaultExt);
         } else {
             return runnerCollection;
@@ -72,7 +70,7 @@ public class BaseLatticeAbilityDelegate {
     }
 
 
-
+    @SuppressWarnings("all")
     private <ExtensionPoints extends IBusinessExt, R> RunnerCollection.Producer<ExtensionPoints, R> getDefaultRunnerProducer(
             String bizCode,
             String extensionCode,
@@ -85,7 +83,7 @@ public class BaseLatticeAbilityDelegate {
             if (ability.supportCustomization()) {
                 IBusinessExt extImpl = loadExtensionRealization(bizCode, scenario, template, extensionCode);
                 if (null == extImpl) {
-                    extensionJavaRunner = null; //有可能为null，比如产品开放给业务的扩展点
+                    extensionJavaRunner = null;
                 } else {
                     int priority = -1;
                     extensionJavaRunner = new ExtensionJavaRunner(template, extensionCode, priority, extImpl);

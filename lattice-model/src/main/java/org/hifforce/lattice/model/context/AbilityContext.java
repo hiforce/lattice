@@ -18,15 +18,18 @@ public class AbilityContext implements Serializable {
     private final IBizObject bizObject;
 
     @Getter
-    @Setter
-    private String scenario;
+    private final String scenario;
+
+    @Getter
+    private final String bizCode;
 
     @Getter
     @Setter
     private boolean onlyProductExt;
 
-    public AbilityContext(IBizObject bizObject, String scenario) {
+    public AbilityContext(IBizObject bizObject) {
         this.bizObject = bizObject;
-        this.scenario = scenario;
+        this.scenario = bizObject.getBizContext().getScenario();
+        this.bizCode = bizObject.getBizCode();
     }
 }

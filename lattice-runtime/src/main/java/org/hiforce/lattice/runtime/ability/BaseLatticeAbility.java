@@ -29,22 +29,19 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
 
     private final IBizObject bizObject;
 
-    private final String scenario;
-
     @Getter
     private final String instanceCode;
 
     private final BaseLatticeAbilityDelegate delegate;
 
-    public BaseLatticeAbility(IBizObject bizObject, String scenario) {
+    public BaseLatticeAbility(IBizObject bizObject) {
         this.bizObject = bizObject;
-        this.scenario = scenario;
         this.instanceCode = this.getClass().getName();
         this.delegate = new BaseLatticeAbilityDelegate(this);
     }
 
     public AbilityContext getContext() {
-        return new AbilityContext(bizObject, scenario);
+        return new AbilityContext(bizObject);
     }
 
     public String getCode() {
