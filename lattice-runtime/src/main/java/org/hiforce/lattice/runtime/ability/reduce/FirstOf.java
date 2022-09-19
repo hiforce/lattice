@@ -1,6 +1,7 @@
 package org.hiforce.lattice.runtime.ability.reduce;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.hifforce.lattice.model.ability.execute.Reducer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

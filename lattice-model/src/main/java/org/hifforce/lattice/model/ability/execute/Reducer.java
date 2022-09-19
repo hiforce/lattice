@@ -1,4 +1,4 @@
-package org.hiforce.lattice.runtime.ability.reduce;
+package org.hifforce.lattice.model.ability.execute;
 
 
 import lombok.Getter;

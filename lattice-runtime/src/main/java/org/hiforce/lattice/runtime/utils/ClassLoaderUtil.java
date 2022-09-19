@@ -49,11 +49,8 @@ public abstract class ClassLoaderUtil {
                 .findFirst().isPresent()) {
             return true;
         }
-        if (LatticeSpiFactory.getInstance().getExtensionAnnotationParsers()
+        return LatticeSpiFactory.getInstance().getExtensionAnnotationParsers()
                 .stream().map(p -> null != targetClass.getAnnotation(p.getAnnotationClass()))
-                .findFirst().isPresent()) {
-            return true;
-        }
-        return false;
+                .findFirst().isPresent();
     }
 }

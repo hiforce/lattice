@@ -7,8 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.business.IBizObject;
 import org.hifforce.lattice.model.template.ITemplate;
-import org.hiforce.lattice.runtime.ability.ExtensionCallback;
-import org.hiforce.lattice.runtime.ability.reduce.Reducer;
+import org.hifforce.lattice.model.ability.execute.ExtensionCallback;
+import org.hifforce.lattice.model.ability.execute.Reducer;
 
 import java.util.*;
 import java.util.function.Predicate;

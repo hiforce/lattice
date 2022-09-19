@@ -1,16 +1,19 @@
 package org.hiforce.lattice.runtime.ability;
 
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.hifforce.lattice.annotation.model.AbilityAnnotation;
 import org.hifforce.lattice.exception.LatticeRuntimeException;
 import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.IBusinessExt;
+import org.hifforce.lattice.model.ability.execute.ExtensionCallback;
+import org.hifforce.lattice.model.ability.execute.Reducer;
+import org.hifforce.lattice.model.business.IBizObject;
 import org.hifforce.lattice.model.context.AbilityContext;
 import org.hiforce.lattice.runtime.ability.execute.ExecuteResult;
 import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
-import org.hiforce.lattice.runtime.ability.reduce.Reducer;
+import org.hiforce.lattice.runtime.utils.LatticeAnnotationUtils;
 
 import javax.annotation.Nonnull;
 
@@ -22,23 +25,33 @@ import javax.annotation.Nonnull;
 public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
         implements IAbility<BusinessExt> {
 
-    @Getter
-    @Setter
-    private String abilityCode;
+    private IBizObject bizObject;
+
+    private String scenario;
 
     @Getter
     private final String instanceCode;
 
     private final BaseLatticeAbilityDelegate delegate;
 
-    @SuppressWarnings("unused")
-    public BaseLatticeAbility() {
+    public BaseLatticeAbility(IBizObject bizObject, String scenario) {
+        this.bizObject = bizObject;
+        this.scenario = scenario;
         this.instanceCode = this.getClass().getName();
         this.delegate = new BaseLatticeAbilityDelegate(this);
     }
 
-    public abstract AbilityContext getContext();
+    public AbilityContext getContext() {
+        return new AbilityContext(bizObject, scenario);
+    }
 
+    public String getCode() {
+        AbilityAnnotation annotation = LatticeAnnotationUtils.getAbilityAnnotation(this.getClass());
+        if (null == annotation) {
+            return null;
+        }
+        return annotation.getCode();
+    }
 
     @Override
     public boolean supportChecking() {
@@ -73,9 +86,9 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
      * @param reducer       The result's reduce policy for multi-realization.
      * @return The result of extension point execution.
      */
-    protected final <T, R> R reduceExecute(String extensionCode,
-                                           ExtensionCallback<BusinessExt, T> callback,
-                                           @Nonnull Reducer<T, R> reducer) {
+    public final <T, R> R reduceExecute(String extensionCode,
+                                        ExtensionCallback<BusinessExt, T> callback,
+                                        @Nonnull Reducer<T, R> reducer) {
 
         ExecuteResult<R> result = reduceExecuteWithDetailResult(extensionCode, callback, reducer);
         if (null == result || null == result.getResult()) {

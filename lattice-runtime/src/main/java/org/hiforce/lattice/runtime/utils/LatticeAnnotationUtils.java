@@ -3,7 +3,9 @@ package org.hiforce.lattice.runtime.utils;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hifforce.lattice.annotation.model.AbilityAnnotation;
 import org.hifforce.lattice.annotation.model.ScanSkipAnnotation;
+import org.hifforce.lattice.annotation.parser.AbilityAnnotationParser;
 import org.hifforce.lattice.annotation.parser.ScanSkipAnnotationParser;
 import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -18,10 +20,22 @@ import java.util.WeakHashMap;
  * @author Rocky Yu
  * @since 2022/9/16
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class LatticeAnnotationUtils extends AnnotationUtils {
 
     private static final Map<Class<?>, Boolean> annotatedInterfaceCache = new WeakHashMap<>();
 
+    public static AbilityAnnotation getAbilityAnnotation(Class<?> abilityClass) {
+
+        for (AbilityAnnotationParser parser : LatticeSpiFactory.getInstance().getAbilityAnnotationParsers()) {
+            Annotation annotation = AnnotationUtils.findAnnotation(abilityClass, parser.getAnnotationClass());
+            if (null == annotation) {
+                continue;
+            }
+            return parser.buildAnnotationInfo(annotation, abilityClass);
+        }
+        return null;
+    }
 
     public static ScanSkipAnnotation getScanSkipAnnotation(Method method) {
         for (ScanSkipAnnotationParser parser : LatticeSpiFactory.getInstance().getScanSkipAnnotationParsers()) {

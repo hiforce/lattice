@@ -2,14 +2,15 @@ package org.hiforce.lattice.runtime.utils;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Constructor;
 
 import static org.springframework.core.annotation.AnnotationUtils.getAnnotation;
 
@@ -37,7 +38,7 @@ public class LatticeBeanUtils {
     }
 
 
-    public static <T> T getAndCreateSpringBeanViaClass(Class<?> beanClass) {
+    public static <T> T getAndCreateSpringBeanViaClass(Class<?> beanClass, Object... values) {
         if (null == beanClass) {
             return null;
         }
@@ -57,14 +58,15 @@ public class LatticeBeanUtils {
             if (null != t) {
                 return t;
             }
-            return createSpringBeanInstance(beanClass);
+            return createSpringBeanInstance(beanClass, values);
         } catch (Throwable th) {
             log.warn("[Lattice]Failed to Find SpringBean via name: {}", beanClass.getName());
-            return createSpringBeanInstance(beanClass);
+            return createSpringBeanInstance(beanClass, values);
         }
     }
 
-    private static <T> T createSpringBeanInstance(@Nonnull Class<?> beanClass) {
+    @SuppressWarnings("all")
+    private static <T> T createSpringBeanInstance(@Nonnull Class<?> beanClass, Object... values) {
         try {
             ApplicationContext context = SpringApplicationContextHolder.getContext();
             if (context != null) {
@@ -73,17 +75,67 @@ public class LatticeBeanUtils {
             return (T) beanClass.newInstance();
         } catch (Throwable e) {
             log.error("[Lattice]Failed to create spring bean instance", e);
-            return createBeanInstance(beanClass);
+            return createBeanInstance(beanClass, values);
         }
     }
 
-    private static <T> T createBeanInstance(@Nonnull Class<?> beanClass) {
+    @SuppressWarnings("all")
+    private static <T> T createBeanInstance(@Nonnull Class<?> beanClass, Object... values) {
         try {
-            return (T) beanClass.newInstance();
+            if (null == values || 0 == values.length) {
+                return (T) beanClass.newInstance();
+            }
+            Constructor constructor = getMatchedConstructor(beanClass, values);
+            if (null == constructor) {
+                return null;
+            }
+            return (T) constructor.newInstance(values);
         } catch (Throwable e) {
             log.error("[Lattice]Failed to create spring bean instance", e);
             return null;
         }
+    }
+
+    private static Constructor<?> getMatchedConstructor(Class<?> beanClass, Object... values) {
+        for (Constructor<?> constructor : beanClass.getConstructors()) {
+            if (!checkConstructMatched(constructor, values)) {
+                continue;
+            }
+            return constructor;
+        }
+        return null;
+    }
+
+    private static boolean checkConstructMatched(Constructor<?> constructor, Object... values) {
+
+        Class<?>[] parameterTypes = constructor.getParameterTypes();
+        if (parameterTypes.length != values.length) {
+            return false;
+        }
+        for (int i = 0; i < values.length; i++) {
+            if (null != values[i]) {
+                if (!ClassUtils.isAssignable(values[i].getClass(), formatParamType(parameterTypes[i]))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static Class<?> formatParamType(Class<?> paramClass) {
+        if (!paramClass.isPrimitive()) {
+            return paramClass;
+        }
+        if (int.class.equals(paramClass)) {
+            return Integer.class;
+        } else if (long.class.equals(paramClass)) {
+            return Long.class;
+        } else if (double.class.equals(paramClass)) {
+            return Double.class;
+        } else if (boolean.class.equals(paramClass)) {
+            return Boolean.class;
+        }
+        return paramClass;
     }
 
     private static SpringAnnotationResult getSpringAnnotationResult(Class<?> beanClass) {

@@ -12,6 +12,8 @@ import org.hifforce.lattice.exception.LatticeRuntimeException;
 import org.hifforce.lattice.message.Message;
 import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.IBusinessExt;
+import org.hifforce.lattice.model.business.BizContext;
+import org.hifforce.lattice.model.business.IBizObject;
 import org.hifforce.lattice.model.register.AbilityInstSpec;
 import org.hifforce.lattice.model.register.AbilitySpec;
 import org.hifforce.lattice.model.register.BaseSpec;
@@ -134,13 +136,13 @@ public class AbilityRegister {
     private AbilityInstBuildResult innerRegisterAbilityInstance(AbilitySpec abilitySpec, Class<?> instanceClass) {
         IAbility ability;
         IAbility originAbility;
-        Object beanViaClass = getAndCreateSpringBeanViaClass(instanceClass);
+        Object beanViaClass = getAndCreateSpringBeanViaClass(instanceClass, IBizObject.DUMMY, "SAMPLE_SCENARIO");
         if (beanViaClass instanceof IAbility) {
             ability = (IAbility) beanViaClass;
             if (AopUtils.isAopProxy(ability)) {
                 Class<?> originCls = AopUtils.getTargetClass(ability);
                 try {
-                    Object curObject = getAndCreateSpringBeanViaClass(originCls);
+                    Object curObject = getAndCreateSpringBeanViaClass(originCls, IBizObject.DUMMY, "SAMPLE_SCENARIO");
                     originAbility = (IAbility) curObject;
                 } catch (Exception e) {
                     return AbilityInstBuildResult.failed(Message.code("LATTICE-CORE-RT-0002", originCls.getName()));
@@ -180,7 +182,6 @@ public class AbilityRegister {
             instanceDesc.setInstanceClass(instanceClass.getName());
             instanceDesc.setCode(instance.getInstanceCode());
             instanceDesc.setName(instanceClass.getSimpleName());
-            instance.setAbilityCode(abilitySpec.getCode());
             instanceDesc.getExtensions().addAll(scanAbilityExtensions(instance, abilitySpec));
             abilitySpec.addAbilityInstance(instanceDesc);
             return AbilityInstBuildResult.success(instanceDesc);

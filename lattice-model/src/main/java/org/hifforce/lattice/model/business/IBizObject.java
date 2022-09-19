@@ -9,6 +9,13 @@ import java.util.Optional;
  */
 public interface IBizObject {
 
+    IBizObject DUMMY = new IBizObject() {
+        @Override
+        public BizContext getBizContext() {
+            return null;
+        }
+    };
+
     BizContext getBizContext();
 
     default String getBizCode() {

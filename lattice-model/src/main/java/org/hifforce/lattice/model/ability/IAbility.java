@@ -1,8 +1,13 @@
 package org.hifforce.lattice.model.ability;
 
 
+import org.hifforce.lattice.model.ability.execute.ExtensionCallback;
+import org.hifforce.lattice.model.ability.execute.Reducer;
+
+import javax.annotation.Nonnull;
+
 /**
- * @param <ExtensionPoints> the ExtensionPoint which current Ability provided.
+ * @param <BusinessExt> the ExtensionPoint which current Ability provided.
  * @author Rocky Yu
  * @since 2022/9/15
  */
@@ -11,14 +16,7 @@ public interface IAbility<BusinessExt extends IBusinessExt> {
     /**
      * @return current ability's unique code.
      */
-    String getAbilityCode();
-
-    /**
-     * set current ability unique code.
-     *
-     * @param abilityCode the ability unique code.
-     */
-    void setAbilityCode(String abilityCode);
+    String getCode();
 
     /**
      * @return current domain ability's instance unique code.
@@ -55,7 +53,7 @@ public interface IAbility<BusinessExt extends IBusinessExt> {
      *
      * @return the ExtensionPoints realization.
      */
-    BusinessExt getDefaultRealization();
+    IBusinessExt getDefaultRealization();
 
     /**
      * the current ability whether is enabled.
@@ -63,4 +61,15 @@ public interface IAbility<BusinessExt extends IBusinessExt> {
      * @return true or false.
      */
     boolean isEnabled();
+
+    /**
+     * Execute the extension's customization.
+     *
+     * @param extCode  the code of extension point.
+     * @param callback callback of the function.
+     * @param reducer  The multi-result reduce policy.
+     * @return the result of extension customization.
+     */
+    <T, R> R reduceExecute(String extCode, ExtensionCallback<BusinessExt, T> callback,
+                           @Nonnull Reducer<T, R> reducer);
 }
