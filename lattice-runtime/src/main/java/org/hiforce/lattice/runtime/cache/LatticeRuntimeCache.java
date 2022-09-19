@@ -4,11 +4,14 @@ import com.google.auto.service.AutoService;
 import org.apache.commons.lang3.StringUtils;
 import org.hifforce.lattice.annotation.model.AbilityAnnotation;
 import org.hifforce.lattice.cache.ILatticeRuntimeCache;
+import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.cache.IBusinessExtCache;
 import org.hifforce.lattice.model.register.AbilitySpec;
 import org.hiforce.lattice.runtime.ability.cache.BusinessExtCache;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Rocky Yu
@@ -18,7 +21,9 @@ import java.util.Collection;
 @AutoService(ILatticeRuntimeCache.class)
 public class LatticeRuntimeCache extends SimpleCache implements ILatticeRuntimeCache {
 
-    public static TemplateCache CACHE_TEMPLATE_REALIZATION = new TemplateCache();
+    public TemplateCache CACHE_TEMPLATE_REALIZATION = new TemplateCache();
+
+    private final Map<Class<?>, Map<Long, Object>> abilityExtRunnerCollectionCache = new ConcurrentHashMap<>();
 
     @Override
     public IBusinessExtCache getBusinessExtCache() {
@@ -47,5 +52,16 @@ public class LatticeRuntimeCache extends SimpleCache implements ILatticeRuntimeC
 
     public TemplateCache getTemplateCache() {
         return CACHE_TEMPLATE_REALIZATION;
+    }
+
+
+    @SuppressWarnings("rawtypes")
+    public Object getCachedExtensionRunner(IAbility ability, ExtensionRunnerCacheKey key) {
+        Map<Long, Object> cache = abilityExtRunnerCollectionCache.get(ability.getClass());
+        if (null == cache) {
+            return null;
+        }
+        return cache.get(key.getUniqueId());
+
     }
 }

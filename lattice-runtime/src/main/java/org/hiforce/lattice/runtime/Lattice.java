@@ -160,7 +160,7 @@ public class Lattice {
 
     public RealizationSpec getRealizationSpecByCode(String code) {
         return registeredRealizations.stream()
-                .filter(p -> CodeUtils.isCodesMatched(p.getCodes(), code))
+                .filter(p -> CodeUtils.isCodesMatched(p.getCode(), code))
                 .findFirst().orElse(null);
     }
 }

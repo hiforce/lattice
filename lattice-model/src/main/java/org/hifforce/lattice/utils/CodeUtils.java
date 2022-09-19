@@ -11,15 +11,13 @@ import java.util.regex.Pattern;
  */
 public class CodeUtils {
 
-    public static boolean isCodesMatched(String[] codes, String specificCode) {
-        for (String code : codes) {
-            if (StringUtils.equals(code, specificCode))
-                return true;
-            if (!StringUtils.contains(code, "*"))
-                return false;
-            return isPatternCodeMatched(code, specificCode);
-        }
-        return false;
+    public static boolean isCodesMatched(String code, String specificCode) {
+
+        if (StringUtils.equals(code, specificCode))
+            return true;
+        if (!StringUtils.contains(code, "*"))
+            return false;
+        return isPatternCodeMatched(code, specificCode);
     }
 
     public static boolean isPatternCodeMatched(String code, String specificCode) {

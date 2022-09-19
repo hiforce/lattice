@@ -9,4 +9,6 @@ import org.hifforce.lattice.model.ability.cache.IBusinessExtCache;
 public interface ILatticeRuntimeCache {
 
     IBusinessExtCache getBusinessExtCache();
+
+    ITemplateCache getTemplateCache();
 }

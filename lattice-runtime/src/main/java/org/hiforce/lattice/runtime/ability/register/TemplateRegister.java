@@ -45,17 +45,19 @@ public class TemplateRegister {
             if (null == annotation) {
                 continue;
             }
-            RealizationSpec spec = new RealizationSpec();
-            spec.setCodes(annotation.getCodes());
-            spec.setScenario(annotation.getScenario());
-            spec.setBusinessExtClass(annotation.getBusinessExtClass());
-            try {
-                spec.setBusinessExt(annotation.getBusinessExtClass().newInstance());
-            } catch (Exception e) {
-                throw new LatticeRuntimeException("LATTICE-CORE-RT-0006", clz.getName());
+            for (String code : annotation.getCodes()) {
+                RealizationSpec spec = new RealizationSpec();
+                spec.setCode(code);
+                spec.setScenario(annotation.getScenario());
+                spec.setBusinessExtClass(annotation.getBusinessExtClass());
+                try {
+                    spec.setBusinessExt(annotation.getBusinessExtClass().newInstance());
+                } catch (Exception e) {
+                    throw new LatticeRuntimeException("LATTICE-CORE-RT-0006", clz.getName());
+                }
+                spec.getExtensionCodes().addAll(BusinessExtUtils.supportedExtCodes(spec.getBusinessExt()));
+                realizations.add(spec);
             }
-            spec.getExtensionCodes().addAll(BusinessExtUtils.supportedExtCodes(spec.getBusinessExt()));
-            realizations.add(spec);
         }
         return realizations;
     }

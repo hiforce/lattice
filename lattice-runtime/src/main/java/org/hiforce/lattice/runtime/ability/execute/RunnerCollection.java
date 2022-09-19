@@ -17,6 +17,7 @@ import java.util.function.Predicate;
  * @author Rocky Yu
  * @since 2022/9/18
  */
+@SuppressWarnings("rawtypes")
 @Slf4j
 public class RunnerCollection<ExtensionPoints, R> {
 
@@ -65,7 +66,7 @@ public class RunnerCollection<ExtensionPoints, R> {
         return of(bizInstance, runnerList, predicate, null, false, false);
     }
 
-    static <ExtensionPoints, R> RunnerCollection<ExtensionPoints, R> combine(
+    public static <ExtensionPoints, R> RunnerCollection<ExtensionPoints, R> combine(
             RunnerCollection<ExtensionPoints, R> runnerCollection, Producer<ExtensionPoints, R> producer, boolean loadBizExt, boolean loadDefaultExtension) {
         RunnerCollection<ExtensionPoints, R> runnerResult = new RunnerCollection<>();
         runnerResult.parent = runnerCollection;

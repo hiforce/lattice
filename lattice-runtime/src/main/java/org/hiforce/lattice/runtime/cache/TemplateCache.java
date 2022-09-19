@@ -50,4 +50,14 @@ public class TemplateCache extends MultiKeyCache<String, Long, ITemplate> implem
             return false;
         return isPatternCodeMatched(code, specificCode);
     }
+
+    @Override
+    public boolean templateCodeMatched(String[] codes, String specificCode) {
+        for (String code : codes) {
+            if (templateCodeMatched(code, specificCode)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

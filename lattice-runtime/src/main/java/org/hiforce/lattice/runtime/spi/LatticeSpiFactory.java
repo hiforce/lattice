@@ -1,11 +1,16 @@
 package org.hiforce.lattice.runtime.spi;
 
+import com.google.common.collect.Lists;
 import org.hifforce.lattice.annotation.parser.AbilityAnnotationParser;
 import org.hifforce.lattice.annotation.parser.ExtensionAnnotationParser;
 import org.hifforce.lattice.annotation.parser.RealizationAnnotationParser;
 import org.hifforce.lattice.annotation.parser.ScanSkipAnnotationParser;
 import org.hifforce.lattice.model.ability.provider.IAbilityProviderCreator;
+import org.hiforce.lattice.runtime.ability.BaseLatticeAbility;
+import org.hiforce.lattice.runtime.ability.execute.IRunnerCollectionBuilder;
+import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 import org.hiforce.lattice.runtime.ability.provider.DefaultAbilityProviderCreator;
+import org.hiforce.lattice.runtime.session.SessionConfig;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,6 +20,7 @@ import java.util.stream.StreamSupport;
  * @author Rocky Yu
  * @since 2022/9/15
  */
+@SuppressWarnings("rawtypes")
 public class LatticeSpiFactory {
 
     private static volatile LatticeSpiFactory instance;
@@ -34,6 +40,8 @@ public class LatticeSpiFactory {
     private List<RealizationAnnotationParser> realizationAnnotationParsers;
 
     private IAbilityProviderCreator abilityProviderCreator;
+
+    private IRunnerCollectionBuilder runnerCollectionBuilder;
 
     private LatticeSpiFactory() {
 
@@ -123,5 +131,33 @@ public class LatticeSpiFactory {
 
     private ClassLoader getClassLoader() {
         return Thread.currentThread().getContextClassLoader();//TODO: 未来可以增加自定义ClassLoader
+    }
+
+    public IRunnerCollectionBuilder getRunnerCollectionBuilder() {
+        if (null != runnerCollectionBuilder) {
+            return runnerCollectionBuilder;
+        }
+        synchronized (LatticeSpiFactory.class) {
+            if (null == runnerCollectionBuilder) {
+                ServiceLoader<IRunnerCollectionBuilder> serializers =
+                        ServiceLoader.load(IRunnerCollectionBuilder.class, classLoader);
+                final Optional<IRunnerCollectionBuilder> serializer =
+                        StreamSupport.stream(serializers.spliterator(), false)
+                                .findFirst();
+                runnerCollectionBuilder = serializer.orElse(new IRunnerCollectionBuilder() {
+
+                    @Override
+                    public boolean isSupport(BaseLatticeAbility ability, String extensionCode, SessionConfig sessionConfig) {
+                        return false;
+                    }
+
+                    @Override
+                    public RunnerCollection buildCustomRunnerCollection(BaseLatticeAbility ability, String extensionCode, SessionConfig sessionConfig) {
+                        return RunnerCollection.of(ability.getContext().getBizObject(), Lists.newArrayList(), RunnerCollection.ACCEPT_ALL);
+                    }
+                });
+            }
+        }
+        return runnerCollectionBuilder;
     }
 }

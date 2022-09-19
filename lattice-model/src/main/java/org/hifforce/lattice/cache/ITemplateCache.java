@@ -11,4 +11,7 @@ public interface ITemplateCache extends IMultiKeyCache<String, Long, ITemplate> 
     boolean templateCodeMatched(ITemplate realization, ITemplate specificTemplate);
 
     boolean templateCodeMatched(String code, String specificCode);
+
+
+    boolean templateCodeMatched(String [] codes, String specificCode);
 }
