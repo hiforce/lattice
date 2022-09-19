@@ -16,6 +16,8 @@ import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 import org.hiforce.lattice.runtime.utils.LatticeAnnotationUtils;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Rocky Yu
@@ -119,7 +121,10 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0008");
         }
 
+        List<T> results = new ArrayList<>(16);
         RunnerCollection<BusinessExt, R> runnerCollection = delegate.loadExtensionRunners(extensionCode);
-        return null;
+        ExecuteResult<R> executeResult = runnerCollection.distinct()
+                .reduceExecute(reducer, (ExtensionCallback<IBusinessExt, T>) callback, results);
+        return executeResult;
     }
 }

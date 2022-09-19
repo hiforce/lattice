@@ -157,7 +157,7 @@ public class RunnerCollection<ExtensionPoints, R> {
         return this;
     }
 
-    RunnerCollection<ExtensionPoints, R> distinct() {
+    public RunnerCollection<ExtensionPoints, R> distinct() {
         List<InstantItem<ExtensionPoints, R>> result = this.generateInstantItem();
         result = distinctRunners(result);
         this.updateResult(result);
@@ -182,7 +182,7 @@ public class RunnerCollection<ExtensionPoints, R> {
         return output;
     }
 
-    <T, R> ExecuteResult<R> reduceExecute(Reducer<T, R> reducer, ExtensionCallback<IBusinessExt, T> callback, List<T> results) {
+    public <T, R> ExecuteResult<R> reduceExecute(Reducer<T, R> reducer, ExtensionCallback<IBusinessExt, T> callback, List<T> results) {
         List<InstantItem<ExtensionPoints, T>> list = this.generateInstantItem();
         if (list.isEmpty()) {
             return ExecuteResult.success(reducer.reduce(results), null, null);

@@ -63,11 +63,15 @@ public class BaseLatticeAbilityDelegate {
                         ability, extCode, sessionConfig);
 
         if (loadBizExt) {
-            return RunnerCollection.combine(runnerCollection, getDefaultRunnerProducer(bizCode, extCode, scenario), loadBizExt, loadDefaultExt);
+
+            RunnerCollection.Producer producer = getDefaultRunnerProducer(bizCode ,extCode, scenario);
+            return RunnerCollection.combine(runnerCollection, producer, loadBizExt, loadDefaultExt);
         } else {
             return runnerCollection;
         }
     }
+
+
 
     private <ExtensionPoints extends IBusinessExt, R> RunnerCollection.Producer<ExtensionPoints, R> getDefaultRunnerProducer(
             String bizCode,
