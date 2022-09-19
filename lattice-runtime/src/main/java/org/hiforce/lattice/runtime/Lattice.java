@@ -14,6 +14,7 @@ import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.ability.provider.IAbilityProvider;
 import org.hifforce.lattice.model.register.AbilitySpec;
 import org.hifforce.lattice.model.register.RealizationSpec;
+import org.hifforce.lattice.utils.CodeUtils;
 import org.hiforce.lattice.runtime.ability.register.AbilityBuildRequest;
 import org.hiforce.lattice.runtime.ability.register.AbilityRegister;
 import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
@@ -159,7 +160,7 @@ public class Lattice {
 
     public RealizationSpec getRealizationSpecByCode(String code) {
         return registeredRealizations.stream()
-                .filter(p -> p.isCodeMatched(code))
+                .filter(p -> CodeUtils.isCodesMatched(p.getCodes(), code))
                 .findFirst().orElse(null);
     }
 }

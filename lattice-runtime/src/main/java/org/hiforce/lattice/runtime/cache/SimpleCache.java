@@ -14,6 +14,8 @@ public class SimpleCache {
 
     private final ConcurrentMap<String, AbilitySpec> CACHE_ABILITY_SPEC = new ConcurrentHashMap<>(120);
 
+    private final ExtensionSpecCache CACHE_EXTENSION_POINT_SPEC = new ExtensionSpecCache();
+
     protected AbilitySpec getAbilitySpecEntry(String key) {
         if (key == null) {
             return null;
@@ -29,4 +31,11 @@ public class SimpleCache {
     protected Collection<AbilitySpec> getAllCacheAbilitySpec() {
         return CACHE_ABILITY_SPEC.values();
     }
+
+
+    public ExtensionSpecCache getExtensionSpecCache() {
+        return CACHE_EXTENSION_POINT_SPEC;
+    }
+
+
 }

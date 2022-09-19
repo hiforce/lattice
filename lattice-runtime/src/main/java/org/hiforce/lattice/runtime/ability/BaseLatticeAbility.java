@@ -25,9 +25,9 @@ import javax.annotation.Nonnull;
 public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
         implements IAbility<BusinessExt> {
 
-    private IBizObject bizObject;
+    private final IBizObject bizObject;
 
-    private String scenario;
+    private final String scenario;
 
     @Getter
     private final String instanceCode;

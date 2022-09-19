@@ -17,6 +17,9 @@ import java.util.Collection;
 @SuppressWarnings("unused")
 @AutoService(ILatticeRuntimeCache.class)
 public class LatticeRuntimeCache extends SimpleCache implements ILatticeRuntimeCache {
+
+    public static TemplateCache CACHE_TEMPLATE_REALIZATION = new TemplateCache();
+
     @Override
     public IBusinessExtCache getBusinessExtCache() {
         return BusinessExtCache.getInstance();
@@ -39,5 +42,10 @@ public class LatticeRuntimeCache extends SimpleCache implements ILatticeRuntimeC
 
     public Collection<AbilitySpec> getAllCachedAbilities() {
         return getAllCacheAbilitySpec();
+    }
+
+
+    public TemplateCache getTemplateCache() {
+        return CACHE_TEMPLATE_REALIZATION;
     }
 }

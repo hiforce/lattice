@@ -10,4 +10,10 @@ public interface ITemplate {
 
     TemplateType getType();
 
+
+    Long getInternalId();
+
+
+    boolean isPatternTemplateCode();
+
 }
