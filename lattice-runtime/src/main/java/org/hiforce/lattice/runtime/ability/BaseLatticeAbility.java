@@ -19,8 +19,8 @@ import javax.annotation.Nonnull;
  * @since 2022/9/16
  */
 @Slf4j
-public abstract class BaseLatticeAbility<Target, BusinessExt extends IBusinessExt>
-        implements IAbility<Target, BusinessExt> {
+public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
+        implements IAbility<BusinessExt> {
 
     @Getter
     @Setter
@@ -41,7 +41,7 @@ public abstract class BaseLatticeAbility<Target, BusinessExt extends IBusinessEx
 
 
     @Override
-    public boolean supportChecking(String bizCode, Target target) {
+    public boolean supportChecking() {
         return true;
     }
 
@@ -51,18 +51,16 @@ public abstract class BaseLatticeAbility<Target, BusinessExt extends IBusinessEx
     }
 
     @Override
-    public boolean hasDefaultExtension(String bizCode, Target target) {
+    public boolean hasDefaultExtension() {
         return true;
     }
 
     /**
      * Customization for current ability to judge whether is enabled.
      *
-     * @param target       The BizObject target.
-     * @param instanceCode current ability's instance code.
      * @return true or false.
      */
-    public boolean isEnabled(Target target, String instanceCode) {
+    public boolean isEnabled() {
         return true;
     }
 

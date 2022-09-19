@@ -2,12 +2,11 @@ package org.hifforce.lattice.model.ability;
 
 
 /**
- * @param <AbilityTarget>   the Target which current Ability serviced.
  * @param <ExtensionPoints> the ExtensionPoint which current Ability provided.
  * @author Rocky Yu
  * @since 2022/9/15
  */
-public interface IAbility<AbilityTarget, ExtensionPoints extends IBusinessExt> {
+public interface IAbility<BusinessExt extends IBusinessExt> {
 
     /**
      * @return current ability's unique code.
@@ -31,11 +30,9 @@ public interface IAbility<AbilityTarget, ExtensionPoints extends IBusinessExt> {
      * Checking current ability effective or not.
      * Default is effective....
      *
-     * @param bizCode business code.
-     * @param target  the Target.
      * @return true or false.
      */
-    boolean supportChecking(String bizCode, AbilityTarget target);
+    boolean supportChecking();
 
     /**
      * Whether current ability support customization from plugin's extension realization.
@@ -48,11 +45,9 @@ public interface IAbility<AbilityTarget, ExtensionPoints extends IBusinessExt> {
      * Whether current ability invoke getDefaultRealization() if the extension
      * realizaiton not found in the Plugin.
      *
-     * @param bizCode business code.
-     * @param target  the Target.
      * @return true or false.
      */
-    boolean hasDefaultExtension(String bizCode, AbilityTarget target);
+    boolean hasDefaultExtension();
 
 
     /**
@@ -60,13 +55,12 @@ public interface IAbility<AbilityTarget, ExtensionPoints extends IBusinessExt> {
      *
      * @return the ExtensionPoints realization.
      */
-    ExtensionPoints getDefaultRealization(String bizCode, AbilityTarget target);
+    BusinessExt getDefaultRealization();
 
     /**
      * the current ability whether is enabled.
      *
-     * @param instanceCode the instance create ability.
      * @return true or false.
      */
-    boolean isEnabled(AbilityTarget target, String instanceCode);
+    boolean isEnabled();
 }

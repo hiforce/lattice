@@ -13,7 +13,7 @@ import org.hiforce.lattice.test.ability.ext.BlankSampleBusinessExt;
  */
 @NoArgsConstructor
 @Ability(name = "SampleAbility")
-public class SampleAbility extends BaseLatticeAbility<Object, BlankSampleBusinessExt> {
+public class SampleAbility extends BaseLatticeAbility<BlankSampleBusinessExt> {
 
     private IBizObject bizObject;
 
@@ -26,7 +26,7 @@ public class SampleAbility extends BaseLatticeAbility<Object, BlankSampleBusines
     }
 
     @Override
-    public BlankSampleBusinessExt getDefaultRealization(String bizCode, Object o) {
+    public BlankSampleBusinessExt getDefaultRealization() {
         return new BlankSampleBusinessExt();
     }
 
