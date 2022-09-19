@@ -5,6 +5,8 @@ import org.hifforce.lattice.model.register.AbilitySpec;
 import org.hifforce.lattice.model.register.ExtensionPointSpec;
 import org.hifforce.lattice.model.register.RealizationSpec;
 import org.hiforce.lattice.runtime.Lattice;
+import org.hiforce.lattice.test.ability.SampleAbility;
+import org.hiforce.lattice.test.model.OrderLine;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,5 +59,15 @@ public class LatticeGeneralTest {
         Assert.assertNotNull(spec.getBusinessExt());
         Assert.assertFalse(spec.getExtensionCodes().isEmpty());
 
+    }
+
+    @Test
+    public void test_extension_invoke_01() {
+        OrderLine orderLine = new OrderLine();
+        orderLine.setOrderLineId(1L);
+        orderLine.setBizCode("business.a");
+        SampleAbility ability = new SampleAbility(orderLine, orderLine.getScenario());
+        String value = ability.invokeTheSampleSampleExtensionPoint_01();
+        Assert.assertNotNull(value);
     }
 }

@@ -1,7 +1,5 @@
 package org.hifforce.lattice.model.business;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
@@ -10,52 +8,18 @@ import java.io.Serializable;
  * @author Rocky Yu
  * @since 2022/9/16
  */
-public class BizContext implements Serializable {
+public abstract class BizContext implements Serializable {
 
     private static final long serialVersionUID = 4886210062129912701L;
 
-    @Getter
-    @Setter
-    private Serializable bizId;
+    public abstract Serializable getBizId();
 
-    @Getter
-    private final String bizCode;
+    public abstract String getBizCode();
 
-    @Getter
-    @Setter
-    private String scenario;
+    public abstract String getScenario();
 
-    @Getter
-    @Setter
-    private Serializable extraInfo;
 
     private int hashCode;
-
-
-    protected BizContext(String bizCode, Serializable bizId) {
-        this.bizCode = bizCode;
-        this.bizId = bizId;
-        this.hashCode = this.hashCode();
-    }
-
-    protected BizContext(String bizCode, Serializable bizId, Serializable extraInfo) {
-        this.bizCode = bizCode;
-        this.bizId = bizId;
-        this.hashCode = this.hashCode();
-        this.extraInfo = extraInfo;
-    }
-
-    public static BizContext of(String bizCode, Serializable bizId) {
-        return new BizContext(bizCode, bizId);
-    }
-
-    public static  BizContext of(String bizCode, Serializable bizId, Serializable extraInfo) {
-        return new BizContext(bizCode, bizId, extraInfo);
-    }
-
-    public static BizContext ofId(Serializable bizId) {
-        return new BizContext(null, bizId);
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -63,9 +27,9 @@ public class BizContext implements Serializable {
         if (!(o instanceof BizContext)) return false;
 
         BizContext that = (BizContext) o;
-        if (!StringUtils.equals(bizCode, that.bizCode))
+        if (!StringUtils.equals(getBizCode(), that.getBizCode()))
             return false;
-        if (null == bizId || !bizId.equals(that.bizId))
+        if (null == getBizId() || !getBizId().equals(that.getBizId()))
             return false;
         return true;
     }
@@ -77,20 +41,13 @@ public class BizContext implements Serializable {
             return hashCode;
         }
         int result = 31;
-        if (StringUtils.isNotEmpty(bizCode)) {
-            result *= bizCode.hashCode();
+        if (StringUtils.isNotEmpty(getBizCode())) {
+            result *= getBizCode().hashCode();
         }
-        if (null != bizId) {
-            result = 31 * result + bizId.hashCode();
+        if (null != getBizId()) {
+            result = 31 * result + getBizId().hashCode();
         }
         this.hashCode = result;
         return result;
-    }
-
-    public void setBizInstanceId(Serializable bizId) {
-        this.bizId = bizId;
-        if (hashCode > 0) {
-            hashCode = 0;
-        }
     }
 }
