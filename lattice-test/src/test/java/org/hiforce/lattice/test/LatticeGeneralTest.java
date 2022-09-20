@@ -52,7 +52,7 @@ public class LatticeGeneralTest {
 
     @Test
     public void test_realization_register_01() {
-        Assert.assertFalse(Lattice.getInstance().getRegisteredRealizations().isEmpty());
+        Assert.assertFalse(Lattice.getInstance().getAllRegisteredRealizations().isEmpty());
 
         RealizationSpec spec = Lattice.getInstance().getRealizationSpecByCode("business.b");
         Assert.assertNotNull(spec);
@@ -70,5 +70,10 @@ public class LatticeGeneralTest {
         String value = ability.invokeTheSampleSampleExtensionPoint_01();
         System.out.println(">>>Lattice extension invoke result: " + value);
         Assert.assertNotNull(value);
+    }
+
+    @Test
+    public void test_product_register_01(){
+        Assert.assertFalse(Lattice.getInstance().getAllRegisteredProducts().isEmpty());
     }
 }

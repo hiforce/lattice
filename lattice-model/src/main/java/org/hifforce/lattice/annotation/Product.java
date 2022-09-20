@@ -1,6 +1,5 @@
 package org.hifforce.lattice.annotation;
 
-import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.business.TemplateType;
 
 import java.lang.annotation.ElementType;
@@ -34,11 +33,6 @@ public @interface Product {
      * @return the product's type.
      */
     TemplateType type() default TemplateType.PRODUCT;
-
-    /**
-     * @return the SDK which product provided.
-     */
-    Class<? extends IBusinessExt> businessExt() default IBusinessExt.class;
 
     int priority() default 500;
 }

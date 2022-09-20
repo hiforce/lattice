@@ -3,10 +3,10 @@ package org.hiforce.lattice.runtime.ability;
 import org.apache.commons.lang3.StringUtils;
 import org.hifforce.lattice.cache.ITemplateCache;
 import org.hifforce.lattice.model.ability.IBusinessExt;
-import org.hifforce.lattice.model.config.BusinessConfig;
-import org.hifforce.lattice.model.register.RealizationSpec;
 import org.hifforce.lattice.model.business.ITemplate;
 import org.hifforce.lattice.model.business.TemplateType;
+import org.hifforce.lattice.model.config.BusinessConfig;
+import org.hifforce.lattice.model.register.RealizationSpec;
 import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.runtime.ability.execute.ExtensionJavaRunner;
 import org.hiforce.lattice.runtime.ability.execute.ExtensionRunner;
@@ -159,7 +159,7 @@ public class BaseLatticeAbilityDelegate {
 
         ITemplateCache templateCache = Lattice.getInstance().getLatticeRuntimeCache().getTemplateCache();
 
-        List<RealizationSpec> realizationSpecs = Lattice.getInstance().getRegisteredRealizations();
+        List<RealizationSpec> realizationSpecs = Lattice.getInstance().getAllRegisteredRealizations();
 
         if (StringUtils.isEmpty(scenario)) {
             for (RealizationSpec realization : realizationSpecs) {

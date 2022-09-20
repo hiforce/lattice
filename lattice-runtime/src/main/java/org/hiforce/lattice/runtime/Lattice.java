@@ -12,7 +12,9 @@ import org.hifforce.lattice.message.MessageCode;
 import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.ability.provider.IAbilityProvider;
+import org.hifforce.lattice.model.business.IProduct;
 import org.hifforce.lattice.model.register.AbilitySpec;
+import org.hifforce.lattice.model.register.ProductSpec;
 import org.hifforce.lattice.model.register.RealizationSpec;
 import org.hifforce.lattice.utils.CodeUtils;
 import org.hiforce.lattice.runtime.ability.register.AbilityBuildRequest;
@@ -56,9 +58,6 @@ public class Lattice {
     @Getter
     private final List<AbilitySpec> registeredAbilities = Lists.newArrayList();
 
-    @Getter
-    private final List<RealizationSpec> registeredRealizations = Lists.newArrayList();
-
 
     @Getter
     private final LatticeRuntimeCache latticeRuntimeCache = (LatticeRuntimeCache) LatticeCacheFactory.getInstance()
@@ -83,6 +82,7 @@ public class Lattice {
     public final void start() {
         registerAbilities();//Register the Ability Instances during runtime.
         registerRealizations();//Register the business extension realization during runtime.
+        registerProducts();
 
         MessageCode.init();
         Message.clean();
@@ -93,6 +93,20 @@ public class Lattice {
 
     public Collection<AbilitySpec> getAllRegisteredAbilities() {
         return Lattice.getInstance().getLatticeRuntimeCache().getAllCachedAbilities();
+    }
+
+    public List<ProductSpec> getAllRegisteredProducts() {
+        return TemplateRegister.getInstance().getProducts();
+    }
+
+    public List<RealizationSpec> getAllRegisteredRealizations() {
+        return TemplateRegister.getInstance().getRealizations();
+    }
+
+    public ProductSpec getRegisteredProductByCode(String code) {
+        return TemplateRegister.getInstance().getProducts().stream()
+                .filter(p -> StringUtils.equals(code, p.getCode()))
+                .findFirst().orElse(null);
     }
 
 
@@ -138,7 +152,7 @@ public class Lattice {
     @SuppressWarnings("rawtypes")
     private void registerRealizations() {
         Set<Class> classSet = getServiceProviderClasses(IBusinessExt.class.getName());
-        registeredRealizations.addAll(TemplateRegister.getInstance().registerRealizations(classSet));
+        TemplateRegister.getInstance().registerRealizations(classSet);
     }
 
     @SuppressWarnings("rawtypes")
@@ -146,6 +160,12 @@ public class Lattice {
         Set<Class> abilityClasses = getServiceProviderClasses(IAbility.class.getName());
         registeredAbilities.addAll(AbilityRegister.getInstance()
                 .register(new AbilityBuildRequest(null, mergeAbilityInstancePackage(abilityClasses))));
+    }
+
+    @SuppressWarnings("rawtypes")
+    private void registerProducts() {
+        Set<Class> productClasses = getServiceProviderClasses(IProduct.class.getName());
+        TemplateRegister.getInstance().registerProducts(productClasses);
     }
 
     @SuppressWarnings("rawtypes")
@@ -159,8 +179,8 @@ public class Lattice {
     }
 
     public RealizationSpec getRealizationSpecByCode(String code) {
-        return registeredRealizations.stream()
-                .filter(p -> CodeUtils.isCodesMatched(p.getCode(), code))
+        return TemplateRegister.getInstance().getRealizations()
+                .stream().filter(p -> CodeUtils.isCodesMatched(p.getCode(), code))
                 .findFirst().orElse(null);
     }
 }

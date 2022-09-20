@@ -1,10 +1,7 @@
 package org.hiforce.lattice.runtime.spi;
 
 import com.google.common.collect.Lists;
-import org.hifforce.lattice.annotation.parser.AbilityAnnotationParser;
-import org.hifforce.lattice.annotation.parser.ExtensionAnnotationParser;
-import org.hifforce.lattice.annotation.parser.RealizationAnnotationParser;
-import org.hifforce.lattice.annotation.parser.ScanSkipAnnotationParser;
+import org.hifforce.lattice.annotation.parser.*;
 import org.hifforce.lattice.model.ability.provider.IAbilityProviderCreator;
 import org.hiforce.lattice.runtime.ability.BaseLatticeAbility;
 import org.hiforce.lattice.runtime.ability.execute.IRunnerCollectionBuilder;
@@ -39,6 +36,8 @@ public class LatticeSpiFactory {
     @SuppressWarnings("rawtypes")
     private List<RealizationAnnotationParser> realizationAnnotationParsers;
 
+    private List<ProductAnnotationParser> productAnnotationParsers;
+
     private IAbilityProviderCreator abilityProviderCreator;
 
     private IRunnerCollectionBuilder runnerCollectionBuilder;
@@ -68,6 +67,13 @@ public class LatticeSpiFactory {
             abilityAnnotationParsers = getCustomAnnotationParsers(AbilityAnnotationParser.class);
         }
         return abilityAnnotationParsers;
+    }
+
+    public List<ProductAnnotationParser> getProductAnnotationParsers() {
+        if (null == productAnnotationParsers) {
+            productAnnotationParsers = getCustomAnnotationParsers(ProductAnnotationParser.class);
+        }
+        return productAnnotationParsers;
     }
 
     @SuppressWarnings("rawtypes")

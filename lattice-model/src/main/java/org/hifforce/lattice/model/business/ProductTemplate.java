@@ -6,7 +6,7 @@ import org.hifforce.lattice.model.scenario.ScenarioRequest;
  * @author Rocky Yu
  * @since 2022/9/20
  */
-public abstract class Product extends BaseTemplate implements IProduct {
+public abstract class ProductTemplate extends BaseTemplate implements IProduct {
 
     @Override
     public TemplateType getType() {
