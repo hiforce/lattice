@@ -1,12 +1,10 @@
 package org.hiforce.lattice.test;
 
-import org.hifforce.lattice.model.register.AbilityInstSpec;
-import org.hifforce.lattice.model.register.AbilitySpec;
-import org.hifforce.lattice.model.register.ExtensionPointSpec;
-import org.hifforce.lattice.model.register.RealizationSpec;
+import org.hifforce.lattice.model.register.*;
 import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.test.ability.SampleAbility;
 import org.hiforce.lattice.test.model.OrderLine;
+import org.hiforce.lattice.test.product.SampleProduct01;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -73,7 +71,10 @@ public class LatticeGeneralTest {
     }
 
     @Test
-    public void test_product_register_01(){
+    public void test_product_register_01() {
         Assert.assertFalse(Lattice.getInstance().getAllRegisteredProducts().isEmpty());
+        ProductSpec productSpec = Lattice.getInstance().getRegisteredProductByCode(SampleProduct01.CODE);
+        Assert.assertNotNull(productSpec);
+        Assert.assertFalse(productSpec.getRealizations().isEmpty());
     }
 }

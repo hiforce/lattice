@@ -3,6 +3,7 @@ package org.hiforce.lattice.runtime.ability.register;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hifforce.lattice.annotation.model.ProductAnnotation;
 import org.hifforce.lattice.annotation.model.RealizationAnnotation;
 import org.hifforce.lattice.annotation.parser.ProductAnnotationParser;
@@ -18,6 +19,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Rocky Yu
@@ -59,6 +61,10 @@ public class TemplateRegister {
             productSpec.setType(annotation.getType());
             productSpec.setPriority(annotation.getPriority());
             productSpec.setBusinessExt(annotation.getBusinessExt());
+
+            productSpec.getRealizations().addAll(realizations.stream()
+                    .filter(p -> StringUtils.equals(p.getCode(), productSpec.getCode()))
+                    .collect(Collectors.toList()));
             products.add(productSpec);
         }
         return products;
