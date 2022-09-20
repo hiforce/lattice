@@ -1,12 +1,19 @@
 package org.hiforce.lattice.runtime.session;
 
 import com.google.common.collect.Lists;
+import lombok.Getter;
 import org.apache.commons.collections4.CollectionUtils;
+import org.hifforce.lattice.cache.invoke.InvokeCache;
 import org.hifforce.lattice.exception.LatticeRuntimeException;
 import org.hifforce.lattice.model.business.IBizObject;
+import org.hifforce.lattice.model.business.ProductTemplate;
+import org.hifforce.lattice.model.context.BizSessionContext;
+import org.hifforce.lattice.model.register.ProductSpec;
 import org.hifforce.lattice.model.scenario.ScenarioRequest;
+import org.hiforce.lattice.runtime.Lattice;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Rocky Yu
@@ -18,6 +25,12 @@ public abstract class BizSessionScope<Resp, ScopeException extends Throwable>
     private final List<IBizObject> bizObjects = Lists.newArrayList();
 
     private final List<ScenarioRequest> scenarioRequests = Lists.newArrayList();
+
+    @Getter
+    private BizSessionContext context;
+
+    private boolean invokeCacheInit;
+
 
     public BizSessionScope(List<IBizObject> bizObjects) {
         if (CollectionUtils.isEmpty(bizObjects)) {
@@ -46,7 +59,25 @@ public abstract class BizSessionScope<Resp, ScopeException extends Throwable>
     @Override
     protected void entrance() {
         //TODO: init the lattice BizSession Context.
+        invokeCacheInit = InvokeCache.isThreadLocalInit();
+        if (!invokeCacheInit) {
+            InvokeCache.initInvokeCache();
+        }
+        context = BizSessionContext.SESSION_CONTEXT_THREAD_LOCAL.get();
         initScenarioRequest();
+        buildEffectProducts();
+    }
+
+    private void buildEffectProducts() {
+        for (ScenarioRequest request : scenarioRequests) {
+            List<ProductTemplate> productTemplates =
+                    Lattice.getInstance().getAllRegisteredProducts().stream()
+                            .map(ProductSpec::createProductInstance)
+                            .filter(p -> p.isEffect(request))
+                            .collect(Collectors.toList());
+            context.getEffectiveProducts().put(request.getBizObject().getBizCode(), productTemplates);
+        }
+
     }
 
     private void initScenarioRequest() {
@@ -62,6 +93,10 @@ public abstract class BizSessionScope<Resp, ScopeException extends Throwable>
     @Override
     protected void exit() {
         //TODO: clear the lattice BizSession Context.
+        if (!invokeCacheInit) { //if InvokeCache is init by BizSessionScope, release it.
+            InvokeCache.forceClear();
+        }
+        BizSessionContext.SESSION_CONTEXT_THREAD_LOCAL.remove();
     }
 
     @Override
