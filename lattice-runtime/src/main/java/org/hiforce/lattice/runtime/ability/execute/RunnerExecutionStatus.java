@@ -2,7 +2,7 @@ package org.hiforce.lattice.runtime.ability.execute;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hifforce.lattice.model.template.TemplateType;
+import org.hifforce.lattice.model.business.TemplateType;
 
 import java.util.List;
 

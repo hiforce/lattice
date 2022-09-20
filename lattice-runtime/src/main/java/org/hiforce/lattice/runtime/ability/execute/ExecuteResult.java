@@ -3,7 +3,7 @@ package org.hiforce.lattice.runtime.ability.execute;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
-import org.hifforce.lattice.model.template.ITemplate;
+import org.hifforce.lattice.model.business.ITemplate;
 
 import java.util.ArrayList;
 import java.util.Collections;

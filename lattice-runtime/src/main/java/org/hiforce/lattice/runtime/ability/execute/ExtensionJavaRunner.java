@@ -6,7 +6,7 @@ import org.hifforce.lattice.message.Message;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.ability.execute.ExtensionCallback;
 import org.hifforce.lattice.model.business.IBizObject;
-import org.hifforce.lattice.model.template.ITemplate;
+import org.hifforce.lattice.model.business.ITemplate;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;

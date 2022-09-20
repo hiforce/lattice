@@ -3,7 +3,7 @@ package org.hiforce.lattice.runtime.cache;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hifforce.lattice.cache.ITemplateCache;
-import org.hifforce.lattice.model.template.ITemplate;
+import org.hifforce.lattice.model.business.ITemplate;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

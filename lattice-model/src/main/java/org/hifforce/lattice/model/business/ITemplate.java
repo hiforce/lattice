@@ -1,4 +1,4 @@
-package org.hifforce.lattice.model.template;
+package org.hifforce.lattice.model.business;
 
 /**
  * @author Rocky Yu

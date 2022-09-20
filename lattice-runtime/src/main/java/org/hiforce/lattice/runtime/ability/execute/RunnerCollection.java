@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.business.IBizObject;
-import org.hifforce.lattice.model.template.ITemplate;
+import org.hifforce.lattice.model.business.ITemplate;
 import org.hifforce.lattice.model.ability.execute.ExtensionCallback;
 import org.hifforce.lattice.model.ability.execute.Reducer;
 

@@ -3,7 +3,7 @@ package org.hiforce.lattice.runtime.cache.key;
 import lombok.Getter;
 import org.hifforce.lattice.model.register.ExtensionPointSpec;
 import org.hifforce.lattice.model.register.RealizationSpec;
-import org.hifforce.lattice.model.template.ITemplate;
+import org.hifforce.lattice.model.business.ITemplate;
 
 /**
  * @author Rocky Yu

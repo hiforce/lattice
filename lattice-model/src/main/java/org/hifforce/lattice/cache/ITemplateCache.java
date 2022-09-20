@@ -1,6 +1,6 @@
 package org.hifforce.lattice.cache;
 
-import org.hifforce.lattice.model.template.ITemplate;
+import org.hifforce.lattice.model.business.ITemplate;
 
 /**
  * @author Rocky Yu

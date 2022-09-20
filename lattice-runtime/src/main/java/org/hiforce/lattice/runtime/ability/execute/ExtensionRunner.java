@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.business.IBizObject;
-import org.hifforce.lattice.model.template.ITemplate;
+import org.hifforce.lattice.model.business.ITemplate;
 import org.hifforce.lattice.model.ability.execute.ExtensionCallback;
 
 import javax.annotation.Nonnull;
