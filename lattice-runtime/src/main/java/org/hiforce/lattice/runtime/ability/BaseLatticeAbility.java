@@ -11,6 +11,7 @@ import org.hifforce.lattice.model.ability.execute.ExtensionCallback;
 import org.hifforce.lattice.model.ability.execute.Reducer;
 import org.hifforce.lattice.model.business.IBizObject;
 import org.hifforce.lattice.model.context.AbilityContext;
+import org.hiforce.lattice.runtime.ability.delegate.BaseLatticeAbilityDelegate;
 import org.hiforce.lattice.runtime.ability.execute.ExecuteResult;
 import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 import org.hiforce.lattice.runtime.utils.LatticeAnnotationUtils;

@@ -1,4 +1,4 @@
-package org.hiforce.lattice.runtime.ability;
+package org.hiforce.lattice.runtime.ability.delegate;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hifforce.lattice.cache.ITemplateCache;
@@ -8,6 +8,7 @@ import org.hifforce.lattice.model.business.TemplateType;
 import org.hifforce.lattice.model.config.BusinessConfig;
 import org.hifforce.lattice.model.register.RealizationSpec;
 import org.hiforce.lattice.runtime.Lattice;
+import org.hiforce.lattice.runtime.ability.BaseLatticeAbility;
 import org.hiforce.lattice.runtime.ability.execute.ExtensionJavaRunner;
 import org.hiforce.lattice.runtime.ability.execute.ExtensionRunner;
 import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
