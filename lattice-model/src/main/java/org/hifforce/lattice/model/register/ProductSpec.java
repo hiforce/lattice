@@ -32,7 +32,7 @@ public class ProductSpec extends BaseSpec {
 
     @Getter
     @Setter
-    private int priority;
+    private int priority = 500;
 
     @Getter
     private final List<RealizationSpec> realizations = Lists.newArrayList();

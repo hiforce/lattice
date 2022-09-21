@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
  * @author Rocky Yu
  * @since 2022/9/19
  */
-public class CodeUtils {
+public class BizCodeUtils {
 
     public static boolean isCodesMatched(String code, String specificCode) {
 

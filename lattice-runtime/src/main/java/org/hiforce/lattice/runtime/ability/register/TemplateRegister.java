@@ -4,14 +4,18 @@ import com.google.common.collect.Lists;
 import lombok.Getter;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hifforce.lattice.annotation.model.BusinessAnnotation;
 import org.hifforce.lattice.annotation.model.ProductAnnotation;
 import org.hifforce.lattice.annotation.model.RealizationAnnotation;
+import org.hifforce.lattice.annotation.parser.BusinessAnnotationParser;
 import org.hifforce.lattice.annotation.parser.ProductAnnotationParser;
 import org.hifforce.lattice.annotation.parser.RealizationAnnotationParser;
 import org.hifforce.lattice.exception.LatticeRuntimeException;
 import org.hifforce.lattice.model.ability.IBusinessExt;
+import org.hifforce.lattice.model.register.BusinessSpec;
 import org.hifforce.lattice.model.register.ProductSpec;
 import org.hifforce.lattice.model.register.RealizationSpec;
+import org.hifforce.lattice.utils.BizCodeUtils;
 import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
 import org.hiforce.lattice.runtime.utils.BusinessExtUtils;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -35,6 +39,9 @@ public class TemplateRegister {
     @Getter
     private final List<ProductSpec> products = Lists.newArrayList();
 
+    @Getter
+    private final List<BusinessSpec> businesses = Lists.newArrayList();
+
     private TemplateRegister() {
 
     }
@@ -44,6 +51,27 @@ public class TemplateRegister {
             instance = new TemplateRegister();
         }
         return instance;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public List<BusinessSpec> registerBusinesses(Set<Class> classSet) {
+        for (Class clz : classSet) {
+            BusinessAnnotation annotation = getBusinessAnnotation(clz);
+            if (null == annotation) {
+                continue;
+            }
+            BusinessSpec businessSpec = new BusinessSpec();
+            businessSpec.setBusinessClass(clz);
+            businessSpec.setCode(annotation.getCode());
+            businessSpec.setName(annotation.getName());
+            businessSpec.setDescription(annotation.getDesc());
+            businessSpec.setPriority(annotation.getPriority());
+            businessSpec.getRealizations().addAll(realizations.stream()
+                    .filter(p -> BizCodeUtils.isCodesMatched(p.getCode(), businessSpec.getCode()))
+                    .collect(Collectors.toList()));
+            businesses.add(businessSpec);
+        }
+        return businesses;
     }
 
     @SuppressWarnings("rawtypes")
@@ -92,6 +120,23 @@ public class TemplateRegister {
             }
         }
         return realizations;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private BusinessAnnotation getBusinessAnnotation(Class targetClass) {
+        for (BusinessAnnotationParser parser : LatticeSpiFactory.getInstance().getBusinessAnnotationParsers()) {
+            Annotation annotation = AnnotationUtils.findAnnotation(targetClass, parser.getAnnotationClass());
+            if (null == annotation) {
+                continue;
+            }
+            BusinessAnnotation info = new BusinessAnnotation();
+            info.setName(parser.getName(annotation));
+            info.setCode(parser.getCode(annotation));
+            info.setDesc(parser.getDesc(annotation));
+            info.setPriority(parser.getPriority(annotation));
+            return info;
+        }
+        return null;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

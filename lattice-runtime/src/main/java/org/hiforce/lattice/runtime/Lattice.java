@@ -12,11 +12,13 @@ import org.hifforce.lattice.message.MessageCode;
 import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.ability.provider.IAbilityProvider;
+import org.hifforce.lattice.model.business.IBusiness;
 import org.hifforce.lattice.model.business.IProduct;
 import org.hifforce.lattice.model.register.AbilitySpec;
+import org.hifforce.lattice.model.register.BusinessSpec;
 import org.hifforce.lattice.model.register.ProductSpec;
 import org.hifforce.lattice.model.register.RealizationSpec;
-import org.hifforce.lattice.utils.CodeUtils;
+import org.hifforce.lattice.utils.BizCodeUtils;
 import org.hiforce.lattice.runtime.ability.register.AbilityBuildRequest;
 import org.hiforce.lattice.runtime.ability.register.AbilityRegister;
 import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
@@ -89,6 +91,7 @@ public class Lattice {
     public final void start() {
         registerAbilities();//Register the Ability Instances during runtime.
         registerRealizations();//Register the business extension realization during runtime.
+        registerBusinesses();
         registerProducts();
         buildBusinessConfig();
 
@@ -98,6 +101,7 @@ public class Lattice {
         ClassPathScanHandler.clearCache();
         initialized = true;
     }
+
 
     private void buildBusinessConfig() {
         if (isSimpleMode()) {
@@ -114,8 +118,18 @@ public class Lattice {
         return TemplateRegister.getInstance().getProducts();
     }
 
+    public List<BusinessSpec> getAllRegisteredBusinesses(){
+        return TemplateRegister.getInstance().getBusinesses();
+    }
+
     public List<RealizationSpec> getAllRegisteredRealizations() {
         return TemplateRegister.getInstance().getRealizations();
+    }
+
+    public BusinessSpec getRegisteredBusinessByCode(String code){
+        return TemplateRegister.getInstance().getBusinesses().stream()
+                .filter(p -> StringUtils.equals(code, p.getCode()))
+                .findFirst().orElse(null);
     }
 
     public ProductSpec getRegisteredProductByCode(String code) {
@@ -178,9 +192,15 @@ public class Lattice {
     }
 
     @SuppressWarnings("rawtypes")
+    private void registerBusinesses() {
+        Set<Class> classSet = getServiceProviderClasses(IBusiness.class.getName());
+        TemplateRegister.getInstance().registerBusinesses(classSet);
+    }
+
+    @SuppressWarnings("rawtypes")
     private void registerProducts() {
-        Set<Class> productClasses = getServiceProviderClasses(IProduct.class.getName());
-        TemplateRegister.getInstance().registerProducts(productClasses);
+        Set<Class> classSet = getServiceProviderClasses(IProduct.class.getName());
+        TemplateRegister.getInstance().registerProducts(classSet);
     }
 
     @SuppressWarnings("rawtypes")
@@ -195,7 +215,7 @@ public class Lattice {
 
     public RealizationSpec getRealizationSpecByCode(String code) {
         return TemplateRegister.getInstance().getRealizations()
-                .stream().filter(p -> CodeUtils.isCodesMatched(p.getCode(), code))
+                .stream().filter(p -> BizCodeUtils.isCodesMatched(p.getCode(), code))
                 .findFirst().orElse(null);
     }
 }

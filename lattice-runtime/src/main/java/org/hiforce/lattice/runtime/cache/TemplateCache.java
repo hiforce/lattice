@@ -8,7 +8,7 @@ import org.hifforce.lattice.model.business.ITemplate;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.hifforce.lattice.utils.CodeUtils.isPatternCodeMatched;
+import static org.hifforce.lattice.utils.BizCodeUtils.isPatternCodeMatched;
 
 /**
  * @author zhenxin.yzx ( Rocky )

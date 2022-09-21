@@ -4,6 +4,7 @@ import org.hifforce.lattice.model.register.*;
 import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.test.ability.SampleAbility;
 import org.hiforce.lattice.test.model.OrderLine;
+import org.hiforce.lattice.test.plugin.business_a.BusinessA;
 import org.hiforce.lattice.test.plugin.product_01.SampleProduct01;
 import org.hiforce.lattice.test.scenario.order.PlaceOrderService;
 import org.hiforce.lattice.test.scenario.order.impl.PlaceOrderRemoteService;
@@ -79,6 +80,14 @@ public class LatticeGeneralTest {
         ProductSpec productSpec = Lattice.getInstance().getRegisteredProductByCode(SampleProduct01.CODE);
         Assert.assertNotNull(productSpec);
         Assert.assertFalse(productSpec.getRealizations().isEmpty());
+    }
+
+    @Test
+    public void test_business_register_01() {
+        Assert.assertFalse(Lattice.getInstance().getAllRegisteredBusinesses().isEmpty());
+        BusinessSpec businessSpec = Lattice.getInstance().getRegisteredBusinessByCode(BusinessA.BUSINESS_A_CODE);
+        Assert.assertNotNull(businessSpec);
+        Assert.assertFalse(businessSpec.getRealizations().isEmpty());
     }
 
 
