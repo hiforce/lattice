@@ -1,4 +1,4 @@
-package org.hiforce.lattice.runtime.ability.execute;
+package org.hiforce.lattice.runtime.ability.execute.runner;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -6,7 +6,6 @@ import org.hifforce.lattice.message.Message;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.ability.execute.ExtensionCallback;
 import org.hifforce.lattice.model.business.IBizObject;
-import org.hifforce.lattice.model.business.ITemplate;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -21,7 +20,6 @@ public class ExtensionJavaRunner<T extends IBusinessExt, R> extends ExtensionRun
 
 
     @Override
-    @SuppressWarnings("unchecked")
     public R runFirstMatched(Object abilityInstance, IBizObject bizInstance,
                              ExtensionCallback<IBusinessExt, R> callback, RunnerExecuteResult executeResult) {
         if (null == this.getModel()) {
@@ -33,9 +31,9 @@ public class ExtensionJavaRunner<T extends IBusinessExt, R> extends ExtensionRun
         return callback.apply(getModel());
     }
 
-    public ExtensionJavaRunner(ITemplate template, String extensionCode, int priority,
+    public ExtensionJavaRunner(String extensionCode, int priority,
                                T model) {
-        super(template, extensionCode, model);
+        super(extensionCode, model);
         this.setPriority(priority);
     }
 

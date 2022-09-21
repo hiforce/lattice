@@ -11,6 +11,8 @@ import org.hiforce.lattice.test.scenario.order.impl.PlaceOrderRemoteService;
 import org.hiforce.lattice.test.scenario.order.param.PlaceOrderReqDTO;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Order;
+import org.junit.runner.OrderWith;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -65,12 +67,12 @@ public class LatticeGeneralTest {
 
     @Test
     public void test_extension_invoke_01() {
+        Lattice.getInstance().getBusinessConfigs().clear();
         OrderLine orderLine = new OrderLine();
         orderLine.setOrderLineId(1L);
-        orderLine.setBizCode("business.a");
+        orderLine.setBizCode("business.b");
         SampleAbility ability = new SampleAbility(orderLine);
         String value = ability.invokeTheSampleSampleExtensionPoint_01();
-        System.out.println(">>>Lattice extension invoke result: " + value);
         Assert.assertNotNull(value);
     }
 
@@ -89,7 +91,6 @@ public class LatticeGeneralTest {
         Assert.assertNotNull(businessSpec);
         Assert.assertFalse(businessSpec.getRealizations().isEmpty());
     }
-
 
     @Test
     public void test_business_overlap_product_multi_realization_simple() {

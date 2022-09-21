@@ -29,6 +29,7 @@ public class ProductSpec extends TemplateSpec {
 
     public ProductSpec() {
         this.setPriority(500);
+        this.setType(TemplateType.PRODUCT);
     }
 
     public ProductTemplate createProductInstance() {

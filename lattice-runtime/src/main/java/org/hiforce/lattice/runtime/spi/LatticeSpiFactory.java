@@ -7,9 +7,10 @@ import org.hiforce.lattice.runtime.ability.BaseLatticeAbility;
 import org.hiforce.lattice.runtime.ability.execute.IRunnerCollectionBuilder;
 import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 import org.hiforce.lattice.runtime.ability.provider.DefaultAbilityProviderCreator;
-import org.hiforce.lattice.runtime.session.SessionConfig;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -114,19 +115,9 @@ public class LatticeSpiFactory {
     public <T> List<T> getCustomAnnotationParsers(Class<T> spiClass) {
 
         ServiceLoader<T> serializers;
-        Set<T> result = new HashSet<>();
-        boolean supportContainer = false;//TODO：为未来容器化的自定义ClassLoader预留，可以自定义ClassLoader
-        if (supportContainer) {
-            serializers = ServiceLoader.load(spiClass, getClassLoader());
-            Set<T> containerSets = StreamSupport.stream(serializers.spliterator(), false)
-                    .collect(Collectors.toSet());
-            result.addAll(containerSets);
-        }
         serializers = ServiceLoader.load(spiClass, classLoader);
-        Set<T> platformSets = StreamSupport.stream(serializers.spliterator(), false)
-                .collect(Collectors.toSet());
-        result.addAll(platformSets);
-        return new ArrayList<T>(result);
+        return StreamSupport.stream(serializers.spliterator(), false)
+                .distinct().collect(Collectors.toList());
     }
 
     public IAbilityProviderCreator getAbilityProviderCreator() {
@@ -162,13 +153,15 @@ public class LatticeSpiFactory {
                 runnerCollectionBuilder = serializer.orElse(new IRunnerCollectionBuilder() {
 
                     @Override
-                    public boolean isSupport(BaseLatticeAbility ability, String extensionCode, SessionConfig sessionConfig) {
+                    public boolean isSupport(BaseLatticeAbility ability, String extensionCode) {
                         return false;
                     }
 
                     @Override
-                    public RunnerCollection buildCustomRunnerCollection(BaseLatticeAbility ability, String extensionCode, SessionConfig sessionConfig) {
-                        return RunnerCollection.of(ability.getContext().getBizObject(), Lists.newArrayList(), RunnerCollection.ACCEPT_ALL);
+                    @SuppressWarnings("all")
+                    public RunnerCollection buildCustomRunnerCollection(BaseLatticeAbility ability, String extensionCode) {
+                        return RunnerCollection.of(ability.getContext().getBizObject(),
+                                Lists.newArrayList(), RunnerCollection.ACCEPT_ALL);
                     }
                 });
             }

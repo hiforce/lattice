@@ -1,5 +1,6 @@
 package org.hiforce.lattice.test.ability;
 
+import lombok.extern.slf4j.Slf4j;
 import org.hifforce.lattice.annotation.Ability;
 import org.hiforce.lattice.runtime.ability.BaseLatticeAbility;
 import org.hiforce.lattice.runtime.ability.reduce.Reducers;
@@ -14,6 +15,7 @@ import static org.hiforce.lattice.test.ability.ext.SampleBusinessExt.SAMPLE_GET_
  * @author Rocky Yu
  * @since 2022/9/16
  */
+@Slf4j
 @Ability(name = "SampleAbility")
 public class SampleAbility extends BaseLatticeAbility<BlankSampleBusinessExt> {
 
@@ -28,9 +30,11 @@ public class SampleAbility extends BaseLatticeAbility<BlankSampleBusinessExt> {
 
     public String invokeTheSampleSampleExtensionPoint_01() {
 
-        return this.reduceExecute(SAMPLE_GET_SAMPLE_EXTENSION_POINT_01,
+        String value = this.reduceExecute(SAMPLE_GET_SAMPLE_EXTENSION_POINT_01,
                 p -> p.getSampleExtensionPoint_01("test"),
                 Reducers.firstOf(Objects::nonNull));
+        log.error(">>>>> Invoke SAMPLE_GET_SAMPLE_EXTENSION_POINT_01: " + value);
+        return value;
     }
 
 }

@@ -3,6 +3,7 @@ package org.hifforce.lattice.model.config;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hifforce.lattice.model.business.TemplateType;
 
 import java.io.Serializable;
 
@@ -22,4 +23,8 @@ public class ExtPriority implements Serializable {
     @Getter
     @Setter
     private int priority;
+
+    @Getter
+    @Setter
+    private TemplateType type;
 }

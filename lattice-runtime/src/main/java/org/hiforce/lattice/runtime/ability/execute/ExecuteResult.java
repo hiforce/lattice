@@ -3,7 +3,8 @@ package org.hiforce.lattice.runtime.ability.execute;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
-import org.hifforce.lattice.model.business.ITemplate;
+import org.hifforce.lattice.model.register.TemplateSpec;
+import org.hiforce.lattice.runtime.ability.execute.runner.ExtensionRunner;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +34,7 @@ public class ExecuteResult<R> {
 
 
     public static <T> ExecuteResult<T> success(
-            T model, List<ITemplate> runners,
+            T model, List<TemplateSpec> runners,
             List<ExtensionRunner.CollectionRunnerExecuteResult> executeResults) {
 
         ExecuteResult<T> result = new ExecuteResult<>();
@@ -52,7 +53,7 @@ public class ExecuteResult<R> {
     }
 
     @SuppressWarnings("all")
-    private static RunnerExecutionStatus toRunnerExecutionStatus(ITemplate runner, ExtensionRunner.CollectionRunnerExecuteResult executeResult) {
+    private static RunnerExecutionStatus toRunnerExecutionStatus(TemplateSpec runner, ExtensionRunner.CollectionRunnerExecuteResult executeResult) {
         RunnerExecutionStatus status = new RunnerExecutionStatus();
         if (null != runner) {
             status.setTemplateCode(runner.getCode());

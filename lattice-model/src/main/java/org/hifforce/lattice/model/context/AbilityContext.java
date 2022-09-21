@@ -1,7 +1,6 @@
 package org.hifforce.lattice.model.context;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.hifforce.lattice.model.business.IBizObject;
 
 import java.io.Serializable;
@@ -23,9 +22,6 @@ public class AbilityContext implements Serializable {
     @Getter
     private final String bizCode;
 
-    @Getter
-    @Setter
-    private boolean onlyProductExt;
 
     public AbilityContext(IBizObject bizObject) {
         this.bizObject = bizObject;

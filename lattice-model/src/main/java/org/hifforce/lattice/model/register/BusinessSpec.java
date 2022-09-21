@@ -2,6 +2,7 @@ package org.hifforce.lattice.model.register;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hifforce.lattice.model.business.TemplateType;
 
 /**
  * @author Rocky Yu
@@ -15,5 +16,6 @@ public class BusinessSpec extends TemplateSpec {
 
     public BusinessSpec() {
         this.setPriority(1000);
+        this.setType(TemplateType.BUSINESS);
     }
 }

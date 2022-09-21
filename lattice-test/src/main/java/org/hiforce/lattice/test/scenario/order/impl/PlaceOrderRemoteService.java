@@ -36,7 +36,7 @@ public class PlaceOrderRemoteService implements PlaceOrderService {
 
                     //invoke a extension point.
                     SampleAbility ability = new SampleAbility(orderLine);
-                    ability.invokeTheSampleSampleExtensionPoint_01();
+                    String value = ability.invokeTheSampleSampleExtensionPoint_01();
                     return shoppingResult;
                 }
 

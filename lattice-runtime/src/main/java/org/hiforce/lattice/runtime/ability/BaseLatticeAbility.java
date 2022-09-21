@@ -14,6 +14,7 @@ import org.hifforce.lattice.model.context.AbilityContext;
 import org.hiforce.lattice.runtime.ability.delegate.BaseLatticeAbilityDelegate;
 import org.hiforce.lattice.runtime.ability.execute.ExecuteResult;
 import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
+import org.hiforce.lattice.runtime.ability.execute.filter.ExtensionFilter;
 import org.hiforce.lattice.runtime.utils.LatticeAnnotationUtils;
 
 import javax.annotation.Nonnull;
@@ -90,16 +91,30 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
                                         ExtensionCallback<BusinessExt, T> callback,
                                         @Nonnull Reducer<T, R> reducer) {
 
-        ExecuteResult<R> result = reduceExecuteWithDetailResult(extensionCode, callback, reducer);
+        ExecuteResult<R> result = reduceExecuteWithDetailResult(
+                extensionCode, callback, reducer, ExtensionFilter.DEFAULT_FILTER);
         if (null == result || null == result.getResult()) {
             return null;
         }
         return result.getResult();
     }
 
+    public final <T, R> R reduceExecute(String extensionCode,
+                                        ExtensionCallback<BusinessExt, T> callback,
+                                        @Nonnull Reducer<T, R> reducer, ExtensionFilter filter) {
+
+        ExecuteResult<R> result = reduceExecuteWithDetailResult(
+                extensionCode, callback, reducer, filter);
+        if (null == result || null == result.getResult()) {
+            return null;
+        }
+        return result.getResult();
+    }
+
+    @SuppressWarnings("all")
     protected <T, R> ExecuteResult<R> reduceExecuteWithDetailResult(
             String extensionCode, ExtensionCallback<BusinessExt, T> callback,
-            @Nonnull Reducer<T, R> reducer) {
+            @Nonnull Reducer<T, R> reducer, ExtensionFilter filter) {
 
         if (null == getContext().getBizObject()) {
             log.error("[Lattice]bizInstance is null, extensionCode: {}", extensionCode);
@@ -120,9 +135,8 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
         }
 
         List<T> results = new ArrayList<>(16);
-        RunnerCollection<BusinessExt, R> runnerCollection = delegate.loadExtensionRunners(extensionCode);
-        ExecuteResult<R> executeResult = runnerCollection.distinct()
+        RunnerCollection<BusinessExt, R> runnerCollection = delegate.loadExtensionRunners(extensionCode, filter);
+        return runnerCollection.distinct()
                 .reduceExecute(reducer, (ExtensionCallback<IBusinessExt, T>) callback, results);
-        return executeResult;
     }
 }

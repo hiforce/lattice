@@ -1,9 +1,9 @@
 package org.hiforce.lattice.runtime.cache.key;
 
 import lombok.Getter;
-import org.hifforce.lattice.model.register.ExtensionPointSpec;
-import org.hifforce.lattice.model.register.RealizationSpec;
-import org.hifforce.lattice.model.business.ITemplate;
+import org.hifforce.lattice.model.register.TemplateSpec;
+
+import java.util.Objects;
 
 /**
  * @author Rocky Yu
@@ -12,35 +12,17 @@ import org.hifforce.lattice.model.business.ITemplate;
 public class ExtensionInvokeCacheKey extends BaseObjectCacheKey {
 
     @Getter
-    private String templateCode;
+    private final String templateCode;
 
     @Getter
-    private String scenario;
+    private final String scenario;
 
     @Getter
-    private String extensionCode;
+    private final String extensionCode;
 
     private int hash;
 
-    public ExtensionInvokeCacheKey(String scenario, ITemplate template, ExtensionPointSpec extensionPointSpec) {
-        this.scenario = scenario;
-        this.templateCode = template.getCode();
-        this.extensionCode = extensionPointSpec.getCode();
-        this.setTemplateIndex(template.getInternalId());
-        this.setExtCodeIndex(extensionPointSpec.getInternalId());
-        buildObjectCacheUniqueId();
-    }
-
-    public ExtensionInvokeCacheKey(RealizationSpec realization, ExtensionPointSpec extensionPointSpec) {
-        this.scenario = realization.getScenario();
-        this.templateCode = realization.getCode();
-        this.extensionCode = extensionPointSpec.getCode();
-        this.setTemplateIndex(realization.getInternalId());
-        this.setExtCodeIndex(extensionPointSpec.getInternalId());
-        buildObjectCacheUniqueId();
-    }
-
-    public ExtensionInvokeCacheKey(String scenario, ITemplate template, String extCode) {
+    public ExtensionInvokeCacheKey(String scenario, TemplateSpec template, String extCode) {
         this.scenario = scenario;
         this.templateCode = template.getCode();
         this.extensionCode = extCode;
@@ -61,7 +43,7 @@ public class ExtensionInvokeCacheKey extends BaseObjectCacheKey {
         if (scenario != null ? !scenario.equals(key.getScenario()) : key.scenario != null) {
             return false;
         }
-        if (templateCode != null ? !templateCode.equals(key.templateCode) : key.templateCode != null) {
+        if (!Objects.equals(templateCode, key.templateCode)) {
             return false;
         }
         return getExtensionCode() != null ? getExtensionCode().equals(key.getExtensionCode()) : key.getExtensionCode() == null;

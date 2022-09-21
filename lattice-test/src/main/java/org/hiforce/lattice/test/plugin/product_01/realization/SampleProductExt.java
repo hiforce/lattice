@@ -13,6 +13,6 @@ public class SampleProductExt extends BlankSampleBusinessExt {
 
     @Override
     public String getSampleExtensionPoint_01(String someInput) {
-        return "The SampleProduce Ext realization: getSampleExtensionPoint_01";
+        return "[SampleProduct] execute the getSampleExtensionPoint_01!";
     }
 }

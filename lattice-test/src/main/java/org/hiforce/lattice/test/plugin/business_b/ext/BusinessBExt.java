@@ -14,6 +14,6 @@ public class BusinessBExt extends BusinessAExt {
 
     @Override
     public String getSampleExtensionPoint_01(String someInput) {
-        return "Hello, Business B Realization Ext 01";
+        return "[Business B] execute the getSampleExtensionPoint_01!";
     }
 }

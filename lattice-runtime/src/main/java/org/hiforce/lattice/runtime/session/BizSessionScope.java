@@ -64,20 +64,30 @@ public abstract class BizSessionScope<Resp, BizObject extends IBizObject>
             InvokeCache.initInvokeCache();
         }
         context = BizSessionContext.SESSION_CONTEXT_THREAD_LOCAL.get();
+        InvokeCache.instance().put(BizSessionContext.class, BizSessionContext.class, context);
         initScenarioRequest();
         buildEffectProducts();
     }
 
     private void buildEffectProducts() {
         for (ScenarioRequest request : scenarioRequests) {
-            List<ProductTemplate> productTemplates =
+            List<ProductSpec> productSpecs =
                     Lattice.getInstance().getAllRegisteredProducts().stream()
-                            .map(ProductSpec::createProductInstance)
-                            .filter(p -> p.isEffect(request))
+                            .filter(p -> isProductEffective(p, request))
                             .collect(Collectors.toList());
-            context.getEffectiveProducts().put(request.getBizObject().getBizCode(), productTemplates);
+            context.getEffectiveProducts().put(request.getBizObject().getBizCode(), productSpecs);
         }
+    }
 
+    private boolean isProductEffective(ProductSpec productSpec, ScenarioRequest request) {
+        if (null == productSpec) {
+            return false;
+        }
+        ProductTemplate template = productSpec.createProductInstance();
+        if (null == template) {
+            return false;
+        }
+        return template.isEffect(request);
     }
 
     private void initScenarioRequest() {

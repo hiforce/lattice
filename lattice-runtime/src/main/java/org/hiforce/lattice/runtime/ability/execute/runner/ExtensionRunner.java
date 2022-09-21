@@ -1,12 +1,11 @@
-package org.hiforce.lattice.runtime.ability.execute;
+package org.hiforce.lattice.runtime.ability.execute.runner;
 
 
 import lombok.Getter;
 import lombok.Setter;
 import org.hifforce.lattice.model.ability.IBusinessExt;
-import org.hifforce.lattice.model.business.IBizObject;
-import org.hifforce.lattice.model.business.ITemplate;
 import org.hifforce.lattice.model.ability.execute.ExtensionCallback;
+import org.hifforce.lattice.model.business.IBizObject;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -16,10 +15,6 @@ import java.util.List;
  * @since 2022/9/18
  */
 public abstract class ExtensionRunner<T, R> {
-
-    @Getter
-    @Setter
-    private ITemplate template;
 
     @Getter
     @Setter
@@ -34,17 +29,11 @@ public abstract class ExtensionRunner<T, R> {
     private int priority = 0;
 
 
-    public ExtensionRunner(ITemplate template, String extensionCode, T model) {
+    public ExtensionRunner(String extensionCode, T model) {
         this.model = model;
-
-        this.template = template;
         this.extensionCode = extensionCode;
     }
 
-    /**
-     * @param
-     * @return
-     */
     public abstract R runFirstMatched(Object abilityInstance, IBizObject bizInstance,
                                       ExtensionCallback<IBusinessExt, R> callback,
                                       RunnerExecuteResult executeResult);

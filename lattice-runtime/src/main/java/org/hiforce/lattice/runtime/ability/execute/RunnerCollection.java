@@ -5,10 +5,12 @@ import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.hifforce.lattice.model.ability.IBusinessExt;
-import org.hifforce.lattice.model.business.IBizObject;
-import org.hifforce.lattice.model.business.ITemplate;
 import org.hifforce.lattice.model.ability.execute.ExtensionCallback;
 import org.hifforce.lattice.model.ability.execute.Reducer;
+import org.hifforce.lattice.model.business.IBizObject;
+import org.hifforce.lattice.model.register.TemplateSpec;
+import org.hiforce.lattice.runtime.ability.execute.runner.ExtensionRunner;
+import org.hiforce.lattice.runtime.ability.execute.runner.ExtensionRunnerType;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -17,7 +19,7 @@ import java.util.function.Predicate;
  * @author Rocky Yu
  * @since 2022/9/18
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings("all")
 @Slf4j
 public class RunnerCollection<ExtensionPoints, R> {
 
@@ -41,7 +43,7 @@ public class RunnerCollection<ExtensionPoints, R> {
     private RunnerCollection() {
     }
 
-    static <ExtensionPoints, R> RunnerCollection<ExtensionPoints, R> of(
+    public static <ExtensionPoints, R> RunnerCollection<ExtensionPoints, R> of(
             IBizObject bizInstance,
             List<RunnerCollection.RunnerItemEntry<ExtensionPoints, R>> runnerList,
             Predicate<RunnerCollection.RunnerItemEntry<ExtensionPoints, R>> predicate,
@@ -79,7 +81,7 @@ public class RunnerCollection<ExtensionPoints, R> {
         return runnerResult;
     }
 
-    static <ExtensionPoints, R> RunnerCollection<ExtensionPoints, R> combine(RunnerCollection<ExtensionPoints, R> runnerCollection, RunnerCollection<ExtensionPoints, R> runnerCollection2) {
+    public static <ExtensionPoints, R> RunnerCollection<ExtensionPoints, R> combine(RunnerCollection<ExtensionPoints, R> runnerCollection, RunnerCollection<ExtensionPoints, R> runnerCollection2) {
         runnerCollection2.parent = runnerCollection;
         return runnerCollection2;
     }
@@ -207,15 +209,15 @@ public class RunnerCollection<ExtensionPoints, R> {
         return ExecuteResult.success(reducer.reduce(results), convertToTemplateList(list), executeResults);
     }
 
-    private <T> List<ITemplate> convertToTemplateList(List<InstantItem<ExtensionPoints, T>> list) {
-        List<ITemplate> templates = new ArrayList<>(list.size());// make extra room for multi-results
+    private <T> List<TemplateSpec> convertToTemplateList(List<InstantItem<ExtensionPoints, T>> list) {
+        List<TemplateSpec> templates = new ArrayList<>(list.size());// make extra room for multi-results
         list.forEach(p -> templates.add(p.runnerItemEntry.template));
         return templates;
     }
 
     public static class RunnerItemEntry<ExtensionPoints, R> {
         @Getter
-        ITemplate template;
+        TemplateSpec template;
         ExtensionRunner<ExtensionPoints, R> extensionRunner;
         Object abilityInstance;
 
@@ -223,7 +225,7 @@ public class RunnerCollection<ExtensionPoints, R> {
             return extensionRunner.getType();
         }
 
-        public RunnerItemEntry(ITemplate template, ExtensionRunner<ExtensionPoints, R> extensionRunner, Object abilityInstance) {
+        public RunnerItemEntry(TemplateSpec template, ExtensionRunner<ExtensionPoints, R> extensionRunner, Object abilityInstance) {
             this.template = template;
             this.extensionRunner = extensionRunner;
             this.abilityInstance = abilityInstance;
