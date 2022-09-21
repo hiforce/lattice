@@ -13,8 +13,7 @@ public class ExtensionFilter {
 
     @Getter
     @Setter
-    private boolean loadBusinessExt;//Whether load the business's realization;
-
+    private boolean loadBusinessExt = true;//Whether load the business's realization;
 
     @Getter
     @Setter
