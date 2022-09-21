@@ -37,13 +37,15 @@ public class BaseLatticeAbilityDelegate {
     }
 
     public <BusinessExt extends IBusinessExt, R> RunnerCollection<BusinessExt, R> loadExtensionRunners(@Nonnull String extCode) {
-        String scenario = ability.getContext().getScenario();
-        String bizCode = ability.getContext().getBizObject().getBizCode();
-        boolean onlyProduct = ability.getContext().isOnlyProductExt();
         BusinessConfig businessConfig = null; //TODO: 要从当前会话中裁剪出来
         if (null == businessConfig) {
+            if (Lattice.getInstance().isSimpleMode()) {
+
+            }
+            //only load the business's extension realization.
             return buildDefaultRunnerCollection(extCode, null);
         }
+        //todo: load business and products from business config.
 
         return null;//TODO
     }
@@ -62,7 +64,6 @@ public class BaseLatticeAbilityDelegate {
                         ability, extCode, sessionConfig);
 
         if (loadBizExt) {
-
             RunnerCollection.Producer producer = getDefaultRunnerProducer(bizCode, extCode, scenario);
             return RunnerCollection.combine(runnerCollection, producer, loadBizExt, loadDefaultExt);
         } else {

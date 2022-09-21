@@ -52,6 +52,13 @@ public class Lattice {
     @Getter
     private boolean initialized = false;
 
+    /**
+     * The business config not necessary.
+     */
+    @Getter
+    @Setter
+    private boolean simpleMode = false;
+
     @Getter
     private final LatticeTemplateManager templateManager = new LatticeTemplateManager();
 
@@ -83,11 +90,19 @@ public class Lattice {
         registerAbilities();//Register the Ability Instances during runtime.
         registerRealizations();//Register the business extension realization during runtime.
         registerProducts();
+        buildBusinessConfig();
+
 
         MessageCode.init();
         Message.clean();
         ClassPathScanHandler.clearCache();
         initialized = true;
+    }
+
+    private void buildBusinessConfig() {
+        if (isSimpleMode()) {
+
+        }
     }
 
 

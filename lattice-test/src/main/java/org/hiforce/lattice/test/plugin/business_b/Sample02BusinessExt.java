@@ -1,7 +1,7 @@
-package org.hiforce.lattice.test.plugin.biz_02;
+package org.hiforce.lattice.test.plugin.business_b;
 
 import org.hifforce.lattice.annotation.Realization;
-import org.hiforce.lattice.test.plugin.biz_01.Sample01BusinessExt;
+import org.hiforce.lattice.test.plugin.business_a.Sample01BusinessExt;
 
 /**
  * @author Rocky Yu

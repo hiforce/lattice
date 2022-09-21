@@ -38,6 +38,8 @@ public class LatticeSpiFactory {
 
     private List<ProductAnnotationParser> productAnnotationParsers;
 
+    private List<BusinessAnnotationParser> businessAnnotationParsers;
+
     private IAbilityProviderCreator abilityProviderCreator;
 
     private IRunnerCollectionBuilder runnerCollectionBuilder;
@@ -74,6 +76,13 @@ public class LatticeSpiFactory {
             productAnnotationParsers = getCustomAnnotationParsers(ProductAnnotationParser.class);
         }
         return productAnnotationParsers;
+    }
+
+    public List<BusinessAnnotationParser> getBusinessAnnotationParsers() {
+        if (null == businessAnnotationParsers) {
+            businessAnnotationParsers = getCustomAnnotationParsers(BusinessAnnotationParser.class);
+        }
+        return businessAnnotationParsers;
     }
 
     @SuppressWarnings("rawtypes")

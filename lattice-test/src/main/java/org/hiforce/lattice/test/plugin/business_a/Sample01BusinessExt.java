@@ -1,4 +1,4 @@
-package org.hiforce.lattice.test.plugin.biz_01;
+package org.hiforce.lattice.test.plugin.business_a;
 
 import org.hifforce.lattice.annotation.Realization;
 import org.hiforce.lattice.test.ability.ext.BlankSampleBusinessExt;

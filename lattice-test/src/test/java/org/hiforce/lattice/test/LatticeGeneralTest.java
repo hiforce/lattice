@@ -4,7 +4,7 @@ import org.hifforce.lattice.model.register.*;
 import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.test.ability.SampleAbility;
 import org.hiforce.lattice.test.model.OrderLine;
-import org.hiforce.lattice.test.product.SampleProduct01;
+import org.hiforce.lattice.test.plugin.product_01.SampleProduct01;
 import org.hiforce.lattice.test.scenario.order.PlaceOrderService;
 import org.hiforce.lattice.test.scenario.order.impl.PlaceOrderRemoteService;
 import org.hiforce.lattice.test.scenario.order.param.PlaceOrderReqDTO;
@@ -83,7 +83,7 @@ public class LatticeGeneralTest {
 
 
     @Test
-    public void test_business_overlap_product_multi_realization_simple(){
+    public void test_business_overlap_product_multi_realization_simple() {
         PlaceOrderReqDTO reqDTO = new PlaceOrderReqDTO();
         reqDTO.setBuyerId("rocky");
         reqDTO.setItemId(100133311133L);

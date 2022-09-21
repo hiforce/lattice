@@ -28,7 +28,8 @@ public class SampleAbility extends BaseLatticeAbility<BlankSampleBusinessExt> {
 
     public String invokeTheSampleSampleExtensionPoint_01() {
 
-        return this.reduceExecute(SAMPLE_GET_SAMPLE_EXTENSION_POINT_01, p -> p.getSampleExtensionPoint_01("test"),
+        return this.reduceExecute(SAMPLE_GET_SAMPLE_EXTENSION_POINT_01,
+                p -> p.getSampleExtensionPoint_01("test"),
                 Reducers.firstOf(Objects::nonNull));
     }
 

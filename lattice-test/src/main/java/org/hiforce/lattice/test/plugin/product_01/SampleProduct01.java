@@ -1,4 +1,4 @@
-package org.hiforce.lattice.test.product;
+package org.hiforce.lattice.test.plugin.product_01;
 
 import org.hifforce.lattice.annotation.Product;
 import org.hifforce.lattice.model.business.ProductTemplate;

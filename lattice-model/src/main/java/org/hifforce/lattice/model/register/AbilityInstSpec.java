@@ -23,7 +23,7 @@ public class AbilityInstSpec extends BaseSpec {
 
     @Getter
     @Setter
-    private int priority = 2000;
+    private int priority = 1000;
 
     @Getter
     private final Set<ExtensionPointSpec> extensions = Sets.newHashSet();

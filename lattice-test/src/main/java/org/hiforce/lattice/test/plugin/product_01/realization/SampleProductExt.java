@@ -1,8 +1,8 @@
-package org.hiforce.lattice.test.product.realization;
+package org.hiforce.lattice.test.plugin.product_01.realization;
 
 import org.hifforce.lattice.annotation.Realization;
 import org.hiforce.lattice.test.ability.ext.BlankSampleBusinessExt;
-import org.hiforce.lattice.test.product.SampleProduct01;
+import org.hiforce.lattice.test.plugin.product_01.SampleProduct01;
 
 /**
  * @author Rocky Yu
