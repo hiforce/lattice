@@ -93,6 +93,9 @@ public class LatticeGeneralTest {
 
     @Test
     public void test_business_overlap_product_multi_realization_simple() {
+
+        Assert.assertFalse(Lattice.getInstance().getBusinessConfigs().isEmpty());
+
         PlaceOrderReqDTO reqDTO = new PlaceOrderReqDTO();
         reqDTO.setBuyerId("rocky");
         reqDTO.setItemId(100133311133L);

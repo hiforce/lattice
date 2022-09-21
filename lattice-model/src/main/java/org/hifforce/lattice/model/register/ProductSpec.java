@@ -1,6 +1,5 @@
 package org.hifforce.lattice.model.register;
 
-import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -9,14 +8,12 @@ import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.business.ProductTemplate;
 import org.hifforce.lattice.model.business.TemplateType;
 
-import java.util.List;
-
 /**
  * @author Rocky Yu
  * @since 2022/9/20
  */
 @Slf4j
-public class ProductSpec extends BaseSpec {
+public class ProductSpec extends TemplateSpec {
 
     @Getter
     @Setter
@@ -30,12 +27,9 @@ public class ProductSpec extends BaseSpec {
     @Setter
     private Class<? extends IBusinessExt> businessExt;
 
-    @Getter
-    @Setter
-    private int priority = 500;
-
-    @Getter
-    private final List<RealizationSpec> realizations = Lists.newArrayList();
+    public ProductSpec() {
+        this.setPriority(500);
+    }
 
     public ProductTemplate createProductInstance() {
         if (null == productClass) {

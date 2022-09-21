@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hifforce.lattice.cache.LatticeCacheFactory;
 import org.hifforce.lattice.message.Message;
@@ -14,6 +15,10 @@ import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.ability.provider.IAbilityProvider;
 import org.hifforce.lattice.model.business.IBusiness;
 import org.hifforce.lattice.model.business.IProduct;
+import org.hifforce.lattice.model.config.BusinessConfig;
+import org.hifforce.lattice.model.config.ExtPriority;
+import org.hifforce.lattice.model.config.PriorityConfig;
+import org.hifforce.lattice.model.config.ProductConfig;
 import org.hifforce.lattice.model.register.AbilitySpec;
 import org.hifforce.lattice.model.register.BusinessSpec;
 import org.hifforce.lattice.model.register.ProductSpec;
@@ -62,6 +67,9 @@ public class Lattice {
     private boolean simpleMode = false;
 
     @Getter
+    private final List<BusinessConfig> businessConfigs = Lists.newArrayList();
+
+    @Getter
     private final LatticeTemplateManager templateManager = new LatticeTemplateManager();
 
     @Getter
@@ -105,8 +113,68 @@ public class Lattice {
 
     private void buildBusinessConfig() {
         if (isSimpleMode()) {
-
+            //auto-config business and products.
+            autoBuildBusinessConfig();
         }
+    }
+
+    private void autoBuildBusinessConfig() {
+        List<ProductConfig> productConfigs = getAllRegisteredProducts().stream()
+                .map(this::buildProductConfig)
+                .collect(Collectors.toList());
+        for (BusinessSpec businessSpec : getAllRegisteredBusinesses()) {
+
+            List<PriorityConfig> priorityConfigs = businessSpec.getRealizations().stream()
+                    .flatMap(p -> autoBuildPriorityConfig(businessSpec, p).stream())
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            BusinessConfig businessConfig = BusinessConfig.builder()
+                    .bizCode(businessSpec.getCode())
+                    .installedProducts(productConfigs)
+                    .priorityConfigs(priorityConfigs)
+                    .build();
+            businessConfigs.add(businessConfig);
+        }
+    }
+
+    private List<PriorityConfig> autoBuildPriorityConfig(BusinessSpec business, RealizationSpec realization) {
+        List<PriorityConfig> configs = Lists.newArrayList();
+        for (String extCode : realization.getExtensionCodes()) {
+            List<ProductSpec> products = getAllRegisteredProducts().stream()
+                    .filter(p -> p.getRealizations().stream().
+                            anyMatch(real -> real.getExtensionCodes().contains(extCode)))
+                    .collect(Collectors.toList());
+            if (CollectionUtils.isEmpty(products)) {
+                continue;
+            }
+            List<ExtPriority> extPriorities = Lists.newArrayList();
+            extPriorities.add(ExtPriority.builder()
+                    .code(business.getCode())
+                    .priority(business.getPriority()).build());
+            extPriorities.addAll(products.stream()
+                    .map(this::buildExtPriority).collect(Collectors.toList()));
+            extPriorities.sort(Comparator.comparingInt(ExtPriority::getPriority));
+            PriorityConfig priorityConfig = PriorityConfig.builder()
+                    .extCode(extCode)
+                    .priorities(extPriorities)
+                    .build();
+            configs.add(priorityConfig);
+        }
+        return configs;
+    }
+
+    private ExtPriority buildExtPriority(ProductSpec productSpec) {
+        return ExtPriority.builder()
+                .code(productSpec.getCode())
+                .priority(productSpec.getPriority())
+                .build();
+
+    }
+
+    private ProductConfig buildProductConfig(ProductSpec productSpec) {
+        return ProductConfig.builder()
+                .code(productSpec.getCode())
+                .build();
     }
 
 
@@ -118,7 +186,7 @@ public class Lattice {
         return TemplateRegister.getInstance().getProducts();
     }
 
-    public List<BusinessSpec> getAllRegisteredBusinesses(){
+    public List<BusinessSpec> getAllRegisteredBusinesses() {
         return TemplateRegister.getInstance().getBusinesses();
     }
 
@@ -126,7 +194,7 @@ public class Lattice {
         return TemplateRegister.getInstance().getRealizations();
     }
 
-    public BusinessSpec getRegisteredBusinessByCode(String code){
+    public BusinessSpec getRegisteredBusinessByCode(String code) {
         return TemplateRegister.getInstance().getBusinesses().stream()
                 .filter(p -> StringUtils.equals(code, p.getCode()))
                 .findFirst().orElse(null);

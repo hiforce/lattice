@@ -25,15 +25,6 @@ public class BusinessConfig implements Serializable {
     @Getter
     private List<ProductConfig> installedProducts = Lists.newArrayList();
 
-    private static void main(String[] args) {
-        BusinessConfig config = new BusinessConfig.BusinessConfigBuilder()
-                .bizCode("aaa")
-                .installedProducts(
-                        Lists.newArrayList(
-                                new ProductConfig.ProductConfigBuilder()
-                                        .code("dddd")
-                                        .build()
-                        )
-                ).build();
-    }
+    @Getter
+    private List<PriorityConfig> priorityConfigs = Lists.newArrayList();
 }
