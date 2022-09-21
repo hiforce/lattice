@@ -1,10 +1,12 @@
 package org.hiforce.lattice.runtime.session;
 
+import org.hifforce.lattice.exception.LatticeRuntimeException;
+
 /**
  * @author Rocky Yu
  * @since 2022/9/20
  */
-public abstract class Scope<Resp, ScopeException extends Throwable> {
+public abstract class Scope<Resp> {
 
     protected static Entrance newEntrance() {
         return new EntranceImpl();
@@ -12,7 +14,7 @@ public abstract class Scope<Resp, ScopeException extends Throwable> {
 
     protected abstract Entrance getEntrance();
 
-    protected abstract Resp execute() throws ScopeException;
+    protected abstract Resp execute() throws LatticeRuntimeException;
 
     protected abstract void entrance();
 
@@ -22,9 +24,8 @@ public abstract class Scope<Resp, ScopeException extends Throwable> {
      * The BizSession invoke method, main logic entrance.
      *
      * @return Resp
-     * @throws ScopeException
      */
-    public Resp invoke() throws ScopeException {
+    public Resp invoke() throws LatticeRuntimeException {
         try {
             getEntrance().get().increaseCount();
             if (getEntrance().get().getCount() == 1) {

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hifforce.lattice.model.business.BizContext;
 import org.hifforce.lattice.model.business.IBizObject;
+import org.hifforce.lattice.sequence.SequenceGenerator;
 
 import java.io.Serializable;
 
@@ -15,7 +16,15 @@ public class OrderLine implements IBizObject {
 
     @Getter
     @Setter
-    private long orderLineId;
+    private long orderLineId = SequenceGenerator.next(OrderLine.class.getName());
+
+    @Getter
+    @Setter
+    private long itemId;
+
+    @Getter
+    @Setter
+    private String buyerId;
 
     @Getter
     @Setter

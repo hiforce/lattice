@@ -81,9 +81,16 @@ public class LatticeBeanUtils {
     @SuppressWarnings("all")
     private static <T> T createBeanInstance(@Nonnull Class<?> beanClass, Object... values) {
         try {
-            if (null == values || 0 == values.length) {
-                return (T) beanClass.newInstance();
+            try {
+                if (null == values || 0 == values.length) {
+                    return (T) beanClass.newInstance();
+                }
+            } catch (Exception ex) {
+                //values maybe is null, but bean has constructor with args.
+                Constructor constructor = findFirstConstructor(beanClass);
+                return (T) createBeanInstanceWithNullValues(constructor);
             }
+
             Constructor constructor = getMatchedConstructor(beanClass, values);
             if (null == constructor) {
                 return null;
@@ -93,6 +100,19 @@ public class LatticeBeanUtils {
             log.warn("[Lattice]Failed to create spring bean instance", e);
             return null;
         }
+    }
+
+    private static <T> T createBeanInstanceWithNullValues(Constructor<T> constructor) throws Exception {
+        Class<?>[] paramTypes = constructor.getParameterTypes();
+        Object[] values = new Object[paramTypes.length];
+        return constructor.newInstance(values);
+    }
+
+    private static Constructor findFirstConstructor(Class<?> beanClass) {
+        if (beanClass.getConstructors().length == 0) {
+            return null;
+        }
+        return beanClass.getConstructors()[0];
     }
 
     private static Constructor<?> getMatchedConstructor(Class<?> beanClass, Object... values) {

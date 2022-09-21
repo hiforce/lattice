@@ -19,10 +19,10 @@ import java.util.stream.Collectors;
  * @author Rocky Yu
  * @since 2022/9/20
  */
-public abstract class BizSessionScope<Resp, ScopeException extends Throwable>
-        extends Scope<Resp, ScopeException> {
+public abstract class BizSessionScope<Resp, BizObject extends IBizObject>
+        extends Scope<Resp> {
 
-    private final List<IBizObject> bizObjects = Lists.newArrayList();
+    private final List<BizObject> bizObjects = Lists.newArrayList();
 
     private final List<ScenarioRequest> scenarioRequests = Lists.newArrayList();
 
@@ -32,14 +32,14 @@ public abstract class BizSessionScope<Resp, ScopeException extends Throwable>
     private boolean invokeCacheInit;
 
 
-    public BizSessionScope(List<IBizObject> bizObjects) {
+    public BizSessionScope(List<BizObject> bizObjects) {
         if (CollectionUtils.isEmpty(bizObjects)) {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0010");
         }
         this.bizObjects.addAll(bizObjects);
     }
 
-    public BizSessionScope(IBizObject bizObject) {
+    public BizSessionScope(BizObject bizObject) {
         if (null == bizObject) {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0010");
         }
@@ -54,7 +54,7 @@ public abstract class BizSessionScope<Resp, ScopeException extends Throwable>
      * @param bizObject Business Object.
      * @return ScenarioRequest.
      */
-    public abstract ScenarioRequest buildScenarioRequest(IBizObject bizObject);
+    public abstract ScenarioRequest buildScenarioRequest(BizObject bizObject);
 
     @Override
     protected void entrance() {
@@ -81,7 +81,7 @@ public abstract class BizSessionScope<Resp, ScopeException extends Throwable>
     }
 
     private void initScenarioRequest() {
-        for (IBizObject bizObject : bizObjects) {
+        for (BizObject bizObject : bizObjects) {
             ScenarioRequest request = buildScenarioRequest(bizObject);
             if (null == request) {
                 throw new LatticeRuntimeException("LATTICE-CORE-RT-0011");

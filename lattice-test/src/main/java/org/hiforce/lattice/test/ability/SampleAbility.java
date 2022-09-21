@@ -1,10 +1,10 @@
 package org.hiforce.lattice.test.ability;
 
 import org.hifforce.lattice.annotation.Ability;
-import org.hifforce.lattice.model.business.IBizObject;
 import org.hiforce.lattice.runtime.ability.BaseLatticeAbility;
 import org.hiforce.lattice.runtime.ability.reduce.Reducers;
 import org.hiforce.lattice.test.ability.ext.BlankSampleBusinessExt;
+import org.hiforce.lattice.test.model.OrderLine;
 
 import java.util.Objects;
 
@@ -17,8 +17,8 @@ import static org.hiforce.lattice.test.ability.ext.SampleBusinessExt.SAMPLE_GET_
 @Ability(name = "SampleAbility")
 public class SampleAbility extends BaseLatticeAbility<BlankSampleBusinessExt> {
 
-    public SampleAbility(IBizObject bizObject) {
-        super(bizObject);
+    public SampleAbility(OrderLine orderLine) {
+        super(orderLine);
     }
 
     @Override
