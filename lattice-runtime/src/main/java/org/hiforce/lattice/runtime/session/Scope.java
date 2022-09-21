@@ -26,16 +26,17 @@ public abstract class Scope<Resp> {
      * @return Resp
      */
     public Resp invoke() throws LatticeRuntimeException {
+        Entrance entrance = getEntrance();
         try {
-            getEntrance().get().increaseCount();
-            if (getEntrance().get().getCount() == 1) {
+            entrance.get().increaseCount();
+            if (entrance.get().getCount() == 1) {
                 entrance();
             }
             return execute();
         } finally {
-            getEntrance().get().decreaseCount();
-            if (getEntrance().get().getCount() == 0) {
-                getEntrance().clearCount();
+            entrance.get().decreaseCount();
+            if (entrance.get().getCount() == 0) {
+                entrance.clearCount();
                 exit();
             }
         }

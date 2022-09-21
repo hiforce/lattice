@@ -5,6 +5,9 @@ import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.test.ability.SampleAbility;
 import org.hiforce.lattice.test.model.OrderLine;
 import org.hiforce.lattice.test.product.SampleProduct01;
+import org.hiforce.lattice.test.scenario.order.PlaceOrderService;
+import org.hiforce.lattice.test.scenario.order.impl.PlaceOrderRemoteService;
+import org.hiforce.lattice.test.scenario.order.param.PlaceOrderReqDTO;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -76,5 +79,17 @@ public class LatticeGeneralTest {
         ProductSpec productSpec = Lattice.getInstance().getRegisteredProductByCode(SampleProduct01.CODE);
         Assert.assertNotNull(productSpec);
         Assert.assertFalse(productSpec.getRealizations().isEmpty());
+    }
+
+
+    @Test
+    public void test_business_overlap_product_multi_realization_simple(){
+        PlaceOrderReqDTO reqDTO = new PlaceOrderReqDTO();
+        reqDTO.setBuyerId("rocky");
+        reqDTO.setItemId(100133311133L);
+        reqDTO.setBuyQuantity(10);
+
+        PlaceOrderService placeOrderService = new PlaceOrderRemoteService();
+        placeOrderService.createOrder(reqDTO);
     }
 }

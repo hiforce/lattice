@@ -1,9 +1,11 @@
 package org.hiforce.lattice.test.scenario.order.param;
 
+import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * @author Rocky Yu
@@ -15,7 +17,7 @@ public class PlaceOrderReqDTO implements Serializable {
 
     @Getter
     @Setter
-    private long buyerId;
+    private String buyerId;
 
     @Getter
     @Setter
@@ -24,4 +26,11 @@ public class PlaceOrderReqDTO implements Serializable {
     @Getter
     @Setter
     private int buyQuantity = 1;
+
+    @Getter
+    @Setter
+    private String scenario;
+
+    @Getter
+    private final Map<String, String> extraParams = Maps.newHashMap();
 }

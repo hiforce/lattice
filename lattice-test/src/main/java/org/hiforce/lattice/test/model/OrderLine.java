@@ -28,6 +28,10 @@ public class OrderLine implements IBizObject {
 
     @Getter
     @Setter
+    private int buyQuantity;
+
+    @Getter
+    @Setter
     private String bizCode;
 
     @Getter

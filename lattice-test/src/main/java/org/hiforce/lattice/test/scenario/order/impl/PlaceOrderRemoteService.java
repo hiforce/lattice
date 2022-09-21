@@ -21,8 +21,10 @@ public class PlaceOrderRemoteService implements PlaceOrderService {
         //1. build OrderLine business object.
         OrderLine orderLine = new OrderLine();
         orderLine.setBizCode("business.a");
-        orderLine.setItemId(12121212L);
-        orderLine.setBuyerId("rocky");
+        orderLine.setScenario(reqDTO.getScenario());
+        orderLine.setItemId(reqDTO.getItemId());
+        orderLine.setBuyerId(reqDTO.getBuyerId());
+        orderLine.setBuyQuantity(reqDTO.getBuyQuantity());
 
         try {
             ShoppingResult result = new BizSessionScope<ShoppingResult, OrderLine>(orderLine) {
