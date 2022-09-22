@@ -1,8 +1,6 @@
 package org.hifforce.lattice.annotation;
 
 
-import org.hifforce.lattice.model.business.TemplateType;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
