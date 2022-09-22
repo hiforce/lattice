@@ -64,24 +64,6 @@ public class ClassPathScanHandler {
     public ClassPathScanHandler() {
     }
 
-    /**
-     * excludeInner:是否排除内部类 true->是 false->否<br>.
-     * checkInOrEx：过滤规则适用情况 true—>搜索符合规则的 false->排除符合规则的<br>
-     * classFilters：自定义过滤规则，如果是null或者空，即全部符合不过滤
-     *
-     * @param excludeInner whether exclude the inner class.
-     * @param checkInOrEx  whether exclude the rule checking.
-     * @param classFilters the customized the classes to be filtered.
-     */
-    public ClassPathScanHandler(Boolean excludeInner, Boolean checkInOrEx,
-                                List<String> classFilters) {
-        this.excludeInner = excludeInner;
-        this.checkInOrEx = checkInOrEx;
-        this.classFilters = classFilters;
-
-    }
-
-
     public synchronized Set<Class<?>> getPackageAllClasses(final String basePackage, final boolean recursive) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Set<Class<?>> cachedClassSet = null;
