@@ -12,8 +12,10 @@ import static org.hiforce.lattice.test.plugin.business_b.BusinessB.BUSINESS_B_CO
 @Realization(codes = BUSINESS_B_CODE)
 public class BusinessBExt extends BusinessAExt {
 
+    public static String RETURN_VALUE = "[Business B] ext invoked";
+
     @Override
     public String getSampleExtensionPoint_01(String someInput) {
-        return "[Business B] execute the getSampleExtensionPoint_01!";
+        return RETURN_VALUE;
     }
 }

@@ -25,6 +25,9 @@ public class PlaceOrderRespDTO implements Serializable {
     @Setter
     private String errText;
 
+    @Getter @Setter
+    private String result;
+
     public static PlaceOrderRespDTO success() {
         PlaceOrderRespDTO respDTO = new PlaceOrderRespDTO();
         respDTO.setSuccess(true);

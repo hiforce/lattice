@@ -5,14 +5,16 @@ import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.test.ability.SampleAbility;
 import org.hiforce.lattice.test.model.OrderLine;
 import org.hiforce.lattice.test.plugin.business_a.BusinessA;
+import org.hiforce.lattice.test.plugin.business_a.ext.BusinessAExt;
+import org.hiforce.lattice.test.plugin.business_b.ext.BusinessBExt;
 import org.hiforce.lattice.test.plugin.product_01.SampleProduct01;
+import org.hiforce.lattice.test.plugin.product_01.realization.SampleProductExt;
 import org.hiforce.lattice.test.scenario.order.PlaceOrderService;
 import org.hiforce.lattice.test.scenario.order.impl.PlaceOrderRemoteService;
 import org.hiforce.lattice.test.scenario.order.param.PlaceOrderReqDTO;
+import org.hiforce.lattice.test.scenario.order.param.PlaceOrderRespDTO;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.jupiter.api.Order;
-import org.junit.runner.OrderWith;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -73,7 +75,18 @@ public class LatticeGeneralTest {
         orderLine.setBizCode("business.b");
         SampleAbility ability = new SampleAbility(orderLine);
         String value = ability.invokeTheSampleSampleExtensionPoint_01();
-        Assert.assertNotNull(value);
+        Assert.assertEquals(BusinessBExt.RETURN_VALUE, value);
+    }
+
+    @Test
+    public void test_extension_invoke_02() {
+        Lattice.getInstance().getBusinessConfigs().clear();
+        OrderLine orderLine = new OrderLine();
+        orderLine.setOrderLineId(1L);
+        orderLine.setBizCode("business.a");
+        SampleAbility ability = new SampleAbility(orderLine);
+        String value = ability.invokeTheSampleSampleExtensionPoint_01();
+        Assert.assertEquals(BusinessAExt.RETURN_VALUE, value);
     }
 
     @Test
@@ -103,6 +116,8 @@ public class LatticeGeneralTest {
         reqDTO.setBuyQuantity(10);
 
         PlaceOrderService placeOrderService = new PlaceOrderRemoteService();
-        placeOrderService.createOrder(reqDTO);
+        PlaceOrderRespDTO respDTO = placeOrderService.createOrder(reqDTO);
+        Assert.assertNotNull(respDTO);
+        Assert.assertEquals(respDTO.getResult(), SampleProductExt.RETURN_VALUE);
     }
 }

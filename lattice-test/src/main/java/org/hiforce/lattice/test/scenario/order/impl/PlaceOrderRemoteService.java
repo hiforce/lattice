@@ -37,6 +37,7 @@ public class PlaceOrderRemoteService implements PlaceOrderService {
                     //invoke a extension point.
                     SampleAbility ability = new SampleAbility(orderLine);
                     String value = ability.invokeTheSampleSampleExtensionPoint_01();
+                    shoppingResult.setExtResult(value);
                     return shoppingResult;
                 }
 
@@ -49,7 +50,9 @@ public class PlaceOrderRemoteService implements PlaceOrderService {
                 }
             }.invoke();
             //build the resp with result...bla bla bla..
-            return PlaceOrderRespDTO.success();
+            PlaceOrderRespDTO respDTO = PlaceOrderRespDTO.success();
+            respDTO.setResult(result.getExtResult());
+            return respDTO;
         } catch (Throwable ex) {
             ex.printStackTrace();
             return PlaceOrderRespDTO.failed("ERR_SOME_CODE", "Create Order Failed.");

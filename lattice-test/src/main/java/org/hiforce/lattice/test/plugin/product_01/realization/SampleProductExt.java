@@ -11,8 +11,10 @@ import org.hiforce.lattice.test.plugin.product_01.SampleProduct01;
 @Realization(codes = SampleProduct01.CODE)
 public class SampleProductExt extends BlankSampleBusinessExt {
 
+    public static String RETURN_VALUE = "[SampleProduct A] ext invoked";
+
     @Override
     public String getSampleExtensionPoint_01(String someInput) {
-        return "[SampleProduct] execute the getSampleExtensionPoint_01!";
+        return RETURN_VALUE;
     }
 }
