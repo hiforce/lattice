@@ -7,18 +7,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import static org.hiforce.lattice.runtime.cache.LatticeRuntimeCache.BIZ_CODE_IDX_MAP;
+import static org.hiforce.lattice.runtime.cache.LatticeRuntimeCache.SCENARIO_IDX_MAP;
 
 /**
  * @author Rocky Yu
  * @since 2022/9/16
  */
 public abstract class BaseObjectCacheKey {
-
-    public static Map<String, Long> BIZ_CODE_IDX_MAP = new ConcurrentHashMap<String, Long>(120);
-
-    public static Map<String, Long> SCENARIO_IDX_MAP = new ConcurrentHashMap<String, Long>(120);
 
     private static final int templateCodeLen = 5;
     private static final int supportCustomBitLen = 1;
