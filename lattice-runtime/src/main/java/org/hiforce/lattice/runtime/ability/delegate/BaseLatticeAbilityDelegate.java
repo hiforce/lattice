@@ -87,11 +87,30 @@ public class BaseLatticeAbilityDelegate {
         boolean loadDefaultExtension = ability.hasDefaultExtension();
 
         RunnerCollection<BusinessExt, R> businessRunnerCollection = RunnerCollection.of(bizObject,
-                cachedRunners, sessionRelatedFilter,
+                filterEffectiveRunners(cachedRunners), sessionRelatedFilter,
                 getDefaultRunnerProducer(bizCode, extCode, scenario), loadBizExt, loadDefaultExtension);
 
         return RunnerCollection.combine(buildCustomRunnerCollection(extCode, bizObject)
                 , businessRunnerCollection);
+    }
+
+    private <BusinessExt extends IBusinessExt, R> List<RunnerCollection.RunnerItemEntry<BusinessExt, R>> filterEffectiveRunners(
+            List<RunnerCollection.RunnerItemEntry<BusinessExt, R>> runners) {
+        List<RunnerCollection.RunnerItemEntry<BusinessExt, R>> output = Lists.newArrayList();
+        for (RunnerCollection.RunnerItemEntry<BusinessExt, R> runner : runners) {
+            if (TemplateType.PRODUCT != runner.getTemplate().getType()) {
+                output.add(runner);
+                continue;
+            }
+            BizSessionContext bizSessionContext =
+                    InvokeCache.instance().get(BizSessionContext.class, BizSessionContext.class);
+            List<ProductSpec> effective = bizSessionContext.getEffectiveProducts().get(ability.getContext().getBizCode());
+            if (effective.stream().noneMatch(p -> StringUtils.equals(p.getCode(), runner.getTemplate().getCode()))) {
+                continue;
+            }
+            output.add(runner);
+        }
+        return runners;
     }
 
     private <BusinessExt extends IBusinessExt, R> RunnerCollection<BusinessExt, R> buildCustomRunnerCollection(
@@ -159,11 +178,6 @@ public class BaseLatticeAbilityDelegate {
             BizSessionContext bizSessionContext =
                     InvokeCache.instance().get(BizSessionContext.class, BizSessionContext.class);
             if (null == bizSessionContext) {
-                continue;
-            }
-
-            List<ProductSpec> effective = bizSessionContext.getEffectiveProducts().get(bizCode);
-            if (effective.stream().noneMatch(p -> StringUtils.equals(p.getCode(), config.getCode()))) {
                 continue;
             }
 
