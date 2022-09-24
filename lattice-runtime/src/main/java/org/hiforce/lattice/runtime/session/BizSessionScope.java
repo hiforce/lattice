@@ -3,16 +3,20 @@ package org.hiforce.lattice.runtime.session;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hifforce.lattice.cache.invoke.InvokeCache;
 import org.hifforce.lattice.exception.LatticeRuntimeException;
 import org.hifforce.lattice.model.business.IBizObject;
 import org.hifforce.lattice.model.business.ProductTemplate;
+import org.hifforce.lattice.model.config.BusinessConfig;
+import org.hifforce.lattice.model.config.ProductConfig;
 import org.hifforce.lattice.model.context.BizSessionContext;
 import org.hifforce.lattice.model.register.ProductSpec;
 import org.hifforce.lattice.model.scenario.ScenarioRequest;
 import org.hiforce.lattice.runtime.Lattice;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -71,12 +75,27 @@ public abstract class BizSessionScope<Resp, BizObject extends IBizObject>
 
     private void buildEffectProducts() {
         for (ScenarioRequest request : scenarioRequests) {
-            List<ProductSpec> productSpecs =
-                    Lattice.getInstance().getAllRegisteredProducts().stream()
-                            .filter(p -> isProductEffective(p, request))
-                            .collect(Collectors.toList());
+            List<ProductSpec> productSpecs = loadBusinessInstalledProducts(request.getBizObject().getBizCode())
+                    .stream().filter(p -> isProductEffective(p, request))
+                    .collect(Collectors.toList());
             context.getEffectiveProducts().put(request.getBizObject().getBizCode(), productSpecs);
         }
+    }
+
+    private List<ProductSpec> loadBusinessInstalledProducts(String bizCode) {
+        if (StringUtils.isEmpty(bizCode)) {
+            throw new LatticeRuntimeException("LATTICE-CORE-RT-0014", bizCode);
+        }
+        BusinessConfig businessConfig = Lattice.getInstance().getBusinessConfigByBizCode(bizCode);
+        if (null == businessConfig) {
+            if (Lattice.getInstance().isSimpleMode()) {
+                return Lattice.getInstance().getAllRegisteredProducts();
+            }
+            throw new LatticeRuntimeException("LATTICE-CORE-RT-0012", bizCode);
+        }
+        List<ProductConfig> productConfigs = businessConfig.getInstalledProducts();
+        return productConfigs.stream().map(p -> Lattice.getInstance().getRegisteredProductByCode(p.getCode()))
+                .filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     private boolean isProductEffective(ProductSpec productSpec, ScenarioRequest request) {
