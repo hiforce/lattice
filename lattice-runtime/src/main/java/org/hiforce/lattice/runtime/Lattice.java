@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hifforce.lattice.cache.LatticeCacheFactory;
+import org.hifforce.lattice.exception.LatticeRuntimeException;
 import org.hifforce.lattice.message.Message;
 import org.hifforce.lattice.message.MessageCode;
 import org.hifforce.lattice.model.ability.IAbility;
@@ -105,13 +106,13 @@ public class Lattice {
         initialized = true;
     }
 
-    private void initLatticeCache(){
+    private void initLatticeCache() {
         getLatticeRuntimeCache().buildExtensionRunnerCache();
         initErrorMessageCode();
         ClassPathScanHandler.clearCache();
     }
 
-    private void initErrorMessageCode(){
+    private void initErrorMessageCode() {
         Message.clean();
         MessageCode.init();
     }
@@ -131,6 +132,29 @@ public class Lattice {
             //auto-config business and products.
             autoBuildBusinessConfig();
         }
+    }
+
+    public void addBusinessConfig(BusinessConfig config) {
+        if (null == config) {
+            throw new LatticeRuntimeException("LATTICE-CORE-RT-0015");
+        }
+
+        Message message = checkBusinessConfig(config);
+        if (null != message) {
+            throw new LatticeRuntimeException(message);
+        }
+
+        businessConfigs.stream()
+                .filter(p -> StringUtils.equals(config.getBizCode(), p.getBizCode()))
+                .findFirst().ifPresent(businessConfigs::remove);
+        businessConfigs.add(config);
+    }
+
+    private Message checkBusinessConfig(BusinessConfig config) {
+        if (StringUtils.isEmpty(config.getBizCode())) {
+            return Message.code("LATTICE-CORE-RT-0014");
+        }
+        return null;
     }
 
     private void autoBuildBusinessConfig() {
