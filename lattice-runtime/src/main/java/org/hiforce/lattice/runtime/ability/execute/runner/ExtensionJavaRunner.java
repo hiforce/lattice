@@ -31,10 +31,9 @@ public class ExtensionJavaRunner<T extends IBusinessExt, R> extends ExtensionRun
         return callback.apply(getModel());
     }
 
-    public ExtensionJavaRunner(String extensionCode, int priority,
-                               T model) {
+    public ExtensionJavaRunner(String extensionCode, T model) {
         super(extensionCode, model);
-        this.setPriority(priority);
+//        this.setPriority(priority);
     }
 
 

@@ -26,6 +26,10 @@ public class BusinessConfig implements Serializable {
     private String bizCode;
 
     @Getter
+    @Setter
+    private int priority = 1000;
+
+    @Getter
     private List<ProductConfig> installedProducts = Lists.newArrayList();
 
     @Getter

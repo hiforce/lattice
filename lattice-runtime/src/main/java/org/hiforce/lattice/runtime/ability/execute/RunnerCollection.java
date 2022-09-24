@@ -102,7 +102,6 @@ public class RunnerCollection<ExtensionPoints, R> {
         return this;
     }
 
-    // set bizInstance for RunnerCollections create which the bizInstance is null
     RunnerCollection<ExtensionPoints, R> withBizInstance(IBizObject bizInstance) {
         this.bizInstance = bizInstance;
         RunnerCollection<ExtensionPoints, R> parent = this.parent;
@@ -151,12 +150,6 @@ public class RunnerCollection<ExtensionPoints, R> {
 
     private void updateResult(List result) {
         this.finalColl = result;
-    }
-
-    RunnerCollection<ExtensionPoints, R> sort() {
-        List<InstantItem<ExtensionPoints, R>> result = this.generateInstantItem();
-        result.sort(Comparator.comparingInt(p -> p.runnerItemEntry.extensionRunner.getPriority()));
-        return this;
     }
 
     public RunnerCollection<ExtensionPoints, R> distinct() {

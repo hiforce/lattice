@@ -21,6 +21,7 @@ import org.hiforce.lattice.runtime.utils.BusinessExtUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -95,6 +96,7 @@ public class TemplateRegister {
                     .collect(Collectors.toList()));
             products.add(productSpec);
         }
+        products.sort(Comparator.comparingInt(ProductSpec::getPriority));
         return products;
     }
 

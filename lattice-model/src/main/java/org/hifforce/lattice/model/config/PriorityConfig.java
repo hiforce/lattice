@@ -1,7 +1,6 @@
 package org.hifforce.lattice.model.config;
 
 import com.google.common.collect.Lists;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,6 +23,5 @@ public class PriorityConfig implements Serializable {
     private String extCode;
 
     @Getter
-    @Setter
     private List<ExtPriority> priorities = Lists.newArrayList();
 }

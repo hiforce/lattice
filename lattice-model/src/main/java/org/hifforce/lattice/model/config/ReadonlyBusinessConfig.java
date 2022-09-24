@@ -1,8 +1,5 @@
 package org.hifforce.lattice.model.config;
 
-import com.google.common.collect.Lists;
-import lombok.Getter;
-import lombok.Setter;
 import org.hifforce.lattice.exception.LatticeRuntimeException;
 
 import java.util.List;
@@ -15,8 +12,8 @@ public class ReadonlyBusinessConfig extends BusinessConfig {
 
     private static final long serialVersionUID = 248112387639393117L;
 
-    public ReadonlyBusinessConfig(String bizCode, List<ProductConfig> products, List<PriorityConfig> priorities) {
-        super(bizCode, products, priorities);
+    public ReadonlyBusinessConfig(String bizCode, int priority, List<ProductConfig> products, List<PriorityConfig> priorities) {
+        super(bizCode, priority, products, priorities);
     }
 
     public void setBizCode(String bizCode) {

@@ -18,6 +18,7 @@ import org.hifforce.lattice.model.register.BusinessSpec;
 import org.hifforce.lattice.model.register.ProductSpec;
 import org.hifforce.lattice.model.register.RealizationSpec;
 import org.hifforce.lattice.model.register.TemplateSpec;
+import org.hifforce.lattice.utils.BizCodeUtils;
 import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.runtime.ability.BaseLatticeAbility;
 import org.hiforce.lattice.runtime.ability.execute.IRunnerCollectionBuilder;
@@ -122,7 +123,11 @@ public class BaseLatticeAbilityDelegate {
         return runnerCollectionBuilder.buildCustomRunnerCollection(ability, extensionCode);
     }
 
-    private static boolean isTemplateEffected(String bizCode, String templateCode) {
+    private static boolean isTemplateEffected(String bizCode, TemplateSpec template) {
+        if (template.getType() == TemplateType.BUSINESS) {
+            return BizCodeUtils.isCodesMatched(bizCode, template.getCode());
+        }
+
         BizSessionContext bizSessionContext =
                 InvokeCache.instance().get(BizSessionContext.class, BizSessionContext.class);
         if (null == bizSessionContext) {
@@ -130,7 +135,7 @@ public class BaseLatticeAbilityDelegate {
         }
 
         List<ProductSpec> effective = bizSessionContext.getEffectiveProducts().get(bizCode);
-        if (effective.stream().noneMatch(p -> StringUtils.equals(p.getCode(), templateCode))) {
+        if (effective.stream().noneMatch(p -> StringUtils.equals(p.getCode(), template.getCode()))) {
             return false;
         }
         return true;
@@ -168,17 +173,17 @@ public class BaseLatticeAbilityDelegate {
 
         List<RunnerCollection.RunnerItemEntry<ExtensionPoints, R>> extensionRunners = new ArrayList<>();
         for (ExtPriority config : businessConfig.getProductConfigByExtCode(extensionCode, isOnlyProduct)) {
-            //接下来再根据运营平台的配置，看当前的模板是否有效并构建出Runner
             if (null == config)
                 continue;
-            if (config.getType() == TemplateType.BUSINESS
-                    || !businessConfig.productInstalled(config.getCode())) {
-                continue;
-            }
             BizSessionContext bizSessionContext =
                     InvokeCache.instance().get(BizSessionContext.class, BizSessionContext.class);
             if (null == bizSessionContext) {
                 continue;
+            }
+            if (config.getType() == TemplateType.PRODUCT) {
+                if (!businessConfig.productInstalled(config.getCode())) {
+                    continue;
+                }
             }
 
             RunnerCollection.RunnerItemEntry<ExtensionPoints, R> runnerItemEntry =
@@ -215,12 +220,10 @@ public class BaseLatticeAbilityDelegate {
                 }
                 extensionJavaRunner = null;
             } else {
-                int priority = config.getPriority();
-                extensionJavaRunner = new ExtensionJavaRunner(extensionCode, priority, extImpl);
+                extensionJavaRunner = new ExtensionJavaRunner(extensionCode, extImpl);
             }
         } else {
-            extensionJavaRunner = new ExtensionJavaRunner(extensionCode, config.getPriority(),
-                    ability.getDefaultRealization());
+            extensionJavaRunner = new ExtensionJavaRunner(extensionCode, ability.getDefaultRealization());
         }
 
         if (extensionJavaRunner != null) {
@@ -266,12 +269,11 @@ public class BaseLatticeAbilityDelegate {
                 if (null == extImpl) {
                     extensionJavaRunner = null;
                 } else {
-                    int priority = -1;
-                    extensionJavaRunner = new ExtensionJavaRunner(extensionCode, priority, extImpl);
+                    extensionJavaRunner = new ExtensionJavaRunner(extensionCode, extImpl);
                 }
             } else {
                 if (ability.hasDefaultExtension()) {
-                    extensionJavaRunner = new ExtensionJavaRunner(extensionCode, -1, ability.getDefaultRealization());
+                    extensionJavaRunner = new ExtensionJavaRunner(extensionCode, ability.getDefaultRealization());
                 }
             }
             if (null == extensionJavaRunner) {
@@ -411,7 +413,7 @@ public class BaseLatticeAbilityDelegate {
                 }
             }
             IBizObject bizInstance = this.bizInstance;
-            return isTemplateEffected(bizInstance.getBizCode(), entry.getTemplate().getCode());
+            return isTemplateEffected(bizInstance.getBizCode(), entry.getTemplate());
         }
     }
 
@@ -424,7 +426,7 @@ public class BaseLatticeAbilityDelegate {
         public boolean test(RunnerCollection.RunnerItemEntry<ExtensionPoints, R> entry) {
             IBizObject bizInstance = this.bizInstance;
             //从模板的物理归属上看，当前业务（BizCode）是否可以使用该模板。。比如，五道口APP里定义的产品模板不应该能被其他业务所使用
-            return isTemplateEffected(bizInstance.getBizCode(), entry.getTemplate().getCode());
+            return isTemplateEffected(bizInstance.getBizCode(), entry.getTemplate());
         }
     }
 }
