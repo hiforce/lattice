@@ -101,13 +101,19 @@ public class Lattice {
         registerBusinesses();
         registerProducts();
         buildBusinessConfig();
-
-        getLatticeRuntimeCache().buildExtensionRunnerCache();
-
-        MessageCode.init();
-        Message.clean();
-        ClassPathScanHandler.clearCache();
+        initLatticeCache();
         initialized = true;
+    }
+
+    private void initLatticeCache(){
+        getLatticeRuntimeCache().buildExtensionRunnerCache();
+        initErrorMessageCode();
+        ClassPathScanHandler.clearCache();
+    }
+
+    private void initErrorMessageCode(){
+        Message.clean();
+        MessageCode.init();
     }
 
     public BusinessConfig getBusinessConfigByBizCode(String bizCode) {
