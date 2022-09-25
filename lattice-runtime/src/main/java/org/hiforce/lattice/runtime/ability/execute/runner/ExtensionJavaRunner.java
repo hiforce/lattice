@@ -33,7 +33,6 @@ public class ExtensionJavaRunner<T extends IBusinessExt, R> extends ExtensionRun
 
     public ExtensionJavaRunner(String extensionCode, T model) {
         super(extensionCode, model);
-//        this.setPriority(priority);
     }
 
 

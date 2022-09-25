@@ -21,7 +21,7 @@ import org.hifforce.lattice.model.register.TemplateSpec;
 import org.hifforce.lattice.utils.BizCodeUtils;
 import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.runtime.ability.BaseLatticeAbility;
-import org.hiforce.lattice.runtime.ability.execute.IRunnerCollectionBuilder;
+import org.hiforce.lattice.runtime.spi.IRunnerCollectionBuilder;
 import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 import org.hiforce.lattice.runtime.ability.execute.filter.ExtensionFilter;
 import org.hiforce.lattice.runtime.ability.execute.filter.ProductFilter;
@@ -261,25 +261,25 @@ public class BaseLatticeAbilityDelegate {
             String scenario) {
 
         return () -> {
-            ExtensionRunner extensionJavaRunner = null;
+            ExtensionRunner javaRunner = null;
             BusinessSpec template = getBusinessSpec(bizCode);
 
             if (ability.supportCustomization()) {
                 IBusinessExt extImpl = loadExtensionRealization(bizCode, scenario, template, extensionCode);
                 if (null == extImpl) {
-                    extensionJavaRunner = null;
+                    javaRunner = null;
                 } else {
-                    extensionJavaRunner = new ExtensionJavaRunner(extensionCode, extImpl);
+                    javaRunner = new ExtensionJavaRunner(extensionCode, extImpl);
                 }
             } else {
                 if (ability.hasDefaultExtension()) {
-                    extensionJavaRunner = new ExtensionJavaRunner(extensionCode, ability.getDefaultRealization());
+                    javaRunner = new ExtensionJavaRunner(extensionCode, ability.getDefaultRealization());
                 }
             }
-            if (null == extensionJavaRunner) {
+            if (null == javaRunner) {
                 return null;
             }
-            return new RunnerCollection.RunnerItemEntry<>(template, extensionJavaRunner, ability);
+            return new RunnerCollection.RunnerItemEntry<>(template, javaRunner, ability);
         };
     }
 
@@ -393,14 +393,14 @@ public class BaseLatticeAbilityDelegate {
     private static class SessionRelatedFilter<ExtensionPoints, R> implements Predicate<RunnerCollection.RunnerItemEntry<ExtensionPoints, R>> {
 
         private ProductFilter productFilter;
-        private ExtensionFilter extensionRunnerFilter;
-        protected IBizObject bizInstance;
+        private ExtensionFilter extensionFilter;
+        protected IBizObject bizObject;
         protected String bizCode;
 
-        public SessionRelatedFilter(ExtensionFilter extensionRunnerFilter, IBizObject bizInstance, String bizCode) {
-            this.productFilter = extensionRunnerFilter.getProductFilter();
-            this.extensionRunnerFilter = extensionRunnerFilter;
-            this.bizInstance = bizInstance;
+        public SessionRelatedFilter(ExtensionFilter extensionFilter, IBizObject bizObject, String bizCode) {
+            this.productFilter = extensionFilter.getProductFilter();
+            this.extensionFilter = extensionFilter;
+            this.bizObject = bizObject;
             this.bizCode = bizCode;
         }
 
@@ -412,7 +412,7 @@ public class BaseLatticeAbilityDelegate {
                     return false;
                 }
             }
-            IBizObject bizInstance = this.bizInstance;
+            IBizObject bizInstance = this.bizObject;
             return isTemplateEffected(bizInstance.getBizCode(), entry.getTemplate());
         }
     }
@@ -424,9 +424,7 @@ public class BaseLatticeAbilityDelegate {
 
         @Override
         public boolean test(RunnerCollection.RunnerItemEntry<ExtensionPoints, R> entry) {
-            IBizObject bizInstance = this.bizInstance;
-            //从模板的物理归属上看，当前业务（BizCode）是否可以使用该模板。。比如，五道口APP里定义的产品模板不应该能被其他业务所使用
-            return isTemplateEffected(bizInstance.getBizCode(), entry.getTemplate());
+            return isTemplateEffected(bizObject.getBizCode(), entry.getTemplate());
         }
     }
 }

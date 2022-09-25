@@ -1,8 +1,9 @@
-package org.hiforce.lattice.runtime.ability.execute;
+package org.hiforce.lattice.runtime.spi;
 
 
+import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.IBusinessExt;
-import org.hiforce.lattice.runtime.ability.BaseLatticeAbility;
+import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 
 /**
  * @author Rocky Yu
@@ -11,8 +12,8 @@ import org.hiforce.lattice.runtime.ability.BaseLatticeAbility;
 @SuppressWarnings("all")
 public interface IRunnerCollectionBuilder<ExtensionPoints extends IBusinessExt> {
 
-    boolean isSupport(BaseLatticeAbility ability, String extCode);
+    boolean isSupport(IAbility ability, String extCode);
 
     <R> RunnerCollection<ExtensionPoints, R> buildCustomRunnerCollection(
-            BaseLatticeAbility ability, String extCode);
+            IAbility ability, String extCode);
 }

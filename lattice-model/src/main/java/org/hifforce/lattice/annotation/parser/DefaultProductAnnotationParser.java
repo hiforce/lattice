@@ -1,8 +1,8 @@
-package org.hifforce.lattice.annotation.parser.impl;
+package org.hifforce.lattice.annotation.parser;
 
 import com.google.auto.service.AutoService;
 import org.hifforce.lattice.annotation.Product;
-import org.hifforce.lattice.annotation.parser.ProductAnnotationParser;
+import org.hifforce.lattice.spi.annotation.ProductAnnotationParser;
 import org.hifforce.lattice.model.business.TemplateType;
 
 /**

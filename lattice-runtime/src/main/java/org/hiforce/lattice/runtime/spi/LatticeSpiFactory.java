@@ -1,10 +1,10 @@
 package org.hiforce.lattice.runtime.spi;
 
 import com.google.common.collect.Lists;
-import org.hifforce.lattice.annotation.parser.*;
+import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.provider.IAbilityProviderCreator;
+import org.hifforce.lattice.spi.annotation.*;
 import org.hiforce.lattice.runtime.ability.BaseLatticeAbility;
-import org.hiforce.lattice.runtime.ability.execute.IRunnerCollectionBuilder;
 import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 import org.hiforce.lattice.runtime.ability.provider.DefaultAbilityProviderCreator;
 
@@ -153,13 +153,13 @@ public class LatticeSpiFactory {
                 runnerCollectionBuilder = serializer.orElse(new IRunnerCollectionBuilder() {
 
                     @Override
-                    public boolean isSupport(BaseLatticeAbility ability, String extensionCode) {
+                    public boolean isSupport(IAbility ability, String extensionCode) {
                         return false;
                     }
 
                     @Override
                     @SuppressWarnings("all")
-                    public RunnerCollection buildCustomRunnerCollection(BaseLatticeAbility ability, String extensionCode) {
+                    public RunnerCollection buildCustomRunnerCollection(IAbility ability, String extensionCode) {
                         return RunnerCollection.of(ability.getContext().getBizObject(),
                                 Lists.newArrayList(), RunnerCollection.ACCEPT_ALL);
                     }

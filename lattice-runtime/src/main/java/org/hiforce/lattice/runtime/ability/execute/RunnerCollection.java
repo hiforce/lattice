@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.ability.execute.ExtensionCallback;
 import org.hifforce.lattice.model.ability.execute.Reducer;
@@ -212,16 +213,16 @@ public class RunnerCollection<ExtensionPoints, R> {
         @Getter
         TemplateSpec template;
         ExtensionRunner<ExtensionPoints, R> extensionRunner;
-        Object abilityInstance;
+        IAbility ability;
 
         public ExtensionRunnerType getRunnerType() {
             return extensionRunner.getType();
         }
 
-        public RunnerItemEntry(TemplateSpec template, ExtensionRunner<ExtensionPoints, R> extensionRunner, Object abilityInstance) {
+        public RunnerItemEntry(TemplateSpec template, ExtensionRunner<ExtensionPoints, R> extensionRunner, IAbility ability) {
             this.template = template;
             this.extensionRunner = extensionRunner;
-            this.abilityInstance = abilityInstance;
+            this.ability = ability;
         }
 
         @Override
@@ -248,7 +249,7 @@ public class RunnerCollection<ExtensionPoints, R> {
         public List<R> runAllMatched(ExtensionCallback<IBusinessExt, R> callback, ExtensionRunner.RunnerExecuteResult executeResult) {
             RunnerItemEntry<ExtensionPoints, R> entry = this.runnerItemEntry;
             try {
-                return entry.extensionRunner.runAllMatched(entry.abilityInstance, this.bizInstance, callback, executeResult);
+                return entry.extensionRunner.runAllMatched(entry.ability, this.bizInstance, callback, executeResult);
             } catch (Exception ex) {
                 log.error(ex.getMessage(), ex);
                 throw ex;

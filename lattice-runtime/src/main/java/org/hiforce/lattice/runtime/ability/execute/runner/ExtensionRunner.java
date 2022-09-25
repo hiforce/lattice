@@ -24,10 +24,6 @@ public abstract class ExtensionRunner<T, R> {
     @Setter
     private T model;
 
-//    @Getter
-//    @Setter
-//    private int priority = 0;
-
 
     public ExtensionRunner(String extensionCode, T model) {
         this.model = model;

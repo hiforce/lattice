@@ -1,8 +1,8 @@
-package org.hifforce.lattice.annotation.parser.impl;
+package org.hifforce.lattice.annotation.parser;
 
 import com.google.auto.service.AutoService;
 import org.hifforce.lattice.annotation.Ability;
-import org.hifforce.lattice.annotation.parser.AbilityAnnotationParser;
+import org.hifforce.lattice.spi.annotation.AbilityAnnotationParser;
 
 /**
  * @author Rocky Yu

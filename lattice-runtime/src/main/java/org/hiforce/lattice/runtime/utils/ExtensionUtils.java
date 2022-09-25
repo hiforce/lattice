@@ -1,7 +1,7 @@
 package org.hiforce.lattice.runtime.utils;
 
 import org.hifforce.lattice.annotation.model.ExtensionAnnotation;
-import org.hifforce.lattice.annotation.parser.ExtensionAnnotationParser;
+import org.hifforce.lattice.spi.annotation.ExtensionAnnotationParser;
 import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
 
 import java.lang.annotation.Annotation;

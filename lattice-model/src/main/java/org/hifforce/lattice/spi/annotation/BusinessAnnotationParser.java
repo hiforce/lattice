@@ -1,7 +1,6 @@
-package org.hifforce.lattice.annotation.parser;
+package org.hifforce.lattice.spi.annotation;
 
 import org.hifforce.lattice.annotation.model.BusinessAnnotation;
-import org.hifforce.lattice.model.business.TemplateType;
 
 import java.lang.annotation.Annotation;
 

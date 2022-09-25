@@ -3,6 +3,7 @@ package org.hifforce.lattice.model.ability;
 
 import org.hifforce.lattice.model.ability.execute.ExtensionCallback;
 import org.hifforce.lattice.model.ability.execute.Reducer;
+import org.hifforce.lattice.model.context.AbilityContext;
 
 import javax.annotation.Nonnull;
 
@@ -24,13 +25,7 @@ public interface IAbility<BusinessExt extends IBusinessExt> {
     String getInstanceCode();
 
 
-    /**
-     * Checking current ability effective or not.
-     * Default is effective....
-     *
-     * @return true or false.
-     */
-    boolean supportChecking();
+    AbilityContext getContext();
 
     /**
      * Whether current ability support customization from plugin's extension realization.
@@ -54,13 +49,6 @@ public interface IAbility<BusinessExt extends IBusinessExt> {
      * @return the ExtensionPoints realization.
      */
     IBusinessExt getDefaultRealization();
-
-    /**
-     * the current ability whether is enabled.
-     *
-     * @return true or false.
-     */
-    boolean isEnabled();
 
     /**
      * Execute the extension's customization.

@@ -1,4 +1,4 @@
-package org.hifforce.lattice.annotation.parser;
+package org.hifforce.lattice.spi.annotation;
 
 import org.hifforce.lattice.annotation.model.ExtensionAnnotation;
 import org.hifforce.lattice.annotation.model.ReduceType;

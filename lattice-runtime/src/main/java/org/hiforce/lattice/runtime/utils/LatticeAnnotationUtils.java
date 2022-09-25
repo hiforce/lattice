@@ -5,8 +5,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hifforce.lattice.annotation.model.AbilityAnnotation;
 import org.hifforce.lattice.annotation.model.ScanSkipAnnotation;
-import org.hifforce.lattice.annotation.parser.AbilityAnnotationParser;
-import org.hifforce.lattice.annotation.parser.ScanSkipAnnotationParser;
+import org.hifforce.lattice.spi.annotation.AbilityAnnotationParser;
+import org.hifforce.lattice.spi.annotation.ScanSkipAnnotationParser;
 import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 

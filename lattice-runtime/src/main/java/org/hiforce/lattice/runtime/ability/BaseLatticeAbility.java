@@ -55,26 +55,12 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
     }
 
     @Override
-    public boolean supportChecking() {
-        return true;
-    }
-
-    @Override
     public boolean supportCustomization() {
         return true;
     }
 
     @Override
     public boolean hasDefaultExtension() {
-        return true;
-    }
-
-    /**
-     * Customization for current ability to judge whether is enabled.
-     *
-     * @return true or false.
-     */
-    public boolean isEnabled() {
         return true;
     }
 
@@ -99,6 +85,7 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
         return result.getResult();
     }
 
+    @SuppressWarnings("unused")
     public final <T, R> R reduceExecute(String extensionCode,
                                         ExtensionCallback<BusinessExt, T> callback,
                                         @Nonnull Reducer<T, R> reducer, ExtensionFilter filter) {

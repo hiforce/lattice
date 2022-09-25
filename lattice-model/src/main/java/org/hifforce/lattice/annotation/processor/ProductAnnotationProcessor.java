@@ -3,6 +3,7 @@ package org.hifforce.lattice.annotation.processor;
 import com.google.auto.service.AutoService;
 import org.hifforce.lattice.annotation.Product;
 import org.hifforce.lattice.model.business.IProduct;
+import org.hifforce.lattice.spi.annotation.LatticeAnnotationProcessor;
 
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.SupportedOptions;

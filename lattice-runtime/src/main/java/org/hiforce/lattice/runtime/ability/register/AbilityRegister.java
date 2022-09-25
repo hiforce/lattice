@@ -7,7 +7,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.hifforce.lattice.annotation.model.AbilityAnnotation;
 import org.hifforce.lattice.annotation.model.ExtensionAnnotation;
 import org.hifforce.lattice.annotation.model.ReduceType;
-import org.hifforce.lattice.annotation.parser.AbilityAnnotationParser;
+import org.hifforce.lattice.spi.annotation.AbilityAnnotationParser;
 import org.hifforce.lattice.exception.LatticeRuntimeException;
 import org.hifforce.lattice.message.Message;
 import org.hifforce.lattice.model.ability.IAbility;

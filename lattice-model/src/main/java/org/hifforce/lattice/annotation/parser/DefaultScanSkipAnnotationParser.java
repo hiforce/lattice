@@ -1,8 +1,8 @@
-package org.hifforce.lattice.annotation.parser.impl;
+package org.hifforce.lattice.annotation.parser;
 
 import com.google.auto.service.AutoService;
 import org.hifforce.lattice.annotation.ScanSkip;
-import org.hifforce.lattice.annotation.parser.ScanSkipAnnotationParser;
+import org.hifforce.lattice.spi.annotation.ScanSkipAnnotationParser;
 
 /**
  * @author Rocky Yu

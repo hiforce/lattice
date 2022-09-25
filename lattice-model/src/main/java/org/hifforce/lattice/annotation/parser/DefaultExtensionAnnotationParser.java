@@ -1,9 +1,9 @@
-package org.hifforce.lattice.annotation.parser.impl;
+package org.hifforce.lattice.annotation.parser;
 
 import com.google.auto.service.AutoService;
 import org.hifforce.lattice.annotation.Extension;
 import org.hifforce.lattice.annotation.model.ReduceType;
-import org.hifforce.lattice.annotation.parser.ExtensionAnnotationParser;
+import org.hifforce.lattice.spi.annotation.ExtensionAnnotationParser;
 
 /**
  * @author Rocky Yu

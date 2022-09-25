@@ -1,4 +1,4 @@
-package org.hifforce.lattice.annotation.parser;
+package org.hifforce.lattice.spi.annotation;
 
 import java.lang.annotation.Annotation;
 
