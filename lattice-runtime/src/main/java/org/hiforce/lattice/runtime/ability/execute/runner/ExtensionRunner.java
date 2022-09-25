@@ -3,6 +3,7 @@ package org.hiforce.lattice.runtime.ability.execute.runner;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.ability.execute.ExtensionCallback;
 import org.hifforce.lattice.model.business.IBizObject;
@@ -35,7 +36,7 @@ public abstract class ExtensionRunner<T, R> {
                                       RunnerExecuteResult executeResult);
 
     @Nonnull
-    public abstract List<R> runAllMatched(Object abilityInstance, IBizObject bizInstance,
+    public abstract List<R> runAllMatched(IAbility<?> ability, IBizObject bizObject,
                                           ExtensionCallback<IBusinessExt, R> callback, RunnerExecuteResult executeResult);
 
     public abstract ExtensionRunnerType getType();

@@ -3,6 +3,7 @@ package org.hiforce.lattice.runtime.ability.reduce;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import org.apache.commons.collections4.CollectionUtils;
+import org.hifforce.lattice.annotation.model.ReduceType;
 import org.hifforce.lattice.model.ability.execute.Reducer;
 
 import javax.annotation.Nonnull;
@@ -28,6 +29,11 @@ public class FlatList<T> extends Reducer<List<T>, List<T>> {
     @Override
     public boolean willBreak(Collection<List<T>> elements) {
         return false;
+    }
+
+    @Override
+    public ReduceType reducerType() {
+        return ReduceType.ALL;
     }
 
     @Override

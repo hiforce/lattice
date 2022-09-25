@@ -3,6 +3,7 @@ package org.hifforce.lattice.model.ability.execute;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hifforce.lattice.annotation.model.ReduceType;
 
 import java.util.Collection;
 
@@ -26,5 +27,11 @@ public abstract class Reducer<T, R> {
 
     public final void setBreak() {
         this.hasBreak = true;
+    }
+
+    public abstract ReduceType reducerType();
+
+    public String reduceName() {
+        return this.getClass().getSimpleName();
     }
 }

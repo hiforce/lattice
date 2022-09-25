@@ -1,6 +1,7 @@
 package org.hiforce.lattice.runtime.cache;
 
 import com.google.auto.service.AutoService;
+import com.google.common.collect.Maps;
 import lombok.Getter;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +22,7 @@ import org.hiforce.lattice.runtime.ability.cache.BusinessExtCache;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -34,13 +36,22 @@ public class LatticeRuntimeCache extends SimpleCache implements ILatticeRuntimeC
 
     public TemplateCache CACHE_TEMPLATE_REALIZATION = new TemplateCache();
 
-    private final Map<Class<?>, Map<Long, Object>> abilityExtRunnerCollectionCache = new ConcurrentHashMap<>();
+    private final Map<Class<?>, Map<Long, Object>> abilityExtRunnerCollectionCache = Maps.newConcurrentMap();
+
+    private final Map<String, ExtensionPointSpec> extensionCache = Maps.newConcurrentMap();
 
     @Override
     public IBusinessExtCache getBusinessExtCache() {
         return BusinessExtCache.getInstance();
     }
 
+    public void doCacheExtensionSpec(Set<ExtensionPointSpec> extensionSet) {
+        extensionSet.forEach(p -> extensionCache.put(p.getCode(), p));
+    }
+
+    public ExtensionPointSpec getExtensionPointSpecByCode(String extCode) {
+        return extensionCache.get(extCode);
+    }
 
     public AbilitySpec doCacheAbilitySpec(AbilityAnnotation ability, Class<?> targetClass) {
         String abilityCode = StringUtils.isEmpty(ability.getCode()) ? targetClass.getName() : ability.getCode();

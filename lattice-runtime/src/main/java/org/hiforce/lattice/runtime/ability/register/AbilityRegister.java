@@ -188,17 +188,17 @@ public class AbilityRegister {
         }
     }
 
-    private Set<ExtensionPointSpec> scanAbilityExtensions(IAbility domainAbility, AbilitySpec abilitySpec) {
+    private Set<ExtensionPointSpec> scanAbilityExtensions(IAbility<?> ability, AbilitySpec abilitySpec) {
         try {
-            Set<ExtensionPointSpec> extensionPointSpecList = new HashSet<ExtensionPointSpec>();
+            Set<ExtensionPointSpec> extensionPointSpecList = new HashSet<>();
 
-            Class<?> returnType = findAbilityExtensionDefinition(domainAbility.getClass());
+            Class<?> returnType = findAbilityExtensionDefinition(ability.getClass());
             if (null != returnType) {
                 //是可扩展点的接口
                 extensionPointSpecList.addAll(scanAbilityExtensions(Sets.newHashSet(), returnType, abilitySpec));
             }
 
-            Method[] methods = domainAbility.getClass().getMethods();
+            Method[] methods = ability.getClass().getMethods();
             for (Method method : methods) {
                 returnType = method.getReturnType();
                 if (!ClassUtils.isAssignable(returnType, IBusinessExt.class)) {
@@ -213,14 +213,14 @@ public class AbilityRegister {
             }
             return extensionPointSpecList;
         } catch (Throwable th) {
-            Message message = Message.code("LATTICE-CORE-RT-0004", domainAbility.getClass().getName(),
+            Message message = Message.code("LATTICE-CORE-RT-0004", ability.getClass().getName(),
                     th.getMessage());
             log.error(message.getText(), th);
             throw th;
         }
     }
 
-    private Class<?> findAbilityExtensionDefinition(Class abilityClass) {
+    private Class<?> findAbilityExtensionDefinition(Class<?> abilityClass) {
         Object genericSuperclass = abilityClass.getGenericSuperclass();
         if (genericSuperclass instanceof ParameterizedType) {
             ParameterizedType type = (ParameterizedType) genericSuperclass;
@@ -237,7 +237,6 @@ public class AbilityRegister {
                     }
                 } catch (ClassNotFoundException e) {
                     log.warn(e.getMessage(), e);
-                    continue;
                 }
             }
         }

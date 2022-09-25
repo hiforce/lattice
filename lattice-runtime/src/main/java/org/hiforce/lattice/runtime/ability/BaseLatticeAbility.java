@@ -5,12 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hifforce.lattice.annotation.model.AbilityAnnotation;
 import org.hifforce.lattice.exception.LatticeRuntimeException;
+import org.hifforce.lattice.message.Message;
 import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.ability.execute.ExtensionCallback;
 import org.hifforce.lattice.model.ability.execute.Reducer;
 import org.hifforce.lattice.model.business.IBizObject;
 import org.hifforce.lattice.model.context.AbilityContext;
+import org.hifforce.lattice.model.register.ExtensionPointSpec;
+import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.runtime.ability.delegate.BaseLatticeAbilityDelegate;
 import org.hiforce.lattice.runtime.ability.execute.ExecuteResult;
 import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
@@ -105,15 +108,25 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
 
         if (null == getContext().getBizObject()) {
             log.error("[Lattice]bizInstance is null, extensionCode: {}", extensionCode);
-            return ExecuteResult.success(null, null, null);
+            return ExecuteResult.success(reducer.reduceName(), null, null, null);
         }
         if (getContext().getBizObject().getBizContext().getBizId() == null) {
             log.error("[Lattice]bizInstance id is null, extensionCode: {}", extensionCode);
-            return ExecuteResult.success(null, null, null);
+            return ExecuteResult.success(reducer.reduceName(), null, null, null);
         }
 
         if (StringUtils.isEmpty(extensionCode)) {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0007");
+        }
+
+        ExtensionPointSpec extensionPointSpec =
+                Lattice.getInstance().getLatticeRuntimeCache().getExtensionPointSpecByCode(extensionCode);
+        if (null == extensionPointSpec && !Lattice.getInstance().isSimpleMode()) {
+            throw new LatticeRuntimeException("LATTICE-CORE-RT-0016", extensionCode);
+        }
+        if ( null != extensionPointSpec && !reducer.reducerType().equals(extensionPointSpec.getReduceType())) {
+            log.warn(Message.code("LATTICE-CORE-RT-0017", extensionCode, reducer.reducerType(),
+                    extensionPointSpec.getReduceType()).getText());
         }
 
         String bizCode = getContext().getBizObject().getBizCode();

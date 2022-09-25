@@ -3,6 +3,7 @@ package org.hiforce.lattice.runtime.ability.execute;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
+import org.hifforce.lattice.annotation.model.ReduceType;
 import org.hifforce.lattice.model.register.TemplateSpec;
 import org.hiforce.lattice.runtime.ability.execute.runner.ExtensionRunner;
 
@@ -20,11 +21,14 @@ public class ExecuteResult<R> {
     @Setter
     private R result;
 
+    @Getter
+    private String reduceName;
+
     /**
      * The detail multi-runner execution result of the extension point.
      */
     @Getter
-    private final List<RunnerExecutionStatus> detailRunnerResults = new ArrayList<>(10);
+    private final List<RunnerExecutionStatus> detailResults = new ArrayList<>(10);
 
     private static final ExtensionRunner.CollectionRunnerExecuteResult DUMMY = new ExtensionRunner.CollectionRunnerExecuteResult();
 
@@ -34,18 +38,20 @@ public class ExecuteResult<R> {
 
 
     public static <T> ExecuteResult<T> success(
+            String reduceName,
             T model, List<TemplateSpec> runners,
             List<ExtensionRunner.CollectionRunnerExecuteResult> executeResults) {
 
         ExecuteResult<T> result = new ExecuteResult<>();
+        result.reduceName = reduceName;
         result.setResult(model);
         if (CollectionUtils.isNotEmpty(runners)) {
             int totalLen = executeResults.size();
             for (int i = 0; i < runners.size(); i++) {
                 if (i < totalLen) {
-                    result.detailRunnerResults.add(toRunnerExecutionStatus(runners.get(i), executeResults.get(i)));
+                    result.detailResults.add(toRunnerExecutionStatus(runners.get(i), executeResults.get(i)));
                 } else {
-                    result.detailRunnerResults.add(toRunnerExecutionStatus(runners.get(i), DUMMY));
+                    result.detailResults.add(toRunnerExecutionStatus(runners.get(i), DUMMY));
                 }
             }
         }

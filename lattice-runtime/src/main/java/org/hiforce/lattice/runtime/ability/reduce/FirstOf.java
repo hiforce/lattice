@@ -1,6 +1,7 @@
 package org.hiforce.lattice.runtime.ability.reduce;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.hifforce.lattice.annotation.model.ReduceType;
 import org.hifforce.lattice.model.ability.execute.Reducer;
 
 import javax.annotation.Nonnull;
@@ -39,6 +40,11 @@ public class FirstOf<T> extends Reducer<T, T> {
             }
         }
         return false;
+    }
+
+    @Override
+    public ReduceType reducerType() {
+        return ReduceType.FIRST;
     }
 
 

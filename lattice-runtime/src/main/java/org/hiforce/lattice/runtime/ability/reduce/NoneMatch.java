@@ -2,6 +2,7 @@ package org.hiforce.lattice.runtime.ability.reduce;
 
 import lombok.Getter;
 import org.apache.commons.collections4.CollectionUtils;
+import org.hifforce.lattice.annotation.model.ReduceType;
 import org.hifforce.lattice.model.ability.execute.Reducer;
 
 import javax.annotation.Nonnull;
@@ -34,6 +35,11 @@ public class NoneMatch<T> extends Reducer<T, Boolean> {
             }
         }
         return false;
+    }
+
+    @Override
+    public ReduceType reducerType() {
+        return ReduceType.ALL;
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.hiforce.lattice.runtime.ability.reduce;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
+import org.hifforce.lattice.annotation.model.ReduceType;
 import org.hifforce.lattice.model.ability.execute.Reducer;
 
 import java.util.Collection;
@@ -20,6 +21,11 @@ public class None<T> extends Reducer<T, List<T>> {
     @Override
     public boolean willBreak(Collection<T> elements) {
         return false;
+    }
+
+    @Override
+    public ReduceType reducerType() {
+        return ReduceType.NONE;
     }
 
     @Override

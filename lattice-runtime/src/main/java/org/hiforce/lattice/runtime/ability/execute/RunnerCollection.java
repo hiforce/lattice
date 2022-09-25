@@ -181,17 +181,18 @@ public class RunnerCollection<ExtensionPoints, R> {
     public <T, R> ExecuteResult<R> reduceExecute(Reducer<T, R> reducer, ExtensionCallback<IBusinessExt, T> callback, List<T> results) {
         List<InstantItem<ExtensionPoints, T>> list = this.generateInstantItem();
         if (list.isEmpty()) {
-            return ExecuteResult.success(reducer.reduce(results), null, null);
+            return ExecuteResult.success(reducer.reduceName(), reducer.reduce(results), null, null);
         }
 
-        List<ExtensionRunner.CollectionRunnerExecuteResult> executeResults = new ArrayList<>(list.size() * 2);// make extra room for multi-results
+        List<ExtensionRunner.CollectionRunnerExecuteResult> executeResults = new ArrayList<>(list.size() * 2);
         for (InstantItem<ExtensionPoints, T> item : list) {
             ExtensionRunner.CollectionRunnerExecuteResult executeResult = new ExtensionRunner.CollectionRunnerExecuteResult();
             List<T> itemResult = item.runAllMatched(callback, executeResult);
             executeResult.setResults(itemResult);
             executeResults.add(executeResult);
             if (reducer.willBreak(itemResult)) {
-                return ExecuteResult.success(reducer.reduce(itemResult), convertToTemplateList(list), executeResults);
+                return ExecuteResult.success(reducer.reduceName(),
+                        reducer.reduce(itemResult), convertToTemplateList(list), executeResults);
             } else {
                 if (itemResult.size() == 1) {
                     results.add(itemResult.get(0));
@@ -200,11 +201,12 @@ public class RunnerCollection<ExtensionPoints, R> {
                 }
             }
         }
-        return ExecuteResult.success(reducer.reduce(results), convertToTemplateList(list), executeResults);
+        return ExecuteResult.success(reducer.reduceName(),
+                reducer.reduce(results), convertToTemplateList(list), executeResults);
     }
 
     private <T> List<TemplateSpec> convertToTemplateList(List<InstantItem<ExtensionPoints, T>> list) {
-        List<TemplateSpec> templates = new ArrayList<>(list.size());// make extra room for multi-results
+        List<TemplateSpec> templates = new ArrayList<>(list.size());
         list.forEach(p -> templates.add(p.runnerItemEntry.template));
         return templates;
     }
@@ -236,20 +238,21 @@ public class RunnerCollection<ExtensionPoints, R> {
         RunnerCollection.RunnerItemEntry<ExtensionPoints, R> produce();
     }
 
-    private static class InstantItem<ExtensionPoints, R> {
+    private class InstantItem<ExtensionPoints, R> {
         RunnerItemEntry<ExtensionPoints, R> runnerItemEntry;
-        IBizObject bizInstance;
+        IBizObject bizObject;
 
-        public InstantItem(RunnerItemEntry<ExtensionPoints, R> runnerItemEntry, IBizObject bizInstance) {
+        public InstantItem(RunnerItemEntry<ExtensionPoints, R> runnerItemEntry, IBizObject bizObject) {
             this.runnerItemEntry = runnerItemEntry;
-            this.bizInstance = bizInstance;
+            this.bizObject = bizObject;
         }
 
         @SuppressWarnings("unchecked")
-        public List<R> runAllMatched(ExtensionCallback<IBusinessExt, R> callback, ExtensionRunner.RunnerExecuteResult executeResult) {
+        public List<R> runAllMatched(
+                ExtensionCallback<IBusinessExt, R> callback, ExtensionRunner.RunnerExecuteResult result) {
             RunnerItemEntry<ExtensionPoints, R> entry = this.runnerItemEntry;
             try {
-                return entry.extensionRunner.runAllMatched(entry.ability, this.bizInstance, callback, executeResult);
+                return entry.extensionRunner.runAllMatched(entry.ability, this.bizObject, callback, result);
             } catch (Exception ex) {
                 log.error(ex.getMessage(), ex);
                 throw ex;

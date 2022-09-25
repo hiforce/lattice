@@ -3,6 +3,7 @@ package org.hiforce.lattice.runtime.ability.reduce;
 import com.google.common.collect.Maps;
 import lombok.Getter;
 import org.apache.commons.collections4.CollectionUtils;
+import org.hifforce.lattice.annotation.model.ReduceType;
 import org.hifforce.lattice.model.ability.execute.Reducer;
 
 import javax.annotation.Nonnull;
@@ -29,6 +30,11 @@ public class FlatMap<K, V> extends Reducer<Map<K, V>, Map<K, V>> {
     @Override
     public boolean willBreak(Collection<Map<K, V>> elements) {
         return false;
+    }
+
+    @Override
+    public ReduceType reducerType() {
+        return ReduceType.ALL;
     }
 
     @Override
