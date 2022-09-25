@@ -7,7 +7,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.hifforce.lattice.annotation.model.AbilityAnnotation;
 import org.hifforce.lattice.annotation.model.ExtensionAnnotation;
 import org.hifforce.lattice.annotation.model.ReduceType;
-import org.hifforce.lattice.spi.annotation.AbilityAnnotationParser;
 import org.hifforce.lattice.exception.LatticeRuntimeException;
 import org.hifforce.lattice.message.Message;
 import org.hifforce.lattice.model.ability.IAbility;
@@ -16,6 +15,7 @@ import org.hifforce.lattice.model.register.AbilityInstSpec;
 import org.hifforce.lattice.model.register.AbilitySpec;
 import org.hifforce.lattice.model.register.BaseSpec;
 import org.hifforce.lattice.model.register.ExtensionPointSpec;
+import org.hifforce.lattice.spi.annotation.AbilityAnnotationParser;
 import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
 import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
@@ -100,6 +100,7 @@ public class AbilityRegister {
         return null;
     }
 
+    @SuppressWarnings("all")
     public synchronized List<AbilityInstSpec> scanAbilityInstance(AbilitySpec abilitySpec, Collection<Class> classSet) {
 
         List<AbilityInstSpec> abilityInstanceSpecList = new ArrayList<>(registerAbilityInstances(abilitySpec, classSet));
@@ -107,6 +108,7 @@ public class AbilityRegister {
         return abilityInstanceSpecList;
     }
 
+    @SuppressWarnings("all")
     private List<AbilityInstSpec> registerAbilityInstances(AbilitySpec abilitySpec, Collection<Class> classSet) {
         List<AbilityInstSpec> instanceSpecs = new ArrayList<>();
         for (Class<?> targetClass : classSet) {
@@ -132,16 +134,16 @@ public class AbilityRegister {
     }
 
     private AbilityInstBuildResult innerRegisterAbilityInstance(AbilitySpec abilitySpec, Class<?> instanceClass) {
-        IAbility ability;
-        IAbility originAbility;
-        Object beanViaClass = getAndCreateSpringBeanViaClass(instanceClass, null);
+        IAbility<?> ability;
+        IAbility<?> originAbility;
+        Object beanViaClass = getAndCreateSpringBeanViaClass(instanceClass, (Object) null);
         if (beanViaClass instanceof IAbility) {
-            ability = (IAbility) beanViaClass;
+            ability = (IAbility<?>) beanViaClass;
             if (AopUtils.isAopProxy(ability)) {
                 Class<?> originCls = AopUtils.getTargetClass(ability);
                 try {
-                    Object curObject = getAndCreateSpringBeanViaClass(originCls, null);
-                    originAbility = (IAbility) curObject;
+                    Object curObject = getAndCreateSpringBeanViaClass(originCls, (Object) null);
+                    originAbility = (IAbility<?>) curObject;
                 } catch (Exception e) {
                     return AbilityInstBuildResult.failed(Message.code("LATTICE-CORE-RT-0002", originCls.getName()));
                 }
@@ -151,30 +153,30 @@ public class AbilityRegister {
         } else {
             return AbilityInstBuildResult.failed(Message.code("LATTICE-CORE-RT-0002", instanceClass.getName()));
         }
-        if (null != Lattice.getInstance().getAbilityProvider().getRealization(originAbility.getInstanceCode())) {
-            if (isAbilityInstanceRegistered(abilitySpec, originAbility)) {
-                return AbilityInstBuildResult.registered();  //已经注册了，就不重复注册
-            }
-            return buildAbilityInstanceSpec(abilitySpec, originAbility, instanceClass);
+
+        if (isAbilityInstanceRegistered(abilitySpec, originAbility)) {
+            return AbilityInstBuildResult.registered();  //已经注册了，就不重复注册
         }
+
         AbilityInstBuildResult result = buildAbilityInstanceSpec(abilitySpec, originAbility, instanceClass);
         if (result.isSuccess()) {
             AbilityInstSpec abilityInstanceSpec = result.getInstanceSpec();
             if (null != abilityInstanceSpec) {
-                Lattice.getInstance().getAbilityProvider().registerRealization(ability, originAbility.getInstanceCode());
+                Lattice.getInstance().getLatticeRuntimeCache()
+                        .doCacheExtensionSpec(abilityInstanceSpec.getExtensions());
             }
         }
         return result;
     }
 
-    private boolean isAbilityInstanceRegistered(AbilitySpec abilitySpec, IAbility instance) {
+    private boolean isAbilityInstanceRegistered(AbilitySpec abilitySpec, IAbility<?> ability) {
         return abilitySpec.getAbilityInstSpecMap().values()
                 .stream()
-                .anyMatch(p -> p.getCode().equals(instance.getInstanceCode()));
+                .anyMatch(p -> p.getCode().equals(ability.getInstanceCode()));
     }
 
-    private AbilityInstBuildResult buildAbilityInstanceSpec(AbilitySpec abilitySpec, IAbility instance,
-                                                            Class<?> instanceClass) {
+    private AbilityInstBuildResult buildAbilityInstanceSpec(
+            AbilitySpec abilitySpec, IAbility<?> instance, Class<?> instanceClass) {
         try {
             AbilityInstSpec instanceDesc = new AbilityInstSpec();
             instanceDesc.setInstanceClass(instanceClass.getName());
@@ -194,7 +196,6 @@ public class AbilityRegister {
 
             Class<?> returnType = findAbilityExtensionDefinition(ability.getClass());
             if (null != returnType) {
-                //是可扩展点的接口
                 extensionPointSpecList.addAll(scanAbilityExtensions(Sets.newHashSet(), returnType, abilitySpec));
             }
 

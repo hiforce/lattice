@@ -80,11 +80,6 @@ public class Lattice {
     private final LatticeRuntimeCache latticeRuntimeCache = (LatticeRuntimeCache) LatticeCacheFactory.getInstance()
             .getRuntimeCache(new LatticeRuntimeCache());
 
-    @Getter
-    @SuppressWarnings("all")
-    private final IAbilityProvider abilityProvider = LatticeSpiFactory.getInstance()
-            .getAbilityProviderCreator().createAbilityProvider();
-
     private Lattice() {
 
     }
