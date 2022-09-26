@@ -1,6 +1,7 @@
 package org.hifforce.lattice.model.config.builder;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.Setter;
 import org.hifforce.lattice.model.config.BusinessConfig;
@@ -9,6 +10,8 @@ import org.hifforce.lattice.model.config.ProductConfig;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Rocky Yu
@@ -26,7 +29,7 @@ public class BusinessConfigBuilder {
     private int priority = 1000;
 
     @Getter
-    private final List<ProductConfig> products = Lists.newArrayList();
+    private final Set<ProductConfig> products = Sets.newHashSet();
 
     @Getter
     private final List<ExtPriorityConfig> extensions = Lists.newArrayList();
@@ -47,6 +50,15 @@ public class BusinessConfigBuilder {
 
     public BusinessConfigBuilder priority(int priority) {
         this.priority = priority;
+        return this;
+    }
+
+    public BusinessConfigBuilder install(String... productCodes) {
+        if (null == productCodes) {
+            return this;
+        }
+        this.products.addAll(Arrays.stream(productCodes).map(ProductConfig::of)
+                .collect(Collectors.toList()));
         return this;
     }
 
@@ -83,7 +95,7 @@ public class BusinessConfigBuilder {
         return this;
     }
 
-    public BusinessConfig build(){
+    public BusinessConfig build() {
         BusinessConfig config = new BusinessConfig();
         config.setPriority(priority);
         config.setBizCode(bizCode);

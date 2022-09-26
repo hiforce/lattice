@@ -3,6 +3,7 @@ package org.hifforce.lattice.model.config;
 import org.hifforce.lattice.exception.LatticeRuntimeException;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Rocky Yu
@@ -12,7 +13,7 @@ public class ReadonlyBusinessConfig extends BusinessConfig {
 
     private static final long serialVersionUID = 248112387639393117L;
 
-    public ReadonlyBusinessConfig(String bizCode, int priority, List<ProductConfig> products, List<ExtPriorityConfig> priorities) {
+    public ReadonlyBusinessConfig(String bizCode, int priority, Set<ProductConfig> products, List<ExtPriorityConfig> priorities) {
         super(bizCode, priority, products, priorities);
     }
 

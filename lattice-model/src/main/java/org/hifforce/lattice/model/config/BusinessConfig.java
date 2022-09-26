@@ -1,6 +1,7 @@
 package org.hifforce.lattice.model.config;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import org.hifforce.lattice.model.business.TemplateType;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -30,12 +32,12 @@ public class BusinessConfig implements Serializable {
     private int priority = 1000;
 
     @Getter
-    private List<ProductConfig> products = Lists.newArrayList();
+    private final Set<ProductConfig> products = Sets.newHashSet();
 
     @Getter
     private List<ExtPriorityConfig> extensions = Lists.newArrayList();
 
-    public BusinessConfig(String bizCode, int priority, List<ProductConfig> products, List<ExtPriorityConfig> extensions) {
+    public BusinessConfig(String bizCode, int priority, Set<ProductConfig> products, List<ExtPriorityConfig> extensions) {
         this.bizCode = bizCode;
         this.priority = priority;
         this.products.addAll(products);

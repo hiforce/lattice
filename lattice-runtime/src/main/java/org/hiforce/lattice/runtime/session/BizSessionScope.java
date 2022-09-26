@@ -17,6 +17,7 @@ import org.hiforce.lattice.runtime.Lattice;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -93,7 +94,7 @@ public abstract class BizSessionScope<Resp, BizObject extends IBizObject>
             }
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0012", bizCode);
         }
-        List<ProductConfig> productConfigs = businessConfig.getProducts();
+        Set<ProductConfig> productConfigs = businessConfig.getProducts();
         return productConfigs.stream().map(p -> Lattice.getInstance().getRegisteredProductByCode(p.getCode()))
                 .filter(Objects::nonNull).collect(Collectors.toList());
     }

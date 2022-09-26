@@ -3,6 +3,7 @@ package org.hifforce.lattice.model.config;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 
 /**
@@ -17,9 +18,24 @@ public class ProductConfig implements Serializable {
     @Setter
     private String code;
 
-    public static ProductConfig of(String code) {
+    public static ProductConfig of(@Nonnull String code) {
         ProductConfig productConfig = new ProductConfig();
         productConfig.setCode(code);
         return productConfig;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ProductConfig config = (ProductConfig) o;
+
+        return code.equals(config.code);
+    }
+
+    @Override
+    public int hashCode() {
+        return code.hashCode();
     }
 }
