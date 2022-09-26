@@ -12,7 +12,7 @@ import org.hifforce.lattice.model.business.IBizObject;
 import org.hifforce.lattice.model.business.TemplateType;
 import org.hifforce.lattice.model.config.BusinessConfig;
 import org.hifforce.lattice.model.config.ExtPriority;
-import org.hifforce.lattice.model.config.PriorityConfig;
+import org.hifforce.lattice.model.config.ExtPriorityConfig;
 import org.hifforce.lattice.model.context.BizSessionContext;
 import org.hifforce.lattice.model.register.BusinessSpec;
 import org.hifforce.lattice.model.register.ProductSpec;
@@ -21,7 +21,6 @@ import org.hifforce.lattice.model.register.TemplateSpec;
 import org.hifforce.lattice.utils.BizCodeUtils;
 import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.runtime.ability.BaseLatticeAbility;
-import org.hiforce.lattice.runtime.spi.IRunnerCollectionBuilder;
 import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 import org.hiforce.lattice.runtime.ability.execute.filter.ExtensionFilter;
 import org.hiforce.lattice.runtime.ability.execute.filter.ProductFilter;
@@ -32,6 +31,7 @@ import org.hiforce.lattice.runtime.cache.ExtensionRunnerCacheKey;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
 import org.hiforce.lattice.runtime.cache.NotExistedExtensionPointRealization;
 import org.hiforce.lattice.runtime.cache.key.ExtensionInvokeCacheKey;
+import org.hiforce.lattice.runtime.spi.IRunnerCollectionBuilder;
 import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
 
 import javax.annotation.Nonnull;
@@ -163,7 +163,7 @@ public class BaseLatticeAbilityDelegate {
             }
         }
 
-        PriorityConfig priorityConfig = businessConfig.getPriorityConfigs().stream()
+        ExtPriorityConfig priorityConfig = businessConfig.getExtensions().stream()
                 .filter(p -> StringUtils.equals(p.getExtCode(), extensionCode))
                 .findFirst().orElse(null);
         if (null == priorityConfig) {
@@ -172,7 +172,7 @@ public class BaseLatticeAbilityDelegate {
         }
 
         List<RunnerCollection.RunnerItemEntry<ExtensionPoints, R>> extensionRunners = new ArrayList<>();
-        for (ExtPriority config : businessConfig.getProductConfigByExtCode(extensionCode, isOnlyProduct)) {
+        for (ExtPriority config : businessConfig.getExtPriorityByCode(extensionCode, isOnlyProduct)) {
             if (null == config)
                 continue;
             BizSessionContext bizSessionContext =

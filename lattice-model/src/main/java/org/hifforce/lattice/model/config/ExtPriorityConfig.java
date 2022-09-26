@@ -14,7 +14,7 @@ import java.util.List;
  */
 @SuppressWarnings("all")
 @NoArgsConstructor
-public class PriorityConfig implements Serializable {
+public class ExtPriorityConfig implements Serializable {
 
     private static final long serialVersionUID = -1973462143706510775L;
 

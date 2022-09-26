@@ -1,7 +1,6 @@
 package org.hifforce.lattice.model.config;
 
 import com.google.common.collect.Lists;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
@@ -15,7 +14,6 @@ import java.util.stream.Collectors;
  * @author Rocky Yu
  * @since 2022/9/19
  */
-@Builder
 @SuppressWarnings("all")
 public class BusinessConfig implements Serializable {
 
@@ -30,24 +28,35 @@ public class BusinessConfig implements Serializable {
     private int priority = 1000;
 
     @Getter
-    private List<ProductConfig> installedProducts = Lists.newArrayList();
+    private List<ProductConfig> products = Lists.newArrayList();
 
     @Getter
-    private List<PriorityConfig> priorityConfigs = Lists.newArrayList();
+    private List<ExtPriorityConfig> extensions = Lists.newArrayList();
 
     public boolean productInstalled(String productCode) {
-        return installedProducts.stream().filter(p -> StringUtils.equals(p.getCode(), productCode))
+        return products.stream().filter(p -> StringUtils.equals(p.getCode(), productCode))
                 .findFirst().isPresent();
     }
 
     public boolean notContainExtCode(String extCode) {
-        return !priorityConfigs.stream()
+        return !extensions.stream()
                 .filter(p -> StringUtils.equals(extCode, p.getExtCode()))
                 .findFirst().isPresent();
     }
 
-    public List<ExtPriority> getProductConfigByExtCode(String extCode, boolean isOnlyProduct) {
-        PriorityConfig priorityConfig = priorityConfigs.stream()
+    public ProductConfig getProductConfig(String productCode) {
+        return products.stream()
+                .filter(p -> StringUtils.equals(productCode, p.getCode()))
+                .findFirst().orElse(null);
+    }
+
+    /**
+     * @param extCode       The code of extension
+     * @param isOnlyProduct only load the product type priority config.
+     * @return found extension priority config.
+     */
+    public List<ExtPriority> getExtPriorityByCode(String extCode, boolean isOnlyProduct) {
+        ExtPriorityConfig priorityConfig = extensions.stream()
                 .filter(p -> StringUtils.equals(extCode, p.getExtCode()))
                 .findFirst().orElse(null);
         if (null == priorityConfig) {
@@ -58,4 +67,6 @@ public class BusinessConfig implements Serializable {
                 .collect(Collectors.toList());
         return priorities;
     }
+
+
 }

@@ -93,7 +93,7 @@ public abstract class BizSessionScope<Resp, BizObject extends IBizObject>
             }
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0012", bizCode);
         }
-        List<ProductConfig> productConfigs = businessConfig.getInstalledProducts();
+        List<ProductConfig> productConfigs = businessConfig.getProducts();
         return productConfigs.stream().map(p -> Lattice.getInstance().getRegisteredProductByCode(p.getCode()))
                 .filter(Objects::nonNull).collect(Collectors.toList());
     }

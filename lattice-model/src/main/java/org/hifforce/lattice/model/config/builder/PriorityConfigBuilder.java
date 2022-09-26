@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import lombok.Getter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hifforce.lattice.model.config.ExtPriority;
-import org.hifforce.lattice.model.config.PriorityConfig;
+import org.hifforce.lattice.model.config.ExtPriorityConfig;
 
 import java.util.List;
 
@@ -12,6 +12,7 @@ import java.util.List;
  * @author Rocky Yu
  * @since 2022/9/24
  */
+@SuppressWarnings("unused")
 public class PriorityConfigBuilder {
 
     @Getter
@@ -28,8 +29,8 @@ public class PriorityConfigBuilder {
         return new PriorityConfigBuilder();
     }
 
-    public PriorityConfig build() {
-        PriorityConfig config = new PriorityConfig();
+    public ExtPriorityConfig build() {
+        ExtPriorityConfig config = new ExtPriorityConfig();
         config.setExtCode(extCode);
         config.getPriorities().addAll(priorities);
         return config;
