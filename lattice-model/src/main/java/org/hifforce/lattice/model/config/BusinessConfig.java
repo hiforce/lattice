@@ -2,6 +2,7 @@ package org.hifforce.lattice.model.config;
 
 import com.google.common.collect.Lists;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.hifforce.lattice.model.business.TemplateType;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
  * @author Rocky Yu
  * @since 2022/9/19
  */
+@NoArgsConstructor
 @SuppressWarnings("all")
 public class BusinessConfig implements Serializable {
 
@@ -32,6 +34,13 @@ public class BusinessConfig implements Serializable {
 
     @Getter
     private List<ExtPriorityConfig> extensions = Lists.newArrayList();
+
+    public BusinessConfig(String bizCode, int priority, List<ProductConfig> products, List<ExtPriorityConfig> extensions) {
+        this.bizCode = bizCode;
+        this.priority = priority;
+        this.products.addAll(products);
+        this.extensions.addAll(extensions);
+    }
 
     public boolean productInstalled(String productCode) {
         return products.stream().filter(p -> StringUtils.equals(p.getCode(), productCode))
