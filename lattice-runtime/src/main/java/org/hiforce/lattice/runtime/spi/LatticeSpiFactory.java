@@ -1,13 +1,15 @@
 package org.hiforce.lattice.runtime.spi;
 
 import com.google.common.collect.Lists;
+import org.apache.commons.collections4.CollectionUtils;
 import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.provider.IAbilityProviderCreator;
 import org.hifforce.lattice.spi.annotation.*;
-import org.hiforce.lattice.runtime.ability.BaseLatticeAbility;
+import org.hifforce.lattice.spi.config.BusinessConfigLoadSpi;
 import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 import org.hiforce.lattice.runtime.ability.provider.DefaultAbilityProviderCreator;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.ServiceLoader;
@@ -45,6 +47,9 @@ public class LatticeSpiFactory {
 
     private IRunnerCollectionBuilder runnerCollectionBuilder;
 
+
+    private List<BusinessConfigLoadSpi> businessConfigLoads;
+
     private LatticeSpiFactory() {
 
     }
@@ -61,27 +66,38 @@ public class LatticeSpiFactory {
         return instance;
     }
 
+    public List<BusinessConfigLoadSpi> getBusinessConfigLoads() {
+        if (null == businessConfigLoads) {
+            businessConfigLoads = getCustomServiceProviders(BusinessConfigLoadSpi.class);
+        }
+        if (CollectionUtils.isNotEmpty(businessConfigLoads)) {
+            businessConfigLoads.forEach(p -> p.setClassLoader(getClassLoader()));
+            businessConfigLoads.sort(Comparator.comparingInt(BusinessConfigLoadSpi::getPriority));
+        }
+        return businessConfigLoads;
+    }
+
     /**
      * @return The Ability's Custom Annotation Parsers..
      */
     @SuppressWarnings("rawtypes")
     public List<AbilityAnnotationParser> getAbilityAnnotationParsers() {
         if (null == abilityAnnotationParsers) {
-            abilityAnnotationParsers = getCustomAnnotationParsers(AbilityAnnotationParser.class);
+            abilityAnnotationParsers = getCustomServiceProviders(AbilityAnnotationParser.class);
         }
         return abilityAnnotationParsers;
     }
 
     public List<ProductAnnotationParser> getProductAnnotationParsers() {
         if (null == productAnnotationParsers) {
-            productAnnotationParsers = getCustomAnnotationParsers(ProductAnnotationParser.class);
+            productAnnotationParsers = getCustomServiceProviders(ProductAnnotationParser.class);
         }
         return productAnnotationParsers;
     }
 
     public List<BusinessAnnotationParser> getBusinessAnnotationParsers() {
         if (null == businessAnnotationParsers) {
-            businessAnnotationParsers = getCustomAnnotationParsers(BusinessAnnotationParser.class);
+            businessAnnotationParsers = getCustomServiceProviders(BusinessAnnotationParser.class);
         }
         return businessAnnotationParsers;
     }
@@ -90,7 +106,7 @@ public class LatticeSpiFactory {
     public List<ExtensionAnnotationParser> getExtensionAnnotationParsers() {
         if (null == extensionAnnotationParsers) {
             extensionAnnotationParsers =
-                    getCustomAnnotationParsers(ExtensionAnnotationParser.class);
+                    getCustomServiceProviders(ExtensionAnnotationParser.class);
         }
         return extensionAnnotationParsers;
     }
@@ -99,7 +115,7 @@ public class LatticeSpiFactory {
     public List<RealizationAnnotationParser> getRealizationAnnotationParsers() {
         if (null == realizationAnnotationParsers) {
             realizationAnnotationParsers =
-                    getCustomAnnotationParsers(RealizationAnnotationParser.class);
+                    getCustomServiceProviders(RealizationAnnotationParser.class);
         }
         return realizationAnnotationParsers;
     }
@@ -107,12 +123,12 @@ public class LatticeSpiFactory {
     @SuppressWarnings("rawtypes")
     public List<ScanSkipAnnotationParser> getScanSkipAnnotationParsers() {
         if (null == scanSkipAnnotationParsers) {
-            scanSkipAnnotationParsers = getCustomAnnotationParsers(ScanSkipAnnotationParser.class);
+            scanSkipAnnotationParsers = getCustomServiceProviders(ScanSkipAnnotationParser.class);
         }
         return scanSkipAnnotationParsers;
     }
 
-    public <T> List<T> getCustomAnnotationParsers(Class<T> spiClass) {
+    public <T> List<T> getCustomServiceProviders(Class<T> spiClass) {
 
         ServiceLoader<T> serializers;
         serializers = ServiceLoader.load(spiClass, classLoader);

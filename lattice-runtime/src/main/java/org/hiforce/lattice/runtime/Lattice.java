@@ -19,15 +19,13 @@ import org.hifforce.lattice.model.business.IProduct;
 import org.hifforce.lattice.model.business.TemplateType;
 import org.hifforce.lattice.model.config.*;
 import org.hifforce.lattice.model.config.builder.BusinessConfigBuilder;
-import org.hifforce.lattice.model.register.AbilitySpec;
-import org.hifforce.lattice.model.register.BusinessSpec;
-import org.hifforce.lattice.model.register.ProductSpec;
-import org.hifforce.lattice.model.register.RealizationSpec;
+import org.hifforce.lattice.model.register.*;
 import org.hifforce.lattice.utils.BizCodeUtils;
 import org.hiforce.lattice.runtime.ability.register.AbilityBuildRequest;
 import org.hiforce.lattice.runtime.ability.register.AbilityRegister;
 import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
+import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
 import org.hiforce.lattice.runtime.template.LatticeTemplateManager;
 import org.hiforce.lattice.runtime.utils.ClassLoaderUtil;
 import org.hiforce.lattice.runtime.utils.ClassPathScanHandler;
@@ -123,10 +121,19 @@ public class Lattice {
 
 
     private void buildBusinessConfig() {
+        List<String> bizCodes = Lattice.getInstance().getAllRegisteredBusinesses().stream()
+                .map(BaseSpec::getCode).collect(Collectors.toList());
+        List<BusinessConfig> configs = LatticeSpiFactory.getInstance().getBusinessConfigLoads().stream()
+                .flatMap(p -> p.loadBusinessConfigs(bizCodes).stream())
+                .collect(Collectors.toList());
+        businessConfigs.addAll(configs);
+
         if (isSimpleMode()) {
             //auto-config business and products.
             autoBuildBusinessConfig();
         }
+
+        businessConfigs.sort(Comparator.comparingInt(BusinessConfig::getPriority));
     }
 
     public void addBusinessConfig(BusinessConfig config) {
@@ -157,6 +164,11 @@ public class Lattice {
                 .map(this::buildProductConfig)
                 .collect(Collectors.toList());
         for (BusinessSpec businessSpec : getAllRegisteredBusinesses()) {
+            if (businessConfigs.stream()
+                    .anyMatch(p -> StringUtils.equals(p.getBizCode(), businessSpec.getCode()))) {
+                continue; //不重复构建
+            }
+
             List<ExtPriorityConfig> priorityConfigs = businessSpec.getRealizations().stream()
                     .flatMap(p -> autoBuildPriorityConfig(businessSpec, p).stream())
                     .filter(Objects::nonNull)
@@ -168,7 +180,6 @@ public class Lattice {
                     .extension(priorityConfigs)
                     .build();
             businessConfigs.add(businessConfig);
-            businessConfigs.sort(Comparator.comparingInt(BusinessConfig::getPriority));
         }
     }
 
