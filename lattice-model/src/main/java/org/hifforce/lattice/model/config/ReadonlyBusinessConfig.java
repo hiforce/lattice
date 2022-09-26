@@ -13,10 +13,7 @@ public class ReadonlyBusinessConfig extends BusinessConfig {
     private static final long serialVersionUID = 248112387639393117L;
 
     public ReadonlyBusinessConfig(String bizCode, int priority, List<ProductConfig> products, List<ExtPriorityConfig> priorities) {
-        this.setBizCode(bizCode);
-        this.setPriority(priority);
-        getProducts().addAll(products);
-        getExtensions().addAll(priorities);
+        super(bizCode, priority, products, priorities);
     }
 
     public void setBizCode(String bizCode) {
