@@ -18,6 +18,10 @@ public abstract class BizContext implements Serializable {
 
     public abstract String getScenario();
 
+    public String getBizInfo() {
+        return String.format("[BizCode: %s, BizId: %s]", getBizCode(), getBizId());
+    }
+
 
     private int hashCode;
 

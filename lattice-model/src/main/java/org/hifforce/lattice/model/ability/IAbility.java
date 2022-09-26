@@ -28,6 +28,14 @@ public interface IAbility<BusinessExt extends IBusinessExt> {
     AbilityContext getContext();
 
     /**
+     * Whether current ability support current bizObject
+     *
+     * @return default return true.
+     */
+    boolean supportChecking();
+
+
+    /**
      * Whether current ability support customization from plugin's extension realization.
      *
      * @return true or false.

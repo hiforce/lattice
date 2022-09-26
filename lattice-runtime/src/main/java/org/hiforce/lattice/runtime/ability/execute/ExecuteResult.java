@@ -3,7 +3,7 @@ package org.hiforce.lattice.runtime.ability.execute;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
-import org.hifforce.lattice.annotation.model.ReduceType;
+import org.hifforce.lattice.message.Message;
 import org.hifforce.lattice.model.register.TemplateSpec;
 import org.hiforce.lattice.runtime.ability.execute.runner.ExtensionRunner;
 
@@ -16,6 +16,22 @@ import java.util.List;
  * @since 2022/9/18
  */
 public class ExecuteResult<R> {
+
+    @Getter
+    @Setter
+    private String extCode;
+
+    @Getter
+    private boolean success;
+
+    @Getter
+    private String errCode;
+
+    @Getter
+    private String errLogText;
+
+    @Getter
+    private String errText;
 
     @Getter
     @Setter
@@ -36,13 +52,41 @@ public class ExecuteResult<R> {
         DUMMY.setResults(Collections.emptyList());
     }
 
+    public static <T> ExecuteResult<T> failed(String extCode, Message message) {
+        ExecuteResult<T> result = new ExecuteResult<>();
+        result.extCode = extCode;
+        result.errCode = message.getCode();
+        result.errLogText = message.getText();
+        result.errText = message.getDisplayText();
+        return result;
+    }
 
     public static <T> ExecuteResult<T> success(
+            String extCode,
+            String reduceName, Message message) {
+
+        ExecuteResult<T> result = new ExecuteResult<>();
+        result.extCode = extCode;
+        result.success = true;
+        result.reduceName = reduceName;
+        result.setResult(null);
+        result.extCode = extCode;
+        result.errCode = message.getCode();
+        result.errLogText = message.getText();
+        result.errText = message.getDisplayText();
+        return result;
+    }
+
+
+    public static <T> ExecuteResult<T> success(
+            String extCode,
             String reduceName,
             T model, List<TemplateSpec> runners,
             List<ExtensionRunner.CollectionRunnerExecuteResult> executeResults) {
 
         ExecuteResult<T> result = new ExecuteResult<>();
+        result.extCode = extCode;
+        result.success = true;
         result.reduceName = reduceName;
         result.setResult(model);
         if (CollectionUtils.isNotEmpty(runners)) {

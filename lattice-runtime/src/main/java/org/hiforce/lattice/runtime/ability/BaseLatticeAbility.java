@@ -23,6 +23,9 @@ import org.hiforce.lattice.runtime.utils.LatticeAnnotationUtils;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import static org.hiforce.lattice.runtime.ability.execute.filter.ExtensionFilter.DEFAULT_FILTER;
 
 /**
  * @author Rocky Yu
@@ -57,6 +60,15 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
         return annotation.getCode();
     }
 
+    public <R> void handleReduceExecuteFailed(ExecuteResult<R> result) {
+        log.error(result.getErrLogText());
+    }
+
+    @Override
+    public boolean supportChecking() {
+        return true;
+    }
+
     @Override
     public boolean supportCustomization() {
         return true;
@@ -80,12 +92,7 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
                                         ExtensionCallback<BusinessExt, T> callback,
                                         @Nonnull Reducer<T, R> reducer) {
 
-        ExecuteResult<R> result = reduceExecuteWithDetailResult(
-                extensionCode, callback, reducer, ExtensionFilter.DEFAULT_FILTER);
-        if (null == result || null == result.getResult()) {
-            return null;
-        }
-        return result.getResult();
+        return reduceExecute(extensionCode, callback, reducer, DEFAULT_FILTER);
     }
 
     @SuppressWarnings("unused")
@@ -98,34 +105,44 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
         if (null == result || null == result.getResult()) {
             return null;
         }
+        if (!result.isSuccess()) {
+            handleReduceExecuteFailed(result);
+            return null;
+        }
         return result.getResult();
     }
 
     @SuppressWarnings("all")
-    protected <T, R> ExecuteResult<R> reduceExecuteWithDetailResult(
-            String extensionCode, ExtensionCallback<BusinessExt, T> callback,
+    public final <T, R> ExecuteResult<R> reduceExecuteWithDetailResult(
+            String extCode, ExtensionCallback<BusinessExt, T> callback,
             @Nonnull Reducer<T, R> reducer, ExtensionFilter filter) {
 
-        if (null == getContext().getBizObject()) {
-            log.error("[Lattice]bizInstance is null, extensionCode: {}", extensionCode);
-            return ExecuteResult.success(reducer.reduceName(), null, null, null);
-        }
-        if (getContext().getBizObject().getBizContext().getBizId() == null) {
-            log.error("[Lattice]bizInstance id is null, extensionCode: {}", extensionCode);
-            return ExecuteResult.success(reducer.reduceName(), null, null, null);
-        }
-
-        if (StringUtils.isEmpty(extensionCode)) {
+        if (StringUtils.isEmpty(extCode)) {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0007");
         }
 
-        ExtensionPointSpec extensionPointSpec =
-                Lattice.getInstance().getLatticeRuntimeCache().getExtensionPointSpecByCode(extensionCode);
-        if (null == extensionPointSpec && !Lattice.getInstance().isSimpleMode()) {
-            throw new LatticeRuntimeException("LATTICE-CORE-RT-0016", extensionCode);
+        if (null == getContext().getBizObject()) {
+            return ExecuteResult.failed(extCode, Message.code("LATTICE-CORE-RT-0018"));
         }
-        if ( null != extensionPointSpec && !reducer.reducerType().equals(extensionPointSpec.getReduceType())) {
-            log.warn(Message.code("LATTICE-CORE-RT-0017", extensionCode, reducer.reducerType(),
+        if (getContext().getBizObject().getBizContext().getBizId() == null) {
+            return ExecuteResult.failed(extCode, Message.code("LATTICE-CORE-RT-0019"));
+        }
+
+        if (!supportChecking()) {
+            return ExecuteResult.success(extCode, reducer.reduceName(),
+                    Message.code("LATTICE-CORE-RT-0020", this.getClass().getName(),
+                            Optional.ofNullable(getContext().getBizObject())
+                                    .map(p -> p.getBizContext())
+                                    .map(p -> p.getBizInfo()).orElse(getContext().getBizObject().getBizId().toString()), extCode));
+        }
+
+        ExtensionPointSpec extensionPointSpec =
+                Lattice.getInstance().getLatticeRuntimeCache().getExtensionPointSpecByCode(extCode);
+        if (null == extensionPointSpec && !Lattice.getInstance().isSimpleMode()) {
+            throw new LatticeRuntimeException("LATTICE-CORE-RT-0016", extCode);
+        }
+        if (null != extensionPointSpec && !reducer.reducerType().equals(extensionPointSpec.getReduceType())) {
+            log.warn(Message.code("LATTICE-CORE-RT-0017", extCode, reducer.reducerType(),
                     extensionPointSpec.getReduceType()).getText());
         }
 
@@ -135,8 +152,8 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
         }
 
         List<T> results = new ArrayList<>(16);
-        RunnerCollection<BusinessExt, R> runnerCollection = delegate.loadExtensionRunners(extensionCode, filter);
+        RunnerCollection<BusinessExt, R> runnerCollection = delegate.loadExtensionRunners(extCode, filter);
         return runnerCollection.distinct()
-                .reduceExecute(reducer, (ExtensionCallback<IBusinessExt, T>) callback, results);
+                .reduceExecute(extCode, reducer, (ExtensionCallback<IBusinessExt, T>) callback, results);
     }
 }
