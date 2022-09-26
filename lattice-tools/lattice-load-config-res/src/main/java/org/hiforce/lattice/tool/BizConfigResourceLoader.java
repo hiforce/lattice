@@ -2,6 +2,7 @@ package org.hiforce.lattice.tool;
 
 import com.google.auto.service.AutoService;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hifforce.lattice.model.config.BusinessConfig;
 import org.hifforce.lattice.spi.config.BusinessConfigLoadSpi;
@@ -16,6 +17,7 @@ import java.util.Optional;
  * @author Rocky Yu
  * @since 2022/9/26
  */
+@Slf4j
 @SuppressWarnings("unused")
 @AutoService(BusinessConfigLoadSpi.class)
 public class BizConfigResourceLoader implements BusinessConfigLoadSpi {
@@ -46,8 +48,10 @@ public class BizConfigResourceLoader implements BusinessConfigLoadSpi {
                 if (StringUtils.isEmpty(jsonStr)) {
                     continue;
                 }
+                log.warn("Lattice business [{}] local config file: {} found!", bizCode, resourceFile);
                 BusinessConfig businessConfig = JacksonUtils.deserializeIgnoreException(jsonStr, BusinessConfig.class);
                 configs.add(businessConfig);
+                log.warn("Lattice business [{}] local config loaded!", bizCode);
             } finally {
                 try {
                     if (null != is) {
