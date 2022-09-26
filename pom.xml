@@ -29,6 +29,8 @@
         <module>lattice-model</module>
         <module>lattice-runtime</module>
         <module>lattice-test</module>
+        <module>lattice-tools</module>
+        <module>lattice-tools/lattice-load-config-res</module>
     </modules>
 
     <dependencyManagement>
@@ -229,7 +231,17 @@
         <developer>
             <name>Rocky Yu</name>
             <email>rocky@yze.cn</email>
-            <organization>Hiforce</organization>
+            <organization>Lattice Open Group</organization>
+        </developer>
+        <developer>
+            <name>Xie Zhaodong</name>
+            <email>pursuer_xie@foxmail.com</email>
+            <organization>Lattice Open Group</organization>
+        </developer>
+        <developer>
+            <name>Wen JiongYang</name>
+            <email>770105248@qq.com</email>
+            <organization>Lattice Open Group</organization>
         </developer>
     </developers>
 </project>
