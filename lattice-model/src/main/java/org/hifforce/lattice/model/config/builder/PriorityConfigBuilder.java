@@ -44,6 +44,9 @@ public class PriorityConfigBuilder {
     }
 
     public PriorityConfigBuilder priority(@Nonnull String templateCode, @Nonnull TemplateType type) {
+        if (this.priorities == null) {
+            this.priorities = Lists.newArrayList();
+        }
         this.priorities.add(ExtPriority.of(templateCode, type));
         return this;
     }
