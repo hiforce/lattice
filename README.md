@@ -11,3 +11,4 @@ The main ideas of Lattice's architecture design are:
 # Development Guide
 
 * [Quickstart Guide](https://github.com/hiforce/lattice/wiki/Quickstart-Guide)
+* [Business Overlay Product](https://github.com/hiforce/lattice/wiki/Business-Overlay-Product)
