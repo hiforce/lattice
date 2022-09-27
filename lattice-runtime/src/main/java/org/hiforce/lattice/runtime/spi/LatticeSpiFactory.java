@@ -7,7 +7,6 @@ import org.hifforce.lattice.model.ability.provider.IAbilityProviderCreator;
 import org.hifforce.lattice.spi.annotation.*;
 import org.hifforce.lattice.spi.config.BusinessConfigLoadSpi;
 import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
-import org.hiforce.lattice.runtime.ability.provider.DefaultAbilityProviderCreator;
 
 import java.util.Comparator;
 import java.util.List;
@@ -134,21 +133,6 @@ public class LatticeSpiFactory {
         serializers = ServiceLoader.load(spiClass, classLoader);
         return StreamSupport.stream(serializers.spliterator(), false)
                 .distinct().collect(Collectors.toList());
-    }
-
-    public IAbilityProviderCreator getAbilityProviderCreator() {
-        if (null != abilityProviderCreator) {
-            return abilityProviderCreator;
-        }
-        synchronized (LatticeSpiFactory.class) {
-            if (null == abilityProviderCreator) {
-                ServiceLoader<IAbilityProviderCreator> serializers = ServiceLoader.load(IAbilityProviderCreator.class, classLoader);
-                final Optional<IAbilityProviderCreator> serializer = StreamSupport.stream(serializers.spliterator(), false)
-                        .findFirst();
-                abilityProviderCreator = serializer.orElse(new DefaultAbilityProviderCreator());
-            }
-        }
-        return abilityProviderCreator;
     }
 
     private ClassLoader getClassLoader() {
