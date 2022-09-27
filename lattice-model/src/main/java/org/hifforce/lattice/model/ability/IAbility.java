@@ -20,7 +20,7 @@ public interface IAbility<BusinessExt extends IBusinessExt> {
     String getCode();
 
     /**
-     * @return current domain ability's instance unique code.
+     * @return current ability's instance unique code.
      */
     String getInstanceCode();
 
