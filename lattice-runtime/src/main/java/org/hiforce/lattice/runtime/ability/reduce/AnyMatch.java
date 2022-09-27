@@ -47,11 +47,9 @@ public class AnyMatch<T> extends Reducer<T, Boolean> {
 
     @Override
     public Boolean reduce(Collection<T> elements) {
-
         if (isHasBreak()) {
             return getResult();
         }
-        //如果之前都没有中断,说明没有命中
         return false;
     }
 }
