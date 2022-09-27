@@ -14,3 +14,4 @@ The main ideas of Lattice's architecture design are:
 * [Business Overlay Product](https://github.com/hiforce/lattice/wiki/Business-Overlay-Product)
 * [Register Business Configuration](https://github.com/hiforce/lattice/wiki/Register-Business-Configuration)
 * [Load Local Configuration](https://github.com/hiforce/lattice/wiki/Load-Local-Configuration)
+* [Reduce Strategy](https://github.com/hiforce/lattice/wiki/Reduce-Strategy)
