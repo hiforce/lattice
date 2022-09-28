@@ -2,8 +2,8 @@ package org.hifforce.lattice.model.context;
 
 import com.google.common.collect.Maps;
 import lombok.Getter;
-import org.hifforce.lattice.model.business.ProductTemplate;
-import org.hifforce.lattice.model.register.ProductSpec;
+import org.hifforce.lattice.model.business.ITemplate;
+import org.hifforce.lattice.model.register.TemplateSpec;
 
 import java.util.List;
 import java.util.Map;
@@ -18,5 +18,6 @@ public class BizSessionContext {
             ThreadLocal.withInitial(BizSessionContext::new);
 
     @Getter
-    private final Map<String, List<ProductSpec>> effectiveProducts = Maps.newConcurrentMap();
+    private final Map<String, List<TemplateSpec<? extends ITemplate>>>
+            effectiveTemplates = Maps.newConcurrentMap();
 }

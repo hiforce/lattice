@@ -7,14 +7,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.hifforce.lattice.annotation.model.BusinessAnnotation;
 import org.hifforce.lattice.annotation.model.ProductAnnotation;
 import org.hifforce.lattice.annotation.model.RealizationAnnotation;
-import org.hifforce.lattice.spi.annotation.BusinessAnnotationParser;
-import org.hifforce.lattice.spi.annotation.ProductAnnotationParser;
-import org.hifforce.lattice.spi.annotation.RealizationAnnotationParser;
+import org.hifforce.lattice.annotation.model.UseCaseAnnotation;
 import org.hifforce.lattice.exception.LatticeRuntimeException;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.register.BusinessSpec;
 import org.hifforce.lattice.model.register.ProductSpec;
 import org.hifforce.lattice.model.register.RealizationSpec;
+import org.hifforce.lattice.model.register.UseCaseSpec;
+import org.hifforce.lattice.spi.annotation.BusinessAnnotationParser;
+import org.hifforce.lattice.spi.annotation.ProductAnnotationParser;
+import org.hifforce.lattice.spi.annotation.RealizationAnnotationParser;
+import org.hifforce.lattice.spi.annotation.UseCaseAnnotationParser;
 import org.hifforce.lattice.utils.BizCodeUtils;
 import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
 import org.hiforce.lattice.runtime.utils.BusinessExtUtils;
@@ -39,6 +42,9 @@ public class TemplateRegister {
 
     @Getter
     private final List<ProductSpec> products = Lists.newArrayList();
+
+    @Getter
+    private final List<UseCaseSpec> useCases = Lists.newArrayList();
 
     @Getter
     private final List<BusinessSpec> businesses = Lists.newArrayList();
@@ -76,6 +82,30 @@ public class TemplateRegister {
     }
 
     @SuppressWarnings("rawtypes")
+    public List<UseCaseSpec> registerUseCases(Set<Class> classSet) {
+        for (Class clz : classSet) {
+            UseCaseAnnotation annotation = getUseCaseAnnotation(clz);
+            if (null == annotation) {
+                continue;
+            }
+            UseCaseSpec spec = new UseCaseSpec();
+            spec.setUseCaseClass(clz);
+            spec.setCode(annotation.getCode());
+            spec.setName(annotation.getName());
+            spec.setDescription(annotation.getDesc());
+            spec.setPriority(annotation.getPriority());
+            spec.setSdk(annotation.getSdk());
+
+            spec.getRealizations().addAll(realizations.stream()
+                    .filter(p -> StringUtils.equals(p.getCode(), spec.getCode()))
+                    .collect(Collectors.toList()));
+            useCases.add(spec);
+        }
+        useCases.sort(Comparator.comparingInt(UseCaseSpec::getPriority));
+        return useCases;
+    }
+
+    @SuppressWarnings("rawtypes")
     public List<ProductSpec> registerProducts(Set<Class> classSet) {
         for (Class clz : classSet) {
             ProductAnnotation annotation = getProductAnnotation(clz);
@@ -87,10 +117,7 @@ public class TemplateRegister {
             productSpec.setCode(annotation.getCode());
             productSpec.setName(annotation.getName());
             productSpec.setDescription(annotation.getDesc());
-            productSpec.setType(annotation.getType());
             productSpec.setPriority(annotation.getPriority());
-            productSpec.setBusinessExt(annotation.getBusinessExt());
-
             productSpec.getRealizations().addAll(realizations.stream()
                     .filter(p -> StringUtils.equals(p.getCode(), productSpec.getCode()))
                     .collect(Collectors.toList()));
@@ -151,8 +178,25 @@ public class TemplateRegister {
             ProductAnnotation info = new ProductAnnotation();
             info.setName(parser.getName(annotation));
             info.setCode(parser.getCode(annotation));
-            info.setType(parser.getType(annotation));
             info.setDesc(parser.getDesc(annotation));
+            info.setPriority(parser.getPriority(annotation));
+            return info;
+        }
+        return null;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private UseCaseAnnotation getUseCaseAnnotation(Class targetClass) {
+        for (UseCaseAnnotationParser parser : LatticeSpiFactory.getInstance().getUseCaseAnnotationParsers()) {
+            Annotation annotation = AnnotationUtils.findAnnotation(targetClass, parser.getAnnotationClass());
+            if (null == annotation) {
+                continue;
+            }
+            UseCaseAnnotation info = new UseCaseAnnotation();
+            info.setName(parser.getName(annotation));
+            info.setCode(parser.getCode(annotation));
+            info.setDesc(parser.getDesc(annotation));
+            info.setSdk(parser.getSdk(annotation));
             info.setPriority(parser.getPriority(annotation));
             return info;
         }

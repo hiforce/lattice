@@ -16,6 +16,7 @@ import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.business.IBusiness;
 import org.hifforce.lattice.model.business.IProduct;
+import org.hifforce.lattice.model.business.IUseCase;
 import org.hifforce.lattice.model.business.TemplateType;
 import org.hifforce.lattice.model.config.*;
 import org.hifforce.lattice.model.config.builder.BusinessConfigBuilder;
@@ -92,6 +93,7 @@ public class Lattice {
         registerAbilities();//Register the Ability Instances during runtime.
         registerRealizations();//Register the business extension realization during runtime.
         registerBusinesses();
+        registerUseCases();
         registerProducts();
         buildBusinessConfig();
         initLatticeCache();
@@ -241,6 +243,10 @@ public class Lattice {
         return Lattice.getInstance().getLatticeRuntimeCache().getAllCachedAbilities();
     }
 
+    public List<UseCaseSpec> getAllRegisteredUseCases() {
+        return TemplateRegister.getInstance().getUseCases();
+    }
+
     public List<ProductSpec> getAllRegisteredProducts() {
         return TemplateRegister.getInstance().getProducts();
     }
@@ -328,6 +334,12 @@ public class Lattice {
     private void registerProducts() {
         Set<Class> classSet = getServiceProviderClasses(IProduct.class.getName());
         TemplateRegister.getInstance().registerProducts(classSet);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private void registerUseCases() {
+        Set<Class> classSet = getServiceProviderClasses(IUseCase.class.getName());
+        TemplateRegister.getInstance().registerUseCases(classSet);
     }
 
     @SuppressWarnings("rawtypes")

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hifforce.lattice.cache.ITemplateCache;
 import org.hifforce.lattice.cache.LatticeCacheFactory;
+import org.hifforce.lattice.model.business.ITemplate;
 import org.hifforce.lattice.model.business.TemplateType;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
  * @author Rocky Yu
  * @since 2022/9/21
  */
-public class TemplateSpec extends BaseSpec {
+public abstract class TemplateSpec<T extends ITemplate> extends BaseSpec {
 
     @Getter
     @Setter
@@ -36,4 +37,6 @@ public class TemplateSpec extends BaseSpec {
         }
         return internalId;
     }
+
+    public abstract T newInstance();
 }

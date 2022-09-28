@@ -46,6 +46,23 @@ public enum TemplateType {
         public int defaultExtPriority() {
             return 500;
         }
+    },
+
+    USE_CASE {
+        @Override
+        public boolean isHorizontal() {
+            return true;
+        }
+
+        @Override
+        public boolean isVertical() {
+            return false;
+        }
+
+        @Override
+        public int defaultExtPriority() {
+            return 100;
+        }
     };
 
     /**

@@ -2,12 +2,13 @@ package org.hifforce.lattice.annotation.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hifforce.lattice.model.ability.IBusinessExt;
 
 /**
  * @author Rocky Yu
- * @since 2022/9/16
+ * @since 2022/9/28
  */
-public class ProductAnnotation {
+public class UseCaseAnnotation {
 
     @Getter
     @Setter
@@ -20,6 +21,10 @@ public class ProductAnnotation {
     @Getter
     @Setter
     private String desc;
+
+    @Getter
+    @Setter
+    private Class<? extends IBusinessExt> sdk;
 
     @Getter
     @Setter

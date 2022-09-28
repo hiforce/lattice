@@ -12,8 +12,9 @@ import java.util.Set;
  */
 public class ProductFilter implements Serializable {
 
-    private static final long serialVersionUID = 2203739715380176426L;
+
+    private static final long serialVersionUID = -8023924263923470083L;
 
     @Getter
-    private final Set<String> allowedProductCodes = Collections.emptySet();
+    private final Set<String> allowedCodes = Collections.emptySet();
 }

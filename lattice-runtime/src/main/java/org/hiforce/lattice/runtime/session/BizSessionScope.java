@@ -7,14 +7,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.hifforce.lattice.cache.invoke.InvokeCache;
 import org.hifforce.lattice.exception.LatticeRuntimeException;
 import org.hifforce.lattice.model.business.IBizObject;
-import org.hifforce.lattice.model.business.ProductTemplate;
+import org.hifforce.lattice.model.business.ITemplate;
 import org.hifforce.lattice.model.config.BusinessConfig;
 import org.hifforce.lattice.model.config.ProductConfig;
 import org.hifforce.lattice.model.context.BizSessionContext;
 import org.hifforce.lattice.model.register.ProductSpec;
+import org.hifforce.lattice.model.register.TemplateSpec;
+import org.hifforce.lattice.model.register.UseCaseSpec;
 import org.hifforce.lattice.model.scenario.ScenarioRequest;
 import org.hiforce.lattice.runtime.Lattice;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -63,7 +66,6 @@ public abstract class BizSessionScope<Resp, BizObject extends IBizObject>
 
     @Override
     protected void entrance() {
-        //TODO: init the lattice BizSession Context.
         invokeCacheInit = InvokeCache.isThreadLocalInit();
         if (!invokeCacheInit) {
             InvokeCache.initInvokeCache();
@@ -74,13 +76,36 @@ public abstract class BizSessionScope<Resp, BizObject extends IBizObject>
         buildEffectProducts();
     }
 
+    @SuppressWarnings("all")
     private void buildEffectProducts() {
         for (ScenarioRequest request : scenarioRequests) {
-            List<ProductSpec> productSpecs = loadBusinessInstalledProducts(request.getBizObject().getBizCode())
-                    .stream().filter(p -> isProductEffective(p, request))
-                    .collect(Collectors.toList());
-            context.getEffectiveProducts().put(request.getBizObject().getBizCode(), productSpecs);
+            List<TemplateSpec<? extends ITemplate>> templates = Lists.newArrayList();
+
+            templates.addAll(loadEffectiveUseCases(request));
+            templates.addAll(loadBusinessInstalledProducts(request.getBizObject().getBizCode())
+                    .stream().filter(p -> isTemplateEffective(p, request))
+                    .collect(Collectors.toList()));
+            templates.sort(Comparator.comparingInt(TemplateSpec::getPriority));
+            context.getEffectiveTemplates().put(request.getBizObject().getBizCode(), templates);
         }
+    }
+
+    private List<UseCaseSpec> loadEffectiveUseCases(ScenarioRequest request) {
+        return Lattice.getInstance().getAllRegisteredUseCases().stream()
+                .filter(p -> isTemplateEffective(p, request))
+                .collect(Collectors.toList());
+    }
+
+    @SuppressWarnings("all")
+    private boolean isTemplateEffective(TemplateSpec templateSpec, ScenarioRequest request) {
+        if (null == templateSpec) {
+            return false;
+        }
+        ITemplate template = templateSpec.newInstance();
+        if (null == template) {
+            return false;
+        }
+        return template.isEffect(request);
     }
 
     private List<ProductSpec> loadBusinessInstalledProducts(String bizCode) {
@@ -97,17 +122,6 @@ public abstract class BizSessionScope<Resp, BizObject extends IBizObject>
         Set<ProductConfig> productConfigs = businessConfig.getProducts();
         return productConfigs.stream().map(p -> Lattice.getInstance().getRegisteredProductByCode(p.getCode()))
                 .filter(Objects::nonNull).collect(Collectors.toList());
-    }
-
-    private boolean isProductEffective(ProductSpec productSpec, ScenarioRequest request) {
-        if (null == productSpec) {
-            return false;
-        }
-        ProductTemplate template = productSpec.createProductInstance();
-        if (null == template) {
-            return false;
-        }
-        return template.isEffect(request);
     }
 
     private void initScenarioRequest() {

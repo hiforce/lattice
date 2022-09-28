@@ -9,6 +9,7 @@ import org.hifforce.lattice.exception.LatticeRuntimeException;
 import org.hifforce.lattice.message.Message;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.business.IBizObject;
+import org.hifforce.lattice.model.business.ITemplate;
 import org.hifforce.lattice.model.business.TemplateType;
 import org.hifforce.lattice.model.config.BusinessConfig;
 import org.hifforce.lattice.model.config.ExtPriority;
@@ -99,13 +100,15 @@ public class BaseLatticeAbilityDelegate {
             List<RunnerCollection.RunnerItemEntry<BusinessExt, R>> runners) {
         List<RunnerCollection.RunnerItemEntry<BusinessExt, R>> output = Lists.newArrayList();
         for (RunnerCollection.RunnerItemEntry<BusinessExt, R> runner : runners) {
-            if (TemplateType.PRODUCT != runner.getTemplate().getType()) {
+            if (runner.getTemplate().getType().isVertical()) {
                 output.add(runner);
                 continue;
             }
             BizSessionContext bizSessionContext =
                     InvokeCache.instance().get(BizSessionContext.class, BizSessionContext.class);
-            List<ProductSpec> effective = bizSessionContext.getEffectiveProducts().get(ability.getContext().getBizCode());
+            List<TemplateSpec<? extends ITemplate>> effective =
+                    bizSessionContext.getEffectiveTemplates().get(ability.getContext().getBizCode());
+
             if (effective.stream().noneMatch(p -> StringUtils.equals(p.getCode(), runner.getTemplate().getCode()))) {
                 continue;
             }
@@ -134,7 +137,7 @@ public class BaseLatticeAbilityDelegate {
             return false;
         }
 
-        List<ProductSpec> effective = bizSessionContext.getEffectiveProducts().get(bizCode);
+        List<TemplateSpec<? extends ITemplate>> effective = bizSessionContext.getEffectiveTemplates().get(bizCode);
         if (effective.stream().noneMatch(p -> StringUtils.equals(p.getCode(), template.getCode()))) {
             return false;
         }
@@ -148,11 +151,11 @@ public class BaseLatticeAbilityDelegate {
         String bizCode = ability.getContext().getBizCode();
 
         boolean supportCustomization = ability.supportCustomization();
-        boolean isOnlyProduct = !filter.isLoadBusinessExt();
+        boolean isHorizontal = !filter.isLoadBusinessExt();
         LatticeRuntimeCache runtimeCache = Lattice.getInstance().getLatticeRuntimeCache();
         // cache
         ExtensionRunnerCacheKey key = new ExtensionRunnerCacheKey(
-                extensionCode, bizCode, scenario, supportCustomization, isOnlyProduct);
+                extensionCode, bizCode, scenario, supportCustomization, isHorizontal);
 
         Object result = runtimeCache.getCachedExtensionRunner(ability, key);
         if (result != null) {
@@ -172,7 +175,7 @@ public class BaseLatticeAbilityDelegate {
         }
 
         List<RunnerCollection.RunnerItemEntry<ExtensionPoints, R>> extensionRunners = new ArrayList<>();
-        for (ExtPriority config : businessConfig.getExtPriorityByCode(extensionCode, isOnlyProduct)) {
+        for (ExtPriority config : businessConfig.getExtPriorityByCode(extensionCode, isHorizontal)) {
             if (null == config)
                 continue;
             BizSessionContext bizSessionContext =
@@ -180,7 +183,7 @@ public class BaseLatticeAbilityDelegate {
             if (null == bizSessionContext) {
                 continue;
             }
-            if (config.getType() == TemplateType.PRODUCT) {
+            if (config.getType().isHorizontal()) {
                 if (!businessConfig.productInstalled(config.getCode())) {
                     continue;
                 }
@@ -408,7 +411,7 @@ public class BaseLatticeAbilityDelegate {
         public boolean test(RunnerCollection.RunnerItemEntry<ExtensionPoints, R> entry) {
             String templateCode = entry.getTemplate().getCode();
             if (null != productFilter) {
-                if (!productFilter.getAllowedProductCodes().contains(templateCode)) {
+                if (!productFilter.getAllowedCodes().contains(templateCode)) {
                     return false;
                 }
             }

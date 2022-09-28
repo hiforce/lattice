@@ -2,6 +2,7 @@ package org.hiforce.lattice.test.plugin.business_a;
 
 import org.hifforce.lattice.annotation.Business;
 import org.hifforce.lattice.model.business.BusinessTemplate;
+import org.hifforce.lattice.model.scenario.ScenarioRequest;
 
 /**
  * @author Rocky Yu
@@ -10,4 +11,9 @@ import org.hifforce.lattice.model.business.BusinessTemplate;
 @Business(code = BusinessA.BUSINESS_A_CODE, name = "Business A")
 public class BusinessA extends BusinessTemplate {
     public static final String BUSINESS_A_CODE = "business.a";
+
+    @Override
+    public boolean isEffect(ScenarioRequest request) {
+        return true;
+    }
 }

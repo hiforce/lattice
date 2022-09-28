@@ -32,11 +32,6 @@ public class DefaultProductAnnotationParser extends ProductAnnotationParser<Prod
     }
 
     @Override
-    public TemplateType getType(Product annotation) {
-        return annotation.type();
-    }
-
-    @Override
     public int getPriority(Product annotation) {
         return annotation.priority();
     }

@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
-import org.hifforce.lattice.model.business.TemplateType;
 
 import java.io.Serializable;
 import java.util.List;
@@ -62,11 +61,11 @@ public class BusinessConfig implements Serializable {
     }
 
     /**
-     * @param extCode       The code of extension
-     * @param isOnlyProduct only load the product type priority config.
+     * @param extCode      The code of extension
+     * @param isHorizontal only load the Horizontal type template.
      * @return found extension priority config.
      */
-    public List<ExtPriority> getExtPriorityByCode(String extCode, boolean isOnlyProduct) {
+    public List<ExtPriority> getExtPriorityByCode(String extCode, boolean isHorizontal) {
         ExtPriorityConfig priorityConfig = extensions.stream()
                 .filter(p -> StringUtils.equals(extCode, p.getExtCode()))
                 .findFirst().orElse(null);
@@ -74,7 +73,7 @@ public class BusinessConfig implements Serializable {
             return null;
         }
         List<ExtPriority> priorities = priorityConfig.getPriorities().stream()
-                .filter(p -> isOnlyProduct ? p.getType() == TemplateType.PRODUCT : true)
+                .filter(p -> isHorizontal ? p.getType().isHorizontal() : true)
                 .collect(Collectors.toList());
         return priorities;
     }

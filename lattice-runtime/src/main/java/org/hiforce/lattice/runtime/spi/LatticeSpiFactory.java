@@ -3,7 +3,6 @@ package org.hiforce.lattice.runtime.spi;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hifforce.lattice.model.ability.IAbility;
-import org.hifforce.lattice.model.ability.provider.IAbilityProviderCreator;
 import org.hifforce.lattice.spi.annotation.*;
 import org.hifforce.lattice.spi.config.BusinessConfigLoadSpi;
 import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
@@ -42,7 +41,7 @@ public class LatticeSpiFactory {
 
     private List<BusinessAnnotationParser> businessAnnotationParsers;
 
-    private IAbilityProviderCreator abilityProviderCreator;
+    private List<UseCaseAnnotationParser> useCaseAnnotationParsers;
 
     private IRunnerCollectionBuilder runnerCollectionBuilder;
 
@@ -92,6 +91,13 @@ public class LatticeSpiFactory {
             productAnnotationParsers = getCustomServiceProviders(ProductAnnotationParser.class);
         }
         return productAnnotationParsers;
+    }
+
+    public List<UseCaseAnnotationParser> getUseCaseAnnotationParsers() {
+        if (null == useCaseAnnotationParsers) {
+            useCaseAnnotationParsers = getCustomServiceProviders(UseCaseAnnotationParser.class);
+        }
+        return useCaseAnnotationParsers;
     }
 
     public List<BusinessAnnotationParser> getBusinessAnnotationParsers() {
