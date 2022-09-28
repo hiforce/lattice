@@ -23,5 +23,10 @@ public class ExtPriorityConfig implements Serializable {
     private String extCode;
 
     @Getter
+    @Setter
     private List<ExtPriority> priorities = Lists.newArrayList();
+
+    public ExtPriorityConfig(String extCode) {
+        this.extCode = extCode;
+    }
 }

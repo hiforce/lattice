@@ -14,13 +14,11 @@ import org.hifforce.lattice.message.Message;
 import org.hifforce.lattice.message.MessageCode;
 import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.IBusinessExt;
-import org.hifforce.lattice.model.business.IBusiness;
-import org.hifforce.lattice.model.business.IProduct;
-import org.hifforce.lattice.model.business.IUseCase;
-import org.hifforce.lattice.model.business.TemplateType;
+import org.hifforce.lattice.model.business.*;
 import org.hifforce.lattice.model.config.*;
 import org.hifforce.lattice.model.config.builder.BusinessConfigBuilder;
 import org.hifforce.lattice.model.register.*;
+import org.hifforce.lattice.model.scenario.ScenarioRequest;
 import org.hifforce.lattice.utils.BizCodeUtils;
 import org.hiforce.lattice.runtime.ability.register.AbilityBuildRequest;
 import org.hiforce.lattice.runtime.ability.register.AbilityRegister;
@@ -134,8 +132,40 @@ public class Lattice {
             //auto-config business and products.
             autoBuildBusinessConfig();
         }
-
+        businessConfigs.forEach(p -> autoBuildUseCaseExtPriorityConfig(p, buildUseCaseExtPriorityConfigMap()));
         businessConfigs.sort(Comparator.comparingInt(BusinessConfig::getPriority));
+    }
+
+    private void autoBuildUseCaseExtPriorityConfig(BusinessConfig businessConfig, Map<String, ExtPriorityConfig> priorityMap) {
+        priorityMap.forEach((key, value) -> {
+            ExtPriorityConfig priorityConfig = businessConfig.getExtPriorityConfigByExtCode(key);
+            if (null == priorityConfig) {
+                businessConfig.getExtensions().add(value);
+            } else {
+                List<ExtPriority> newList = Lists.newArrayList();
+                newList.addAll(value.getPriorities());
+                newList.addAll(priorityConfig.getPriorities());
+                priorityConfig.setPriorities(newList);
+            }
+
+        });
+    }
+
+    private Map<String, ExtPriorityConfig> buildUseCaseExtPriorityConfigMap() {
+        Map<String, ExtPriorityConfig> extPriorityConfigMap = Maps.newHashMap();
+        getAllRegisteredUseCases().forEach(p -> {
+            for (RealizationSpec realizationSpec : p.getRealizations()) {
+                for (String extCode : realizationSpec.getExtensionCodes()) {
+                    ExtPriorityConfig config = extPriorityConfigMap.get(extCode);
+                    if (null == config) {
+                        config = new ExtPriorityConfig(extCode);
+                        extPriorityConfigMap.put(extCode, config);
+                    }
+                    config.getPriorities().add(ExtPriority.of(p.getCode(), p.getType()));
+                }
+            }
+        });
+        return extPriorityConfigMap;
     }
 
     public void addBusinessConfig(BusinessConfig config) {
@@ -360,6 +390,11 @@ public class Lattice {
 
     public List<RealizationSpec> getAllRealizations() {
         return TemplateRegister.getInstance().getRealizations();
+    }
+
+
+    public BusinessTemplate getFirstMatchedBusiness(ScenarioRequest request) {
+        return TemplateRegister.getInstance().getFirstMatchedBusiness(request);
     }
 
 }

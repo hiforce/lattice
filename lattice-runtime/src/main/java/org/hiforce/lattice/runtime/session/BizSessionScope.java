@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 public abstract class BizSessionScope<Resp, BizObject extends IBizObject>
         extends Scope<Resp> {
 
+    @Getter
     private final List<BizObject> bizObjects = Lists.newArrayList();
 
     private final List<ScenarioRequest> scenarioRequests = Lists.newArrayList();

@@ -16,7 +16,6 @@ import org.hifforce.lattice.model.config.ExtPriority;
 import org.hifforce.lattice.model.config.ExtPriorityConfig;
 import org.hifforce.lattice.model.context.BizSessionContext;
 import org.hifforce.lattice.model.register.BusinessSpec;
-import org.hifforce.lattice.model.register.ProductSpec;
 import org.hifforce.lattice.model.register.RealizationSpec;
 import org.hifforce.lattice.model.register.TemplateSpec;
 import org.hifforce.lattice.utils.BizCodeUtils;
@@ -183,7 +182,7 @@ public class BaseLatticeAbilityDelegate {
             if (null == bizSessionContext) {
                 continue;
             }
-            if (config.getType().isHorizontal()) {
+            if (config.getType().isHorizontal() && config.getType().needInstall()) {
                 if (!businessConfig.productInstalled(config.getCode())) {
                     continue;
                 }
@@ -211,8 +210,8 @@ public class BaseLatticeAbilityDelegate {
             }
             return null;
         }
-        TemplateSpec template = config.getType() == TemplateType.BUSINESS ?
-                getBusinessSpec(config.getCode()) : getProductSpec(config.getCode());
+        TemplateSpec template = config.getType().isVertical() ?
+                getBusinessSpec(config.getCode()) : getHorizontalTemplateSpec(config.getCode());
 
         if (supportCustomization) {
             IBusinessExt extImpl = loadExtensionRealization(bizCode, scenario, template, extensionCode);
@@ -292,8 +291,14 @@ public class BaseLatticeAbilityDelegate {
                 .findFirst().orElse(null);
     }
 
-    private ProductSpec getProductSpec(String code) {
-        return Lattice.getInstance().getAllRegisteredProducts().stream()
+    private TemplateSpec getHorizontalTemplateSpec(String code) {
+        TemplateSpec spec = Lattice.getInstance().getAllRegisteredProducts().stream()
+                .filter(p -> StringUtils.equals(code, p.getCode()))
+                .findFirst().orElse(null);
+        if (null != spec) {
+            return spec;
+        }
+        return Lattice.getInstance().getAllRegisteredUseCases().stream()
                 .filter(p -> StringUtils.equals(code, p.getCode()))
                 .findFirst().orElse(null);
     }

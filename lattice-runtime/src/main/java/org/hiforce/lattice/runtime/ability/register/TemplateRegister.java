@@ -10,10 +10,12 @@ import org.hifforce.lattice.annotation.model.RealizationAnnotation;
 import org.hifforce.lattice.annotation.model.UseCaseAnnotation;
 import org.hifforce.lattice.exception.LatticeRuntimeException;
 import org.hifforce.lattice.model.ability.IBusinessExt;
+import org.hifforce.lattice.model.business.BusinessTemplate;
 import org.hifforce.lattice.model.register.BusinessSpec;
 import org.hifforce.lattice.model.register.ProductSpec;
 import org.hifforce.lattice.model.register.RealizationSpec;
 import org.hifforce.lattice.model.register.UseCaseSpec;
+import org.hifforce.lattice.model.scenario.ScenarioRequest;
 import org.hifforce.lattice.spi.annotation.BusinessAnnotationParser;
 import org.hifforce.lattice.spi.annotation.ProductAnnotationParser;
 import org.hifforce.lattice.spi.annotation.RealizationAnnotationParser;
@@ -58,6 +60,13 @@ public class TemplateRegister {
             instance = new TemplateRegister();
         }
         return instance;
+    }
+
+    public BusinessTemplate getFirstMatchedBusiness(ScenarioRequest request) {
+        return businesses.stream()
+                .map(BusinessSpec::newInstance)
+                .filter(p -> p.isEffect(request))
+                .findFirst().orElse(null);
     }
 
     @SuppressWarnings("rawtypes")

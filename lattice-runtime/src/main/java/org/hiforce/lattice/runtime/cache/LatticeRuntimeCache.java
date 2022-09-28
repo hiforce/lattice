@@ -121,6 +121,10 @@ public class LatticeRuntimeCache extends SimpleCache implements ILatticeRuntimeC
                 .forEach(p -> latticeRuntimeCache.getTemplateCache()
                         .put(p.getCode(), SequenceGenerator.next(IProduct.class.getName()), p));
 
+        Lattice.getInstance().getAllRegisteredUseCases()
+                .forEach(p -> latticeRuntimeCache.getTemplateCache()
+                        .put(p.getCode(), SequenceGenerator.next(IProduct.class.getName()), p));
+
         Lattice.getInstance().getAllRegisteredBusinesses()
                 .forEach(p -> latticeRuntimeCache.getTemplateCache()
                         .put(p.getCode(), SequenceGenerator.next(IProduct.class.getName()), p));

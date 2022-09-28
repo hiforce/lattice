@@ -60,12 +60,18 @@ public class BusinessConfig implements Serializable {
                 .findFirst().orElse(null);
     }
 
+    public ExtPriorityConfig getExtPriorityConfigByExtCode(String extCode) {
+        return extensions.stream()
+                .filter(p -> StringUtils.equals(extCode, p.getExtCode()))
+                .findFirst().orElse(null);
+    }
+
     /**
-     * @param extCode      The code of extension
-     * @param isHorizontal only load the Horizontal type template.
+     * @param extCode        The code of extension
+     * @param onlyHorizontal only load the Horizontal type template.
      * @return found extension priority config.
      */
-    public List<ExtPriority> getExtPriorityByCode(String extCode, boolean isHorizontal) {
+    public List<ExtPriority> getExtPriorityByCode(String extCode, boolean onlyHorizontal) {
         ExtPriorityConfig priorityConfig = extensions.stream()
                 .filter(p -> StringUtils.equals(extCode, p.getExtCode()))
                 .findFirst().orElse(null);
@@ -73,10 +79,9 @@ public class BusinessConfig implements Serializable {
             return null;
         }
         List<ExtPriority> priorities = priorityConfig.getPriorities().stream()
-                .filter(p -> isHorizontal ? p.getType().isHorizontal() : true)
+                .filter(p -> onlyHorizontal ? p.getType().isHorizontal() : true)
                 .collect(Collectors.toList());
         return priorities;
     }
-
 
 }

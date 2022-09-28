@@ -26,6 +26,11 @@ public enum TemplateType {
         public int defaultExtPriority() {
             return 1000;
         }
+
+        @Override
+        public boolean needInstall() {
+            return false;
+        }
     },
 
     /**
@@ -46,6 +51,11 @@ public enum TemplateType {
         public int defaultExtPriority() {
             return 500;
         }
+
+        @Override
+        public boolean needInstall() {
+            return true;
+        }
     },
 
     USE_CASE {
@@ -63,6 +73,11 @@ public enum TemplateType {
         public int defaultExtPriority() {
             return 100;
         }
+
+        @Override
+        public boolean needInstall() {
+            return false;
+        }
     };
 
     /**
@@ -79,4 +94,6 @@ public enum TemplateType {
      * @return default extension priority
      */
     public abstract int defaultExtPriority();
+
+    public abstract boolean needInstall();
 }
