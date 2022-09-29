@@ -24,4 +24,8 @@ public class ExtensionAnnotation {
     @Getter
     @Setter
     private ReduceType reduceType;
+
+    @Getter
+    @Setter
+    private ProtocolType protocolType;
 }

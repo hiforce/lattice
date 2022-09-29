@@ -1,6 +1,7 @@
 package org.hifforce.lattice.spi.annotation;
 
 import org.hifforce.lattice.annotation.model.ExtensionAnnotation;
+import org.hifforce.lattice.annotation.model.ProtocolType;
 import org.hifforce.lattice.annotation.model.ReduceType;
 
 import java.lang.annotation.Annotation;
@@ -19,6 +20,8 @@ public abstract class ExtensionAnnotationParser<T extends Annotation> extends La
 
     public abstract ReduceType getReduceType(T annotation);
 
+    public abstract ProtocolType getProtocolType(T annotation);
+
     public ExtensionAnnotation buildAnnotationInfo(T annotation) {
         if (null == annotation) {
             return null;
@@ -28,6 +31,7 @@ public abstract class ExtensionAnnotationParser<T extends Annotation> extends La
         info.setCode(getCode(annotation));
         info.setDesc(getDesc(annotation));
         info.setReduceType(getReduceType(annotation));
+        info.setProtocolType(getProtocolType(annotation));
         return info;
     }
 }

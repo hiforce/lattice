@@ -1,6 +1,7 @@
 package org.hifforce.lattice.annotation;
 
 
+import org.hifforce.lattice.annotation.model.ProtocolType;
 import org.hifforce.lattice.annotation.model.ReduceType;
 
 import java.lang.annotation.*;
@@ -20,8 +21,7 @@ public @interface Extension {
 
     String desc() default "";
 
-    /**
-     * @return 扩展点的ReduceType
-     */
     ReduceType reduceType() default ReduceType.UNKNOWN;
+
+    ProtocolType protocolType() default ProtocolType.LOCAL;
 }
