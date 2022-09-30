@@ -45,6 +45,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static org.hiforce.lattice.runtime.ability.execute.RunnerCollection.ACCEPT_ALL;
+
 /**
  * @author Rocky Yu
  * @since 2022/9/16
@@ -70,27 +72,33 @@ public class BaseLatticeAbilityDelegate {
         IBizObject bizObject = ability.getContext().getBizObject();
         boolean onlyProduct = !filter.isLoadBusinessExt();
 
-        BusinessConfig businessConfig = Lattice.getInstance().getBusinessConfigByBizCode(bizCode);
-        if (null == businessConfig) {
-            if (Lattice.getInstance().isSimpleMode()) {
-                return buildDefaultRunnerCollection(extCode, onlyProduct);
-            }
-            throw new LatticeRuntimeException("LATTICE-CORE-RT-0012", bizCode);
-        }
-
+        List<RunnerItemEntry<R>> cachedRunners = null;
         LatticeRuntimeCache runtimeCache = Lattice.getInstance().getLatticeRuntimeCache();
         ExtensionPointSpec extensionPointSpec = runtimeCache.getExtensionSpecCache().getKey1Only(extCode);
         if (null == extensionPointSpec) {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0006", extCode);
         }
-        List<RunnerItemEntry<R>> cachedRunners = null;
-        if (extensionPointSpec.getProtocolType() == ProtocolType.REMOTE) {
-//todo:
-        } else {
-            cachedRunners =
-                    getCachedLocalRunners(extCode, businessConfig, filter);
+
+        BusinessConfig businessConfig = Lattice.getInstance().getBusinessConfigByBizCode(bizCode);
+        if (null == businessConfig) {
+            if (Lattice.getInstance().isSimpleMode()) {
+                if (extensionPointSpec.getProtocolType() == ProtocolType.LOCAL) {
+                    return buildDefaultRunnerCollection(extCode, onlyProduct);
+                }
+                cachedRunners = getCachedRemoteRunners(extCode, businessConfig);
+                if (null != cachedRunners) {
+                    return RunnerCollection.of(bizObject, cachedRunners, ACCEPT_ALL);
+                }
+                return buildDefaultRunnerCollection(extCode, onlyProduct);
+            }
+            throw new LatticeRuntimeException("LATTICE-CORE-RT-0012", bizCode);
         }
 
+        if (extensionPointSpec.getProtocolType() == ProtocolType.REMOTE) {
+            cachedRunners = getCachedRemoteRunners(extCode, businessConfig);
+        } else {
+            cachedRunners = getCachedLocalRunners(extCode, businessConfig, filter);
+        }
         if (cachedRunners == null) {
             return buildDefaultRunnerCollection(extCode, onlyProduct);
         }
@@ -136,7 +144,7 @@ public class BaseLatticeAbilityDelegate {
             String extensionCode, IBizObject bizInstance) {
         IRunnerCollectionBuilder runnerCollectionBuilder = LatticeRuntimeSpiFactory.getInstance().getRunnerCollectionBuilder();
         if (!runnerCollectionBuilder.isSupport(ability, extensionCode)) {
-            return RunnerCollection.of(bizInstance, Lists.newArrayList(), RunnerCollection.ACCEPT_ALL);
+            return RunnerCollection.of(bizInstance, Lists.newArrayList(), ACCEPT_ALL);
         }
         return runnerCollectionBuilder.buildCustomRunnerCollection(ability, extensionCode);
     }
@@ -179,7 +187,16 @@ public class BaseLatticeAbilityDelegate {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0021", extCode);
         }
 
-        BusinessSpec businessSpec = Lattice.getInstance().getRegisteredBusinessByCode(businessConfig.getBizCode());
+        BusinessSpec businessSpec = null;
+
+        if (null == businessConfig) {
+            businessSpec = new BusinessSpec();
+            businessSpec.setType(TemplateType.BUSINESS);
+            businessSpec.setCode(ability.getContext().getBizCode());
+        } else {
+            businessSpec = Lattice.getInstance()
+                    .getRegisteredBusinessByCode(businessConfig.getBizCode());
+        }
 
         ExtensionRemoteRunner<R> runner = builderBean.build(ability, businessSpec, extCode, scenario);
         RunnerItemEntry<R> runerItem = new RunnerItemEntry<R>(ability, businessSpec, runner);
