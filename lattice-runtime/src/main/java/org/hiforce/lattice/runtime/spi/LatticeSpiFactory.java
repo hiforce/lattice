@@ -25,23 +25,6 @@ public class LatticeSpiFactory {
 
     private static ClassLoader classLoader;
 
-    @SuppressWarnings("rawtypes")
-    private List<AbilityAnnotationParser> abilityAnnotationParsers;
-
-    @SuppressWarnings("rawtypes")
-    private List<ExtensionAnnotationParser> extensionAnnotationParsers;
-
-    @SuppressWarnings("rawtypes")
-    private List<ScanSkipAnnotationParser> scanSkipAnnotationParsers;
-
-    @SuppressWarnings("rawtypes")
-    private List<RealizationAnnotationParser> realizationAnnotationParsers;
-
-    private List<ProductAnnotationParser> productAnnotationParsers;
-
-    private List<BusinessAnnotationParser> businessAnnotationParsers;
-
-    private List<UseCaseAnnotationParser> useCaseAnnotationParsers;
 
     private IRunnerCollectionBuilder runnerCollectionBuilder;
 
@@ -73,64 +56,6 @@ public class LatticeSpiFactory {
             businessConfigLoads.sort(Comparator.comparingInt(BusinessConfigLoadSpi::getPriority));
         }
         return businessConfigLoads;
-    }
-
-    /**
-     * @return The Ability's Custom Annotation Parsers..
-     */
-    @SuppressWarnings("rawtypes")
-    public List<AbilityAnnotationParser> getAbilityAnnotationParsers() {
-        if (null == abilityAnnotationParsers) {
-            abilityAnnotationParsers = getCustomServiceProviders(AbilityAnnotationParser.class);
-        }
-        return abilityAnnotationParsers;
-    }
-
-    public List<ProductAnnotationParser> getProductAnnotationParsers() {
-        if (null == productAnnotationParsers) {
-            productAnnotationParsers = getCustomServiceProviders(ProductAnnotationParser.class);
-        }
-        return productAnnotationParsers;
-    }
-
-    public List<UseCaseAnnotationParser> getUseCaseAnnotationParsers() {
-        if (null == useCaseAnnotationParsers) {
-            useCaseAnnotationParsers = getCustomServiceProviders(UseCaseAnnotationParser.class);
-        }
-        return useCaseAnnotationParsers;
-    }
-
-    public List<BusinessAnnotationParser> getBusinessAnnotationParsers() {
-        if (null == businessAnnotationParsers) {
-            businessAnnotationParsers = getCustomServiceProviders(BusinessAnnotationParser.class);
-        }
-        return businessAnnotationParsers;
-    }
-
-    @SuppressWarnings("rawtypes")
-    public List<ExtensionAnnotationParser> getExtensionAnnotationParsers() {
-        if (null == extensionAnnotationParsers) {
-            extensionAnnotationParsers =
-                    getCustomServiceProviders(ExtensionAnnotationParser.class);
-        }
-        return extensionAnnotationParsers;
-    }
-
-    @SuppressWarnings("rawtypes")
-    public List<RealizationAnnotationParser> getRealizationAnnotationParsers() {
-        if (null == realizationAnnotationParsers) {
-            realizationAnnotationParsers =
-                    getCustomServiceProviders(RealizationAnnotationParser.class);
-        }
-        return realizationAnnotationParsers;
-    }
-
-    @SuppressWarnings("rawtypes")
-    public List<ScanSkipAnnotationParser> getScanSkipAnnotationParsers() {
-        if (null == scanSkipAnnotationParsers) {
-            scanSkipAnnotationParsers = getCustomServiceProviders(ScanSkipAnnotationParser.class);
-        }
-        return scanSkipAnnotationParsers;
     }
 
     public <T> List<T> getCustomServiceProviders(Class<T> spiClass) {

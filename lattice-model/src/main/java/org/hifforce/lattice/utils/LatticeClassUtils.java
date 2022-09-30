@@ -1,4 +1,4 @@
-package org.hiforce.lattice.runtime.utils;
+package org.hifforce.lattice.utils;
 
 import org.apache.commons.lang3.ClassUtils;
 

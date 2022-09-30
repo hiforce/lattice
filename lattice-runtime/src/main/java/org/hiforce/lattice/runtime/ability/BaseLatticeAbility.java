@@ -13,12 +13,12 @@ import org.hifforce.lattice.model.ability.execute.Reducer;
 import org.hifforce.lattice.model.business.IBizObject;
 import org.hifforce.lattice.model.context.AbilityContext;
 import org.hifforce.lattice.model.register.ExtensionPointSpec;
+import org.hifforce.lattice.utils.LatticeAnnotationUtils;
 import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.runtime.ability.delegate.BaseLatticeAbilityDelegate;
 import org.hiforce.lattice.runtime.ability.execute.ExecuteResult;
 import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 import org.hiforce.lattice.runtime.ability.execute.filter.ExtensionFilter;
-import org.hiforce.lattice.runtime.utils.LatticeAnnotationUtils;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

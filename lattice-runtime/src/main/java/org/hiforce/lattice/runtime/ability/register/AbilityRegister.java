@@ -15,11 +15,11 @@ import org.hifforce.lattice.model.register.AbilityInstSpec;
 import org.hifforce.lattice.model.register.AbilitySpec;
 import org.hifforce.lattice.model.register.BaseSpec;
 import org.hifforce.lattice.model.register.ExtensionPointSpec;
+import org.hifforce.lattice.spi.LatticeAnnotationSpiFactory;
 import org.hifforce.lattice.spi.annotation.AbilityAnnotationParser;
+import org.hifforce.lattice.utils.LatticeClassUtils;
 import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
-import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
-import org.hiforce.lattice.runtime.utils.LatticeClassUtils;
 import org.springframework.aop.support.AopUtils;
 
 import java.lang.annotation.Annotation;
@@ -30,7 +30,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.hiforce.lattice.runtime.utils.ExtensionUtils.getExtensionAnnotation;
+import static org.hifforce.lattice.utils.LatticeAnnotationUtils.getExtensionAnnotation;
 import static org.hiforce.lattice.runtime.utils.LatticeBeanUtils.getAndCreateSpringBeanViaClass;
 
 /**
@@ -88,7 +88,7 @@ public class AbilityRegister {
     @SuppressWarnings("all")
     private Pair<AbilityAnnotation, Class<?>> findAbilityAnnotationAndAbilityClass(Class<?> currentClass) {
 
-        List<AbilityAnnotationParser> parsers = LatticeSpiFactory.getInstance().getAbilityAnnotationParsers();
+        List<AbilityAnnotationParser> parsers = LatticeAnnotationSpiFactory.getInstance().getAbilityAnnotationParsers();
         for (AbilityAnnotationParser parser : parsers) {
             Annotation annotation = currentClass.getDeclaredAnnotation(parser.getAnnotationClass());
             if (null == annotation) {

@@ -21,6 +21,7 @@
         <version.lattice>1.0.7-SNAPSHOT</version.lattice>
         <version.spring.boot>2.7.3</version.spring.boot>
         <springext-plugin-version>1.2</springext-plugin-version>
+        <dubbo.version>3.1.0</dubbo.version>
         <version.jdk>1.8</version.jdk>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -31,6 +32,12 @@
         <module>lattice-test</module>
         <module>lattice-tools</module>
         <module>lattice-tools/lattice-load-config-res</module>
+        <module>lattice-remote</module>
+        <module>lattice-remote/lattice-remote-runner</module>
+        <module>lattice-remote/lattice-remote-container</module>
+        <module>lattice-remote/lattice-remote-runner/lattice-remote-runner-dubbo</module>
+        <module>lattice-remote/lattice-remote-client</module>
+        <module>lattice-register</module>
     </modules>
 
     <dependencyManagement>
@@ -49,7 +56,22 @@
             </dependency>
             <dependency>
                 <groupId>org.hiforce.lattice</groupId>
+                <artifactId>lattice-register</artifactId>
+                <version>${version.lattice}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hiforce.lattice</groupId>
                 <artifactId>lattice-runtime</artifactId>
+                <version>${version.lattice}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hiforce.lattice</groupId>
+                <artifactId>lattice-remote-client</artifactId>
+                <version>${version.lattice}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hiforce.lattice</groupId>
+                <artifactId>lattice-remote-container</artifactId>
                 <version>${version.lattice}</version>
             </dependency>
             <dependency>
@@ -98,6 +120,16 @@
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
                 <version>23.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.dubbo</groupId>
+                <artifactId>dubbo</artifactId>
+                <version>${dubbo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>1.33</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -3,7 +3,8 @@ package org.hiforce.lattice.runtime.utils;
 
 import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.IBusinessExt;
-import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
+import org.hifforce.lattice.spi.LatticeAnnotationSpiFactory;
+import org.hifforce.lattice.utils.LatticeClassUtils;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -44,12 +45,12 @@ public abstract class ClassLoaderUtil {
 
     @SuppressWarnings("unchecked")
     private static boolean isLatticeExtendAnnotationClass(Class<?> targetClass) {
-        if (LatticeSpiFactory.getInstance().getAbilityAnnotationParsers()
+        if (LatticeAnnotationSpiFactory.getInstance().getAbilityAnnotationParsers()
                 .stream().map(p -> null != targetClass.getAnnotation(p.getAnnotationClass()))
                 .findFirst().isPresent()) {
             return true;
         }
-        return LatticeSpiFactory.getInstance().getExtensionAnnotationParsers()
+        return LatticeAnnotationSpiFactory.getInstance().getExtensionAnnotationParsers()
                 .stream().map(p -> null != targetClass.getAnnotation(p.getAnnotationClass()))
                 .findFirst().isPresent();
     }

@@ -1,13 +1,14 @@
-package org.hiforce.lattice.runtime.utils;
+package org.hifforce.lattice.utils;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hifforce.lattice.annotation.model.AbilityAnnotation;
-import org.hifforce.lattice.annotation.model.ScanSkipAnnotation;
-import org.hifforce.lattice.spi.annotation.AbilityAnnotationParser;
-import org.hifforce.lattice.spi.annotation.ScanSkipAnnotationParser;
-import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
+import org.hifforce.lattice.annotation.model.*;
+import org.hifforce.lattice.exception.LatticeRuntimeException;
+import org.hifforce.lattice.model.ability.IBusinessExt;
+import org.hifforce.lattice.spi.LatticeAnnotationSpiFactory;
+import org.hifforce.lattice.spi.annotation.*;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
@@ -18,16 +19,27 @@ import java.util.WeakHashMap;
 
 /**
  * @author Rocky Yu
- * @since 2022/9/16
+ * @since 2022/9/30
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings("all")
 public class LatticeAnnotationUtils extends AnnotationUtils {
 
     private static final Map<Class<?>, Boolean> annotatedInterfaceCache = new WeakHashMap<>();
 
+    public static ExtensionAnnotation getExtensionAnnotation(Method method) {
+        for (ExtensionAnnotationParser parser : LatticeAnnotationSpiFactory.getInstance().getExtensionAnnotationParsers()) {
+            Annotation annotation = LatticeAnnotationUtils.findAnnotation(method, parser.getAnnotationClass());
+            if (null == annotation) {
+                continue;
+            }
+            return parser.buildAnnotationInfo(annotation);
+        }
+        return null;
+    }
+
     public static AbilityAnnotation getAbilityAnnotation(Class<?> abilityClass) {
 
-        for (AbilityAnnotationParser parser : LatticeSpiFactory.getInstance().getAbilityAnnotationParsers()) {
+        for (AbilityAnnotationParser parser : LatticeAnnotationSpiFactory.getInstance().getAbilityAnnotationParsers()) {
             Annotation annotation = AnnotationUtils.findAnnotation(abilityClass, parser.getAnnotationClass());
             if (null == annotation) {
                 continue;
@@ -37,8 +49,78 @@ public class LatticeAnnotationUtils extends AnnotationUtils {
         return null;
     }
 
+    public static ProductAnnotation getProductAnnotation(Class targetClass) {
+        for (ProductAnnotationParser parser : LatticeAnnotationSpiFactory.getInstance().getProductAnnotationParsers()) {
+            Annotation annotation = AnnotationUtils.findAnnotation(targetClass, parser.getAnnotationClass());
+            if (null == annotation) {
+                continue;
+            }
+            ProductAnnotation info = new ProductAnnotation();
+            info.setName(parser.getName(annotation));
+            info.setCode(parser.getCode(annotation));
+            info.setDesc(parser.getDesc(annotation));
+            info.setPriority(parser.getPriority(annotation));
+            return info;
+        }
+        return null;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static UseCaseAnnotation getUseCaseAnnotation(Class targetClass) {
+        for (UseCaseAnnotationParser parser : LatticeAnnotationSpiFactory.getInstance().getUseCaseAnnotationParsers()) {
+            Annotation annotation = AnnotationUtils.findAnnotation(targetClass, parser.getAnnotationClass());
+            if (null == annotation) {
+                continue;
+            }
+            UseCaseAnnotation info = new UseCaseAnnotation();
+            info.setName(parser.getName(annotation));
+            info.setCode(parser.getCode(annotation));
+            info.setDesc(parser.getDesc(annotation));
+            info.setSdk(parser.getSdk(annotation));
+            info.setPriority(parser.getPriority(annotation));
+            return info;
+        }
+        return null;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static BusinessAnnotation getBusinessAnnotation(Class targetClass) {
+        for (BusinessAnnotationParser parser : LatticeAnnotationSpiFactory.getInstance().getBusinessAnnotationParsers()) {
+            Annotation annotation = AnnotationUtils.findAnnotation(targetClass, parser.getAnnotationClass());
+            if (null == annotation) {
+                continue;
+            }
+            BusinessAnnotation info = new BusinessAnnotation();
+            info.setName(parser.getName(annotation));
+            info.setCode(parser.getCode(annotation));
+            info.setDesc(parser.getDesc(annotation));
+            info.setPriority(parser.getPriority(annotation));
+            return info;
+        }
+        return null;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static RealizationAnnotation getRealizationAnnotation(Class targetClass) {
+        for (RealizationAnnotationParser parser : LatticeAnnotationSpiFactory.getInstance().getRealizationAnnotationParsers()) {
+            Annotation annotation = AnnotationUtils.findAnnotation(targetClass, parser.getAnnotationClass());
+            if (null == annotation) {
+                continue;
+            }
+            RealizationAnnotation info = new RealizationAnnotation();
+            info.setScenario(parser.getScenario(annotation));
+            info.setCodes(parser.getCodes(annotation));
+            if (!ClassUtils.isAssignable(targetClass, IBusinessExt.class)) {
+                throw new LatticeRuntimeException("LATTICE-CORE-005", targetClass.getName());
+            }
+            info.setBusinessExtClass(targetClass);
+            return info;
+        }
+        return null;
+    }
+
     public static ScanSkipAnnotation getScanSkipAnnotation(Method method) {
-        for (ScanSkipAnnotationParser parser : LatticeSpiFactory.getInstance().getScanSkipAnnotationParsers()) {
+        for (ScanSkipAnnotationParser parser : LatticeAnnotationSpiFactory.getInstance().getScanSkipAnnotationParsers()) {
             Annotation annotation = AnnotationUtils.findAnnotation(method, parser.getAnnotationClass());
             if (null == annotation) {
                 continue;
@@ -50,7 +132,7 @@ public class LatticeAnnotationUtils extends AnnotationUtils {
 
     @SuppressWarnings("unchecked")
     public static ScanSkipAnnotation getScanSkipAnnotation(Class<?> targetClass) {
-        for (ScanSkipAnnotationParser parser : LatticeSpiFactory.getInstance().getScanSkipAnnotationParsers()) {
+        for (ScanSkipAnnotationParser parser : LatticeAnnotationSpiFactory.getInstance().getScanSkipAnnotationParsers()) {
             Annotation annotation = AnnotationUtils.getAnnotation(targetClass, parser.getAnnotationClass());
             if (null == annotation) {
                 continue;

@@ -1,4 +1,4 @@
-package org.hiforce.lattice.runtime.utils;
+package org.hifforce.lattice.utils;
 
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static org.hifforce.lattice.utils.LatticeAnnotationUtils.getExtensionAnnotation;
 
 /**
  * @author Rocky Yu
@@ -36,7 +38,7 @@ public class BusinessExtUtils {
         supportedCodes.addAll(distinctSupportCodes(businessExt));
         try {
             for (Method method : businessExt.getClass().getMethods()) {
-                ExtensionAnnotation annotation = ExtensionUtils.getExtensionAnnotation(method);
+                ExtensionAnnotation annotation = getExtensionAnnotation(method);
                 if (null == annotation) {
                     continue;
                 }
