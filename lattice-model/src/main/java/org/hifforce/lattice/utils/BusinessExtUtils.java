@@ -1,6 +1,8 @@
 package org.hifforce.lattice.utils;
 
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Sets;
+import com.google.common.collect.Table;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +26,21 @@ public class BusinessExtUtils {
 
     private static final Map<Class<?>, Set<String>> CODE_MAP = new ConcurrentHashMap<>();
 
+    private static final Table<Class<?>, String, Method> EXT_METHOD_MAP = HashBasedTable.create();
+
+    public static Method getExtensionMethod(IBusinessExt businessExt, String extCode, String scenario) {
+        if (null == businessExt) {
+            return null;
+        }
+        if (!supportedExtCodes(businessExt).contains(extCode)) {
+            return null;
+        }
+
+        IBusinessExt subExt = businessExt.getBusinessExtByCode(extCode, scenario);
+        return EXT_METHOD_MAP.get(subExt.getClass(), extCode);
+    }
+
+
     public static Set<String> supportedExtCodes(IBusinessExt businessExt) {
         if (null == businessExt) {
             return Sets.newHashSet();
@@ -43,6 +60,7 @@ public class BusinessExtUtils {
                     continue;
                 }
                 if (StringUtils.isNotEmpty(annotation.getCode())) {
+                    EXT_METHOD_MAP.put(key, annotation.getCode(), method);
                     supportedCodes.add(annotation.getCode());
                 }
 
