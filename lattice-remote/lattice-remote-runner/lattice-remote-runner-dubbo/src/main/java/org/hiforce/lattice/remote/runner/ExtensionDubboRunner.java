@@ -1,6 +1,7 @@
 package org.hiforce.lattice.remote.runner;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -16,12 +17,14 @@ import org.hifforce.lattice.model.business.IBizObject;
 import org.hifforce.lattice.model.register.TemplateSpec;
 import org.hiforce.lattice.remote.client.LatticeRemoteInvoker;
 import org.hiforce.lattice.remote.runner.init.LatticeDubboRunnerEnv;
+import org.hiforce.lattice.remote.runner.key.DubboInvokeCacheKey;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Rocky Yu
@@ -30,6 +33,9 @@ import java.util.List;
 @SuppressWarnings("all")
 @Slf4j
 public class ExtensionDubboRunner<R> extends ExtensionRemoteRunner<R> {
+
+    private static Map<DubboInvokeCacheKey, LatticeRemoteInvoker>
+            INVOKE_CACHE = Maps.newHashMap();
 
     @Getter
     @Setter
@@ -84,18 +90,27 @@ public class ExtensionDubboRunner<R> extends ExtensionRemoteRunner<R> {
     }
 
     private Object invoke(List<Object> params) {
-        ApplicationConfig application = LatticeDubboRunnerEnv.getInstance().getApplication();
-        RegistryConfig registry = LatticeDubboRunnerEnv.getInstance().getRegistry();
+        String bizCode = template.getCode();
+        String scenario = getScenario();
 
-        ReferenceConfig<LatticeRemoteInvoker> reference = new ReferenceConfig<>();
-        reference.setApplication(application);
-        reference.setRegistry(registry); // 多个注册中心可以用setRegistries()
-        reference.setInterface(LatticeRemoteInvoker.class);
-        reference.setVersion("1.0.0");
-        reference.setGroup("lattice-" + template.getCode());
+        DubboInvokeCacheKey key = new DubboInvokeCacheKey(bizCode, scenario, getExtensionCode());
 
-        LatticeRemoteInvoker remoteInvoker = reference.get();
-        return remoteInvoker.invoke(template.getCode(), getScenario(),
+        LatticeRemoteInvoker remoteInvoker = INVOKE_CACHE.get(key);
+        if (null == remoteInvoker) {
+
+            ApplicationConfig application = LatticeDubboRunnerEnv.getInstance().getApplication();
+            RegistryConfig registry = LatticeDubboRunnerEnv.getInstance().getRegistry();
+
+            ReferenceConfig<LatticeRemoteInvoker> reference = new ReferenceConfig<>();
+            reference.setApplication(application);
+            reference.setRegistry(registry); // 多个注册中心可以用setRegistries()
+            reference.setInterface(LatticeRemoteInvoker.class);
+            reference.setVersion("1.0.0");
+            reference.setGroup("lattice-" + bizCode);
+            remoteInvoker = reference.get();
+            INVOKE_CACHE.put(key, remoteInvoker);
+        }
+        return remoteInvoker.invoke(bizCode, scenario,
                 getExtensionCode(), (Object[]) params.toArray());
     }
 
