@@ -5,7 +5,7 @@ import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hifforce.lattice.message.Message;
 import org.hifforce.lattice.model.register.TemplateSpec;
-import org.hiforce.lattice.runtime.ability.execute.runner.ExtensionRunner;
+import org.hifforce.lattice.extension.ExtensionRunner;
 
 import java.util.ArrayList;
 import java.util.Collections;

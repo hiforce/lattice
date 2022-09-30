@@ -2,6 +2,8 @@ package org.hiforce.lattice.runtime.ability.execute.runner;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.hifforce.lattice.extension.ExtensionRunner;
+import org.hifforce.lattice.extension.ExtensionRunnerType;
 import org.hifforce.lattice.message.Message;
 import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.IBusinessExt;

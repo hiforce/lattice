@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+    org.hiforce.lattice.remote.runner.config.RemoteRunnerConfig

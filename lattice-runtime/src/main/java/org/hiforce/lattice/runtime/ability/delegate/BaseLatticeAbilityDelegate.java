@@ -25,7 +25,7 @@ import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 import org.hiforce.lattice.runtime.ability.execute.filter.ExtensionFilter;
 import org.hiforce.lattice.runtime.ability.execute.filter.ProductFilter;
 import org.hiforce.lattice.runtime.ability.execute.runner.ExtensionJavaRunner;
-import org.hiforce.lattice.runtime.ability.execute.runner.ExtensionRunner;
+import org.hifforce.lattice.extension.ExtensionRunner;
 import org.hiforce.lattice.runtime.cache.ExtensionInvokeCache;
 import org.hiforce.lattice.runtime.cache.ExtensionRunnerCacheKey;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;

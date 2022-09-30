@@ -10,8 +10,8 @@ import org.hifforce.lattice.model.ability.execute.ExtensionCallback;
 import org.hifforce.lattice.model.ability.execute.Reducer;
 import org.hifforce.lattice.model.business.IBizObject;
 import org.hifforce.lattice.model.register.TemplateSpec;
-import org.hiforce.lattice.runtime.ability.execute.runner.ExtensionRunner;
-import org.hiforce.lattice.runtime.ability.execute.runner.ExtensionRunnerType;
+import org.hifforce.lattice.extension.ExtensionRunner;
+import org.hifforce.lattice.extension.ExtensionRunnerType;
 
 import java.util.*;
 import java.util.function.Predicate;

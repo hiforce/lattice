@@ -30,8 +30,8 @@ public class LatticePluginContainer {
         Lattice.getInstance().start();
 
         ApplicationConfig application = new ApplicationConfig();
-        application.setName("lattice-plugin-container");
-        application.setId("lattice-remote-container`");
+        application.setName("lattice-remote-container");
+        application.setId("lattice-remote-container");
 
         MonitorConfig monitorConfig = new MonitorConfig();
         monitorConfig.setProtocol("dubbo-registry");
@@ -43,8 +43,8 @@ public class LatticePluginContainer {
         protocol.setThreads(200);
 
         RegistryConfig registry = new RegistryConfig();
-        registry.setAddress("nacos://39.108.157.200:8848");
-        registry.getMetaData().put("report.address", "nacos://39.108.157.200:8848");
+        registry.setAddress("nacos://172.18.70.228:8848");
+        registry.getMetaData().put("report.address", "nacos://172.18.70.228:8848");
 
 //        ProviderConfig providerConfig = new ProviderConfig();
 //        providerConfig.setFilter("testFilter");

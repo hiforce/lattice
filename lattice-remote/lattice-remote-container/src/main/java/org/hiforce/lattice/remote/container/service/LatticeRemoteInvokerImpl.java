@@ -20,7 +20,7 @@ public class LatticeRemoteInvokerImpl implements LatticeRemoteInvoker {
     public Serializable invoke(String bizCode, String scenario, String extCode, Serializable... params) {
         RealizationSpec realizationSpec = Lattice.getInstance().getAllRealizations().stream()
                 .filter(p -> StringUtils.equals(bizCode, p.getCode()))
-                .filter(p -> StringUtils.equals(scenario, p.getScenario()))
+                .filter(p -> isScenarioMatched(scenario, p.getScenario()))
                 .filter(p -> p.getExtensionCodes().contains(extCode))
                 .findFirst().orElse(null);
         if (null == realizationSpec) {
@@ -32,5 +32,16 @@ public class LatticeRemoteInvokerImpl implements LatticeRemoteInvoker {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private boolean isScenarioMatched(String targetScenario, String specScenario) {
+        if (StringUtils.isEmpty(targetScenario) && StringUtils.isEmpty(specScenario)) {
+            return true;
+        }
+        if (null == targetScenario || null == specScenario) {
+            return false;
+        }
+        return StringUtils.equals(targetScenario, specScenario);
+
     }
 }
