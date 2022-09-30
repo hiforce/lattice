@@ -4,14 +4,13 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.hifforce.lattice.model.ability.IAbility;
+import org.hifforce.lattice.extension.ExtensionRunner;
+import org.hifforce.lattice.extension.ExtensionRunnerType;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.ability.execute.ExtensionCallback;
 import org.hifforce.lattice.model.ability.execute.Reducer;
 import org.hifforce.lattice.model.business.IBizObject;
 import org.hifforce.lattice.model.register.TemplateSpec;
-import org.hifforce.lattice.extension.ExtensionRunner;
-import org.hifforce.lattice.extension.ExtensionRunnerType;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -212,24 +211,24 @@ public class RunnerCollection<ExtensionPoints, R> {
     }
 
     public static class RunnerItemEntry<ExtensionPoints, R> {
+
         @Getter
         TemplateSpec template;
+
         ExtensionRunner<ExtensionPoints, R> extensionRunner;
-        IAbility ability;
 
         public ExtensionRunnerType getRunnerType() {
             return extensionRunner.getType();
         }
 
-        public RunnerItemEntry(TemplateSpec template, ExtensionRunner<ExtensionPoints, R> extensionRunner, IAbility ability) {
+        public RunnerItemEntry(TemplateSpec template, ExtensionRunner<ExtensionPoints, R> extensionRunner) {
             this.template = template;
             this.extensionRunner = extensionRunner;
-            this.ability = ability;
         }
 
         @Override
         public String toString() {
-            return "[" + (template != null ? template.getCode() : null) + "|"
+            return "[" + template.getCode() + "|"
                     + (extensionRunner.getModel() != null ? extensionRunner.getModel().getClass().getName() : null) + "]";
         }
     }
@@ -252,7 +251,7 @@ public class RunnerCollection<ExtensionPoints, R> {
                 ExtensionCallback<IBusinessExt, R> callback, ExtensionRunner.RunnerExecuteResult result) {
             RunnerItemEntry<ExtensionPoints, R> entry = this.runnerItemEntry;
             try {
-                return entry.extensionRunner.runAllMatched(entry.ability, this.bizObject, callback, result);
+                return entry.extensionRunner.runAllMatched(this.bizObject, callback, result);
             } catch (Exception ex) {
                 log.error(ex.getMessage(), ex);
                 throw ex;

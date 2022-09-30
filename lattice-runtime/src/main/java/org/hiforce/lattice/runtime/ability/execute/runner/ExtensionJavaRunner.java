@@ -23,8 +23,8 @@ public class ExtensionJavaRunner<T extends IBusinessExt, R> extends ExtensionRun
 
 
     @Override
-    public R runFirstMatched(Object abilityInstance, IBizObject bizInstance,
-                             ExtensionCallback<IBusinessExt, R> callback, RunnerExecuteResult executeResult) {
+    public R runFirstMatched(
+            IBizObject bizObject, ExtensionCallback<IBusinessExt, R> callback, RunnerExecuteResult executeResult) {
         if (null == this.getModel()) {
             log.warn(Message.code("LATTICE-CORE-RT-0009", this.getExtensionCode()).toString());
             return null;
@@ -41,8 +41,9 @@ public class ExtensionJavaRunner<T extends IBusinessExt, R> extends ExtensionRun
 
     @Nonnull
     @Override
-    public List<R> runAllMatched(IAbility<?> ability, IBizObject bizObject, ExtensionCallback<IBusinessExt, R> callback, RunnerExecuteResult executeResult) {
-        return Collections.singletonList(runFirstMatched(ability, bizObject, callback, executeResult));
+    public List<R> runAllMatched(
+            IBizObject bizObject, ExtensionCallback<IBusinessExt, R> callback, RunnerExecuteResult executeResult) {
+        return Collections.singletonList(runFirstMatched(bizObject, callback, executeResult));
     }
 
     @Override

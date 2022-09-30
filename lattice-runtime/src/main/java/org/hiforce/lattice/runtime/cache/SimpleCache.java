@@ -36,6 +36,4 @@ public class SimpleCache {
     public ExtensionSpecCache getExtensionSpecCache() {
         return CACHE_EXTENSION_POINT_SPEC;
     }
-
-
 }

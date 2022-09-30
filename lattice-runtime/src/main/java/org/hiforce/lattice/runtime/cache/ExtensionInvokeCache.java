@@ -22,8 +22,6 @@ public class ExtensionInvokeCache {
 
     private final Map<Long, IBusinessExt> EXT_REALIZATION_CACHE = new ConcurrentHashMap<>(2000);
 
-    private ForkJoinPool forkJoinPool = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
-
     private ExtensionInvokeCache() {
 
     }

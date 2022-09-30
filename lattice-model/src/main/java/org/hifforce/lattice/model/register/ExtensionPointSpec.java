@@ -3,6 +3,7 @@ package org.hifforce.lattice.model.register;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+import org.hifforce.lattice.annotation.model.ProtocolType;
 import org.hifforce.lattice.annotation.model.ReduceType;
 import org.hifforce.lattice.sequence.SequenceGenerator;
 
@@ -30,6 +31,10 @@ public class ExtensionPointSpec extends BaseSpec {
     @Getter
     @Setter
     private ReduceType reduceType = ReduceType.UNKNOWN;
+
+    @Getter
+    @Setter
+    private ProtocolType protocolType = ProtocolType.LOCAL;
 
     @Getter
     @Setter

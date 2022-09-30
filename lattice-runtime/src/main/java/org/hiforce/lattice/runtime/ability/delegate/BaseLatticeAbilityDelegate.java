@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hifforce.lattice.cache.ITemplateCache;
 import org.hifforce.lattice.cache.invoke.InvokeCache;
 import org.hifforce.lattice.exception.LatticeRuntimeException;
+import org.hifforce.lattice.extension.ExtensionRunner;
 import org.hifforce.lattice.message.Message;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.business.IBizObject;
@@ -16,6 +17,7 @@ import org.hifforce.lattice.model.config.ExtPriority;
 import org.hifforce.lattice.model.config.ExtPriorityConfig;
 import org.hifforce.lattice.model.context.BizSessionContext;
 import org.hifforce.lattice.model.register.BusinessSpec;
+import org.hifforce.lattice.model.register.ExtensionPointSpec;
 import org.hifforce.lattice.model.register.RealizationSpec;
 import org.hifforce.lattice.model.register.TemplateSpec;
 import org.hifforce.lattice.utils.BizCodeUtils;
@@ -25,7 +27,6 @@ import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 import org.hiforce.lattice.runtime.ability.execute.filter.ExtensionFilter;
 import org.hiforce.lattice.runtime.ability.execute.filter.ProductFilter;
 import org.hiforce.lattice.runtime.ability.execute.runner.ExtensionJavaRunner;
-import org.hifforce.lattice.extension.ExtensionRunner;
 import org.hiforce.lattice.runtime.cache.ExtensionInvokeCache;
 import org.hiforce.lattice.runtime.cache.ExtensionRunnerCacheKey;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
@@ -152,6 +153,9 @@ public class BaseLatticeAbilityDelegate {
         boolean supportCustomization = ability.supportCustomization();
         boolean isHorizontal = !filter.isLoadBusinessExt();
         LatticeRuntimeCache runtimeCache = Lattice.getInstance().getLatticeRuntimeCache();
+
+        ExtensionPointSpec extensionPointSpec = runtimeCache.getExtensionSpecCache().getKey1Only(extensionCode);
+
         // cache
         ExtensionRunnerCacheKey key = new ExtensionRunnerCacheKey(
                 extensionCode, bizCode, scenario, supportCustomization, isHorizontal);
@@ -229,7 +233,7 @@ public class BaseLatticeAbilityDelegate {
         }
 
         if (extensionJavaRunner != null) {
-            return new RunnerCollection.RunnerItemEntry<>(template, extensionJavaRunner, ability);
+            return new RunnerCollection.RunnerItemEntry<>(template, extensionJavaRunner);
         }
         return null;
     }
@@ -281,7 +285,7 @@ public class BaseLatticeAbilityDelegate {
             if (null == javaRunner) {
                 return null;
             }
-            return new RunnerCollection.RunnerItemEntry<>(template, javaRunner, ability);
+            return new RunnerCollection.RunnerItemEntry<>(template, javaRunner);
         };
     }
 

@@ -6,6 +6,7 @@ import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hifforce.lattice.annotation.model.AbilityAnnotation;
 import org.hifforce.lattice.annotation.model.ExtensionAnnotation;
+import org.hifforce.lattice.annotation.model.ProtocolType;
 import org.hifforce.lattice.annotation.model.ReduceType;
 import org.hifforce.lattice.exception.LatticeRuntimeException;
 import org.hifforce.lattice.message.Message;
@@ -155,7 +156,7 @@ public class AbilityRegister {
         }
 
         if (isAbilityInstanceRegistered(abilitySpec, originAbility)) {
-            return AbilityInstBuildResult.registered();  //已经注册了，就不重复注册
+            return AbilityInstBuildResult.registered();
         }
 
         AbilityInstBuildResult result = buildAbilityInstanceSpec(abilitySpec, originAbility, instanceClass);
@@ -276,19 +277,21 @@ public class AbilityRegister {
 
         return buildExtensionPointSpec(abilitySpec, annotation.getCode(),
                 annotation.getName(), annotation.getDesc(), itfClass, method,
-                annotation.getReduceType());
+                annotation.getReduceType(), annotation.getProtocolType());
     }
 
     private ExtensionPointSpec buildExtensionPointSpec(AbilitySpec abilitySpec, String extensionCode,
                                                        String extensionName,
                                                        String extensionDesc,
                                                        Class<?> itfClass, Method method,
-                                                       ReduceType reduceType) {
+                                                       ReduceType reduceType,
+                                                       ProtocolType protocolType) {
 
         ExtensionPointSpec extensionPointSpec =
                 ExtensionPointSpec.of(method, abilitySpec.getCode(),
                         extensionCode, extensionName, extensionDesc);
         extensionPointSpec.setReduceType(reduceType);
+        extensionPointSpec.setProtocolType(protocolType);
         extensionPointSpec.setItfClass(itfClass);
         return extensionPointSpec;
     }

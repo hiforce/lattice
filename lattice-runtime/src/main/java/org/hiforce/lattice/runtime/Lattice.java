@@ -295,8 +295,25 @@ public class Lattice {
                 .findFirst().orElse(null);
     }
 
+    public TemplateSpec getTemplateSpec(String code, TemplateType type) {
+        if (type == TemplateType.BUSINESS) {
+            return getRegisteredBusinessByCode(code);
+        } else if (type == TemplateType.PRODUCT) {
+            return getRegisteredProductByCode(code);
+        } else if (type == TemplateType.USE_CASE) {
+            return getRegisteredUseCaseByCode(code);
+        }
+        return null;
+    }
+
     public ProductSpec getRegisteredProductByCode(String code) {
         return TemplateRegister.getInstance().getProducts().stream()
+                .filter(p -> StringUtils.equals(code, p.getCode()))
+                .findFirst().orElse(null);
+    }
+
+    public UseCaseSpec getRegisteredUseCaseByCode(String code) {
+        return TemplateRegister.getInstance().getUseCases().stream()
                 .filter(p -> StringUtils.equals(code, p.getCode()))
                 .findFirst().orElse(null);
     }

@@ -21,13 +21,13 @@ public class ExtensionDubboRunner extends ExtensionRemoteRunner {
     }
 
     @Override
-    public Object runFirstMatched(Object abilityInstance, IBizObject bizInstance, ExtensionCallback callback, RunnerExecuteResult executeResult) {
+    public Object runFirstMatched(IBizObject bizObject, ExtensionCallback callback, RunnerExecuteResult executeResult) {
         return null;
     }
 
     @NotNull
     @Override
-    public List runAllMatched(IAbility ability, IBizObject bizObject, ExtensionCallback callback, RunnerExecuteResult executeResult) {
+    public List runAllMatched(IBizObject bizObject, ExtensionCallback callback, RunnerExecuteResult executeResult) {
         return null;
     }
 
