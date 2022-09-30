@@ -28,8 +28,8 @@ public class RunnerCollection<ExtensionPoints, R> {
 
     private IBizObject bizInstance;
 
-    private List<RunnerItemEntry<ExtensionPoints, R>> runnerList = Collections.emptyList();
-    private Predicate<RunnerItemEntry<ExtensionPoints, R>> predicate = ACCEPT_ALL;
+    private List<RunnerItemEntry<R>> runnerList = Collections.emptyList();
+    private Predicate<RunnerItemEntry<R>> predicate = ACCEPT_ALL;
     private Producer<ExtensionPoints, R> defaultProducer = PRODUCE_NULL;
 
     private RunnerCollection<ExtensionPoints, R> parent;
@@ -45,8 +45,8 @@ public class RunnerCollection<ExtensionPoints, R> {
 
     public static <ExtensionPoints, R> RunnerCollection<ExtensionPoints, R> of(
             IBizObject bizInstance,
-            List<RunnerCollection.RunnerItemEntry<ExtensionPoints, R>> runnerList,
-            Predicate<RunnerCollection.RunnerItemEntry<ExtensionPoints, R>> predicate,
+            List<RunnerCollection.RunnerItemEntry<R>> runnerList,
+            Predicate<RunnerCollection.RunnerItemEntry<R>> predicate,
             Producer<ExtensionPoints, R> defaultResult, boolean loadBizExt, boolean loadDefaultExtension) {
 
         RunnerCollection<ExtensionPoints, R> runnerCollection = new RunnerCollection<>();
@@ -63,8 +63,8 @@ public class RunnerCollection<ExtensionPoints, R> {
 
     public static <ExtensionPoints, R> RunnerCollection<ExtensionPoints, R> of(
             IBizObject bizInstance,
-            List<RunnerCollection.RunnerItemEntry<ExtensionPoints, R>> runnerList,
-            Predicate<RunnerCollection.RunnerItemEntry<ExtensionPoints, R>> predicate) {
+            List<RunnerCollection.RunnerItemEntry<R>> runnerList,
+            Predicate<RunnerCollection.RunnerItemEntry<R>> predicate) {
         return of(bizInstance, runnerList, predicate, null, false, false);
     }
 
@@ -129,10 +129,10 @@ public class RunnerCollection<ExtensionPoints, R> {
         }
         boolean skipDefault = false;
         IBizObject bizInstance = this.bizInstance;
-        List<RunnerItemEntry<ExtensionPoints, R>> runnerList = this.runnerList;
+        List<RunnerItemEntry<R>> runnerList = this.runnerList;
         if (runnerList != null) {
-            Predicate<RunnerItemEntry<ExtensionPoints, R>> predicate = this.predicate;
-            for (RunnerItemEntry<ExtensionPoints, R> item : this.runnerList) {
+            Predicate<RunnerItemEntry<R>> predicate = this.predicate;
+            for (RunnerItemEntry<R> item : this.runnerList) {
                 boolean t = predicate.test(item);
                 skipDefault |= t;
                 if (t) {
@@ -140,7 +140,7 @@ public class RunnerCollection<ExtensionPoints, R> {
                 }
             }
             if (!skipDefault && this.loadBizExt) {
-                RunnerItemEntry<ExtensionPoints, R> defaultItem = this.defaultProducer.produce();
+                RunnerItemEntry<R> defaultItem = this.defaultProducer.produce();
                 if (defaultItem != null) {
                     result.add(new InstantItem<>(defaultItem, bizInstance));
                 }
@@ -210,7 +210,7 @@ public class RunnerCollection<ExtensionPoints, R> {
         return templates;
     }
 
-    public static class RunnerItemEntry<ExtensionPoints, R> {
+    public static class RunnerItemEntry<R> {
 
         @Getter
         TemplateSpec template;
@@ -234,14 +234,14 @@ public class RunnerCollection<ExtensionPoints, R> {
     }
 
     public interface Producer<ExtensionPoints, R> {
-        RunnerCollection.RunnerItemEntry<ExtensionPoints, R> produce();
+        RunnerCollection.RunnerItemEntry<R> produce();
     }
 
     private class InstantItem<ExtensionPoints, R> {
-        RunnerItemEntry<ExtensionPoints, R> runnerItemEntry;
+        RunnerItemEntry<R> runnerItemEntry;
         IBizObject bizObject;
 
-        public InstantItem(RunnerItemEntry<ExtensionPoints, R> runnerItemEntry, IBizObject bizObject) {
+        public InstantItem(RunnerItemEntry<R> runnerItemEntry, IBizObject bizObject) {
             this.runnerItemEntry = runnerItemEntry;
             this.bizObject = bizObject;
         }
@@ -249,7 +249,7 @@ public class RunnerCollection<ExtensionPoints, R> {
         @SuppressWarnings("unchecked")
         public List<R> runAllMatched(
                 ExtensionCallback<IBusinessExt, R> callback, ExtensionRunner.RunnerExecuteResult result) {
-            RunnerItemEntry<ExtensionPoints, R> entry = this.runnerItemEntry;
+            RunnerItemEntry<R> entry = this.runnerItemEntry;
             try {
                 return entry.extensionRunner.runAllMatched(this.bizObject, callback, result);
             } catch (Exception ex) {

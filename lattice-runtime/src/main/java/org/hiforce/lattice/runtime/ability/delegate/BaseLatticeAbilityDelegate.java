@@ -74,7 +74,7 @@ public class BaseLatticeAbilityDelegate {
         }
 
 
-        List<RunnerCollection.RunnerItemEntry<BusinessExt, R>> cachedRunners =
+        List<RunnerCollection.RunnerItemEntry<R>> cachedRunners =
                 getCachedRunners(extCode, businessConfig, filter);
         if (cachedRunners == null) {
             return buildDefaultRunnerCollection(extCode, onlyProduct);
@@ -96,10 +96,10 @@ public class BaseLatticeAbilityDelegate {
                 , businessRunnerCollection);
     }
 
-    private <BusinessExt extends IBusinessExt, R> List<RunnerCollection.RunnerItemEntry<BusinessExt, R>> filterEffectiveRunners(
-            List<RunnerCollection.RunnerItemEntry<BusinessExt, R>> runners) {
-        List<RunnerCollection.RunnerItemEntry<BusinessExt, R>> output = Lists.newArrayList();
-        for (RunnerCollection.RunnerItemEntry<BusinessExt, R> runner : runners) {
+    private <R> List<RunnerCollection.RunnerItemEntry<R>> filterEffectiveRunners(
+            List<RunnerCollection.RunnerItemEntry<R>> runners) {
+        List<RunnerCollection.RunnerItemEntry<R>> output = Lists.newArrayList();
+        for (RunnerCollection.RunnerItemEntry<R> runner : runners) {
             if (runner.getTemplate().getType().isVertical()) {
                 output.add(runner);
                 continue;
@@ -144,7 +144,7 @@ public class BaseLatticeAbilityDelegate {
         return true;
     }
 
-    private <ExtensionPoints extends IBusinessExt, R> List<RunnerCollection.RunnerItemEntry<ExtensionPoints, R>> getCachedRunners(
+    private <R> List<RunnerCollection.RunnerItemEntry<R>> getCachedRunners(
             String extensionCode, BusinessConfig businessConfig, ExtensionFilter filter) {
 
         String scenario = ability.getContext().getScenario();
@@ -165,7 +165,7 @@ public class BaseLatticeAbilityDelegate {
             if (result == NULL_OBJECT) {
                 return null;
             } else {
-                return (List<RunnerCollection.RunnerItemEntry<ExtensionPoints, R>>) result;
+                return (List<RunnerCollection.RunnerItemEntry<R>>) result;
             }
         }
 
@@ -177,7 +177,7 @@ public class BaseLatticeAbilityDelegate {
             return null;
         }
 
-        List<RunnerCollection.RunnerItemEntry<ExtensionPoints, R>> extensionRunners = new ArrayList<>();
+        List<RunnerCollection.RunnerItemEntry<R>> extensionRunners = new ArrayList<>();
         for (ExtPriority config : businessConfig.getExtPriorityByCode(extensionCode, isHorizontal)) {
             if (null == config)
                 continue;
@@ -192,7 +192,7 @@ public class BaseLatticeAbilityDelegate {
                 }
             }
 
-            RunnerCollection.RunnerItemEntry<ExtensionPoints, R> runnerItemEntry =
+            RunnerCollection.RunnerItemEntry<R> runnerItemEntry =
                     buildExtensionJavaRunnerItemEntry(extensionCode, config, bizCode, scenario);
             if (null != runnerItemEntry) {
                 extensionRunners.add(runnerItemEntry);
@@ -202,7 +202,7 @@ public class BaseLatticeAbilityDelegate {
         return extensionRunners;
     }
 
-    private <ExtensionPoints extends IBusinessExt, R> RunnerCollection.RunnerItemEntry<ExtensionPoints, R> buildExtensionJavaRunnerItemEntry(
+    private <R> RunnerCollection.RunnerItemEntry<R> buildExtensionJavaRunnerItemEntry(
             String extensionCode, ExtPriority config, String bizCode, String scenario) {
 
         boolean supportCustomization = ability.supportCustomization();
@@ -402,7 +402,7 @@ public class BaseLatticeAbilityDelegate {
     }
 
 
-    private static class SessionRelatedFilter<ExtensionPoints, R> implements Predicate<RunnerCollection.RunnerItemEntry<ExtensionPoints, R>> {
+    private static class SessionRelatedFilter<ExtensionPoints, R> implements Predicate<RunnerCollection.RunnerItemEntry<R>> {
 
         private ProductFilter productFilter;
         private ExtensionFilter extensionFilter;
@@ -417,7 +417,7 @@ public class BaseLatticeAbilityDelegate {
         }
 
         @Override
-        public boolean test(RunnerCollection.RunnerItemEntry<ExtensionPoints, R> entry) {
+        public boolean test(RunnerCollection.RunnerItemEntry<R> entry) {
             String templateCode = entry.getTemplate().getCode();
             if (null != productFilter) {
                 if (!productFilter.getAllowedCodes().contains(templateCode)) {
@@ -435,7 +435,7 @@ public class BaseLatticeAbilityDelegate {
         }
 
         @Override
-        public boolean test(RunnerCollection.RunnerItemEntry<ExtensionPoints, R> entry) {
+        public boolean test(RunnerCollection.RunnerItemEntry<R> entry) {
             return isTemplateEffected(bizObject.getBizCode(), entry.getTemplate());
         }
     }
