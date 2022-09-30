@@ -3,7 +3,6 @@ package org.hiforce.lattice.runtime.spi;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hifforce.lattice.model.ability.IAbility;
-import org.hifforce.lattice.spi.annotation.*;
 import org.hifforce.lattice.spi.config.BusinessConfigLoadSpi;
 import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 
@@ -19,9 +18,9 @@ import java.util.stream.StreamSupport;
  * @since 2022/9/15
  */
 @SuppressWarnings("rawtypes")
-public class LatticeSpiFactory {
+public class LatticeRuntimeSpiFactory {
 
-    private static volatile LatticeSpiFactory instance;
+    private static volatile LatticeRuntimeSpiFactory instance;
 
     private static ClassLoader classLoader;
 
@@ -31,16 +30,16 @@ public class LatticeSpiFactory {
 
     private List<BusinessConfigLoadSpi> businessConfigLoads;
 
-    private LatticeSpiFactory() {
+    private LatticeRuntimeSpiFactory() {
 
     }
 
-    public static LatticeSpiFactory getInstance() {
+    public static LatticeRuntimeSpiFactory getInstance() {
         if (null == instance) {
-            synchronized (LatticeSpiFactory.class) {
+            synchronized (LatticeRuntimeSpiFactory.class) {
                 if (null == instance) {
-                    instance = new LatticeSpiFactory();
-                    classLoader = LatticeSpiFactory.class.getClassLoader();
+                    instance = new LatticeRuntimeSpiFactory();
+                    classLoader = LatticeRuntimeSpiFactory.class.getClassLoader();
                 }
             }
         }
@@ -74,7 +73,7 @@ public class LatticeSpiFactory {
         if (null != runnerCollectionBuilder) {
             return runnerCollectionBuilder;
         }
-        synchronized (LatticeSpiFactory.class) {
+        synchronized (LatticeRuntimeSpiFactory.class) {
             if (null == runnerCollectionBuilder) {
                 ServiceLoader<IRunnerCollectionBuilder> serializers =
                         ServiceLoader.load(IRunnerCollectionBuilder.class, classLoader);

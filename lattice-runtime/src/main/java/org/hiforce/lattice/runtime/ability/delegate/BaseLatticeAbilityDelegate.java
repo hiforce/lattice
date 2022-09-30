@@ -3,10 +3,13 @@ package org.hiforce.lattice.runtime.ability.delegate;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.hifforce.lattice.annotation.model.ProtocolType;
 import org.hifforce.lattice.cache.ITemplateCache;
 import org.hifforce.lattice.cache.invoke.InvokeCache;
 import org.hifforce.lattice.exception.LatticeRuntimeException;
+import org.hifforce.lattice.extension.ExtensionRemoteRunner;
 import org.hifforce.lattice.extension.ExtensionRunner;
+import org.hifforce.lattice.extension.RemoteExtensionRunnerBuilderBean;
 import org.hifforce.lattice.extension.RunnerItemEntry;
 import org.hifforce.lattice.message.Message;
 import org.hifforce.lattice.model.ability.IBusinessExt;
@@ -34,7 +37,8 @@ import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
 import org.hiforce.lattice.runtime.cache.NotExistedExtensionPointRealization;
 import org.hiforce.lattice.runtime.cache.key.ExtensionInvokeCacheKey;
 import org.hiforce.lattice.runtime.spi.IRunnerCollectionBuilder;
-import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
+import org.hiforce.lattice.runtime.spi.LatticeRuntimeSpiFactory;
+import org.hiforce.lattice.runtime.utils.SpringApplicationContextHolder;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -74,9 +78,19 @@ public class BaseLatticeAbilityDelegate {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0012", bizCode);
         }
 
+        LatticeRuntimeCache runtimeCache = Lattice.getInstance().getLatticeRuntimeCache();
+        ExtensionPointSpec extensionPointSpec = runtimeCache.getExtensionSpecCache().getKey1Only(extCode);
+        if (null == extensionPointSpec) {
+            throw new LatticeRuntimeException("LATTICE-CORE-RT-0006", extCode);
+        }
+        List<RunnerItemEntry<R>> cachedRunners = null;
+        if (extensionPointSpec.getProtocolType() == ProtocolType.REMOTE) {
+//todo:
+        } else {
+            cachedRunners =
+                    getCachedLocalRunners(extCode, businessConfig, filter);
+        }
 
-        List<RunnerItemEntry<R>> cachedRunners =
-                getCachedRunners(extCode, businessConfig, filter);
         if (cachedRunners == null) {
             return buildDefaultRunnerCollection(extCode, onlyProduct);
         }
@@ -120,7 +134,7 @@ public class BaseLatticeAbilityDelegate {
 
     private <R> RunnerCollection<R> buildCustomRunnerCollection(
             String extensionCode, IBizObject bizInstance) {
-        IRunnerCollectionBuilder runnerCollectionBuilder = LatticeSpiFactory.getInstance().getRunnerCollectionBuilder();
+        IRunnerCollectionBuilder runnerCollectionBuilder = LatticeRuntimeSpiFactory.getInstance().getRunnerCollectionBuilder();
         if (!runnerCollectionBuilder.isSupport(ability, extensionCode)) {
             return RunnerCollection.of(bizInstance, Lists.newArrayList(), RunnerCollection.ACCEPT_ALL);
         }
@@ -145,8 +159,36 @@ public class BaseLatticeAbilityDelegate {
         return true;
     }
 
-    private <R> List<RunnerItemEntry<R>> getCachedRunners(
-            String extensionCode, BusinessConfig businessConfig, ExtensionFilter filter) {
+    private <R> List<RunnerItemEntry<R>> getCachedRemoteRunners(String extCode, BusinessConfig businessConfig) {
+        String scenario = ability.getContext().getScenario();
+        String bizCode = ability.getContext().getBizCode();
+        LatticeRuntimeCache runtimeCache = Lattice.getInstance().getLatticeRuntimeCache();
+        ExtensionRunnerCacheKey key = new ExtensionRunnerCacheKey(
+                extCode, bizCode, scenario, true, false);
+        Object result = runtimeCache.getCachedExtensionRunner(ability, key);
+        if (result != null) {
+            if (result == NULL_OBJECT) {
+                return null;
+            } else {
+                return (List<RunnerItemEntry<R>>) result;
+            }
+        }
+        RemoteExtensionRunnerBuilderBean builderBean =
+                SpringApplicationContextHolder.getSpringBean(RemoteExtensionRunnerBuilderBean.class);
+        if (null == builderBean) {
+            throw new LatticeRuntimeException("LATTICE-CORE-RT-0021", extCode);
+        }
+
+        BusinessSpec businessSpec = Lattice.getInstance().getRegisteredBusinessByCode(businessConfig.getBizCode());
+
+        ExtensionRemoteRunner<R> runner = builderBean.build(ability, businessSpec, extCode, scenario);
+        RunnerItemEntry<R> runerItem = new RunnerItemEntry<R>(ability, businessSpec, runner);
+        runtimeCache.doCacheExtensionRunner(ability, key, Lists.newArrayList(runerItem));
+        return Lists.newArrayList(runerItem);
+    }
+
+    private <R> List<RunnerItemEntry<R>> getCachedLocalRunners(
+            String extCode, BusinessConfig businessConfig, ExtensionFilter filter) {
 
         String scenario = ability.getContext().getScenario();
         String bizCode = ability.getContext().getBizCode();
@@ -154,12 +196,9 @@ public class BaseLatticeAbilityDelegate {
         boolean supportCustomization = ability.supportCustomization();
         boolean isHorizontal = !filter.isLoadBusinessExt();
         LatticeRuntimeCache runtimeCache = Lattice.getInstance().getLatticeRuntimeCache();
-
-        ExtensionPointSpec extensionPointSpec = runtimeCache.getExtensionSpecCache().getKey1Only(extensionCode);
-
         // cache
         ExtensionRunnerCacheKey key = new ExtensionRunnerCacheKey(
-                extensionCode, bizCode, scenario, supportCustomization, isHorizontal);
+                extCode, bizCode, scenario, supportCustomization, isHorizontal);
 
         Object result = runtimeCache.getCachedExtensionRunner(ability, key);
         if (result != null) {
@@ -171,7 +210,7 @@ public class BaseLatticeAbilityDelegate {
         }
 
         ExtPriorityConfig priorityConfig = businessConfig.getExtensions().stream()
-                .filter(p -> StringUtils.equals(p.getExtCode(), extensionCode))
+                .filter(p -> StringUtils.equals(p.getExtCode(), extCode))
                 .findFirst().orElse(null);
         if (null == priorityConfig) {
             runtimeCache.doCacheExtensionRunner(ability, key, NULL_OBJECT);
@@ -179,7 +218,7 @@ public class BaseLatticeAbilityDelegate {
         }
 
         List<RunnerItemEntry<R>> extensionRunners = new ArrayList<>();
-        for (ExtPriority config : businessConfig.getExtPriorityByCode(extensionCode, isHorizontal)) {
+        for (ExtPriority config : businessConfig.getExtPriorityByCode(extCode, isHorizontal)) {
             if (null == config)
                 continue;
             BizSessionContext bizSessionContext =
@@ -194,7 +233,7 @@ public class BaseLatticeAbilityDelegate {
             }
 
             RunnerItemEntry<R> runnerItemEntry =
-                    buildExtensionJavaRunnerItemEntry(extensionCode, config, bizCode, scenario);
+                    buildExtensionJavaRunnerItemEntry(extCode, config, bizCode, scenario);
             if (null != runnerItemEntry) {
                 extensionRunners.add(runnerItemEntry);
             }
@@ -234,7 +273,7 @@ public class BaseLatticeAbilityDelegate {
         }
 
         if (extensionJavaRunner != null) {
-            return new RunnerItemEntry<>(template, extensionJavaRunner);
+            return new RunnerItemEntry<>(ability, template, extensionJavaRunner);
         }
         return null;
     }
@@ -248,7 +287,7 @@ public class BaseLatticeAbilityDelegate {
         boolean loadDefaultExt = ability.hasDefaultExtension();//Whether load the default ext realization.
 
 
-        RunnerCollection<R> runnerCollection = LatticeSpiFactory.getInstance()
+        RunnerCollection<R> runnerCollection = LatticeRuntimeSpiFactory.getInstance()
                 .getRunnerCollectionBuilder().buildCustomRunnerCollection(
                         ability, extCode);
 
@@ -286,7 +325,7 @@ public class BaseLatticeAbilityDelegate {
             if (null == javaRunner) {
                 return null;
             }
-            return new RunnerItemEntry<>(template, javaRunner);
+            return new RunnerItemEntry<>(ability, template, javaRunner);
         };
     }
 

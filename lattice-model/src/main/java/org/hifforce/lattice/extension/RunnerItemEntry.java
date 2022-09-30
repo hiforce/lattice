@@ -2,6 +2,7 @@ package org.hifforce.lattice.extension;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.register.TemplateSpec;
 
 /**
@@ -10,6 +11,9 @@ import org.hifforce.lattice.model.register.TemplateSpec;
  */
 @SuppressWarnings("all")
 public class RunnerItemEntry<R> {
+
+    @Getter
+    private IAbility ability;
 
     @Getter
     @Setter
@@ -22,9 +26,10 @@ public class RunnerItemEntry<R> {
         return runner.getType();
     }
 
-    public RunnerItemEntry(TemplateSpec template, ExtensionRunner<R> runner) {
+    public RunnerItemEntry(IAbility ability, TemplateSpec template, ExtensionRunner<R> runner) {
         this.template = template;
         this.runner = runner;
+        this.ability = ability;
     }
 
     @Override

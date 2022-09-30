@@ -24,6 +24,9 @@ public abstract class ExtensionRunner<R> {
     @Setter
     private IBusinessExt model;
 
+    public ExtensionRunner(String extensionCode) {
+        this.extensionCode = extensionCode;
+    }
 
     public ExtensionRunner(String extensionCode, IBusinessExt model) {
         this.model = model;

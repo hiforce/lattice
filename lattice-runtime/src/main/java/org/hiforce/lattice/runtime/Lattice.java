@@ -24,7 +24,7 @@ import org.hiforce.lattice.runtime.ability.register.AbilityBuildRequest;
 import org.hiforce.lattice.runtime.ability.register.AbilityRegister;
 import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
-import org.hiforce.lattice.runtime.spi.LatticeSpiFactory;
+import org.hiforce.lattice.runtime.spi.LatticeRuntimeSpiFactory;
 import org.hiforce.lattice.runtime.template.LatticeTemplateManager;
 import org.hiforce.lattice.runtime.utils.ClassLoaderUtil;
 import org.hiforce.lattice.runtime.utils.ClassPathScanHandler;
@@ -123,7 +123,7 @@ public class Lattice {
     private void buildBusinessConfig() {
         List<String> bizCodes = Lattice.getInstance().getAllRegisteredBusinesses().stream()
                 .map(BaseSpec::getCode).collect(Collectors.toList());
-        List<BusinessConfig> configs = LatticeSpiFactory.getInstance().getBusinessConfigLoads().stream()
+        List<BusinessConfig> configs = LatticeRuntimeSpiFactory.getInstance().getBusinessConfigLoads().stream()
                 .flatMap(p -> p.loadBusinessConfigs(bizCodes).stream())
                 .collect(Collectors.toList());
         businessConfigs.addAll(configs);

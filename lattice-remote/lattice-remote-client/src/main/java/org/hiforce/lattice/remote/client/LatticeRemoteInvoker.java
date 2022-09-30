@@ -8,5 +8,5 @@ import java.io.Serializable;
  */
 public interface LatticeRemoteInvoker {
 
-    Serializable invoke(String bizCode, String scenario, String extCode, Serializable... params);
+    Serializable invoke(String bizCode, String scenario, String extCode, Object... params);
 }

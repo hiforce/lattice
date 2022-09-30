@@ -17,7 +17,7 @@ public class LatticeRemoteInvokerImpl implements LatticeRemoteInvoker {
 
     @Override
     @SuppressWarnings("all")
-    public Serializable invoke(String bizCode, String scenario, String extCode, Serializable... params) {
+    public Serializable invoke(String bizCode, String scenario, String extCode, Object... params) {
         RealizationSpec realizationSpec = Lattice.getInstance().getAllRealizations().stream()
                 .filter(p -> StringUtils.equals(bizCode, p.getCode()))
                 .filter(p -> isScenarioMatched(scenario, p.getScenario()))
