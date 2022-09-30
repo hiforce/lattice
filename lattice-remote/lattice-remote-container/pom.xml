@@ -23,6 +23,10 @@
             <artifactId>lattice-remote-client</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.hiforce.lattice</groupId>
+            <artifactId>lattice-runtime</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
         </dependency>

@@ -1,4 +1,4 @@
-package org.hiforce.lattice.register;
+package org.hiforce.lattice.runtime.ability.register;
 
 import com.google.common.collect.Lists;
 import lombok.Getter;
@@ -144,7 +144,7 @@ public class TemplateRegister {
                 try {
                     spec.setBusinessExt(annotation.getBusinessExtClass().newInstance());
                 } catch (Exception e) {
-                    throw new LatticeRuntimeException("LATTICE-REGISTER-0001", clz.getName());
+                    throw new LatticeRuntimeException("LATTICE-CORE-RT-0005", clz.getName());
                 }
                 spec.getExtensionCodes().addAll(BusinessExtUtils.supportedExtCodes(spec.getBusinessExt()));
                 realizations.add(spec);

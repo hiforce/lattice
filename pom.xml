@@ -37,7 +37,6 @@
         <module>lattice-remote/lattice-remote-container</module>
         <module>lattice-remote/lattice-remote-runner/lattice-remote-runner-dubbo</module>
         <module>lattice-remote/lattice-remote-client</module>
-        <module>lattice-register</module>
     </modules>
 
     <dependencyManagement>
@@ -52,11 +51,6 @@
             <dependency>
                 <groupId>org.hiforce.lattice</groupId>
                 <artifactId>lattice-model</artifactId>
-                <version>${version.lattice}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hiforce.lattice</groupId>
-                <artifactId>lattice-register</artifactId>
                 <version>${version.lattice}</version>
             </dependency>
             <dependency>
