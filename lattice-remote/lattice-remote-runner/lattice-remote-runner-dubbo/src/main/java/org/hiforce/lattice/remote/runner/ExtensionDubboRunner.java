@@ -2,7 +2,7 @@ package org.hiforce.lattice.remote.runner;
 
 import org.hifforce.lattice.extension.ExtensionRemoteRunner;
 import org.hifforce.lattice.extension.ExtensionRunnerType;
-import org.hifforce.lattice.model.ability.IAbility;
+import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.ability.execute.ExtensionCallback;
 import org.hifforce.lattice.model.business.IBizObject;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +16,7 @@ import java.util.List;
 @SuppressWarnings("all")
 public class ExtensionDubboRunner extends ExtensionRemoteRunner {
 
-    public ExtensionDubboRunner(String extensionCode, Object model) {
+    public ExtensionDubboRunner(String extensionCode, IBusinessExt model) {
         super(extensionCode, model);
     }
 

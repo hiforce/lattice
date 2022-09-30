@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.hifforce.lattice.extension.ExtensionRunner;
 import org.hifforce.lattice.extension.ExtensionRunnerType;
 import org.hifforce.lattice.message.Message;
-import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.ability.execute.ExtensionCallback;
 import org.hifforce.lattice.model.business.IBizObject;
@@ -19,7 +18,7 @@ import java.util.List;
  * @since 2022/9/19
  */
 @Slf4j
-public class ExtensionJavaRunner<T extends IBusinessExt, R> extends ExtensionRunner<T, R> {
+public class ExtensionJavaRunner<R> extends ExtensionRunner<R> {
 
 
     @Override
@@ -34,7 +33,7 @@ public class ExtensionJavaRunner<T extends IBusinessExt, R> extends ExtensionRun
         return callback.apply(getModel());
     }
 
-    public ExtensionJavaRunner(String extensionCode, T model) {
+    public ExtensionJavaRunner(String extensionCode, IBusinessExt model) {
         super(extensionCode, model);
     }
 

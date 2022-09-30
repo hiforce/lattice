@@ -14,7 +14,7 @@ import java.util.List;
  * @author Rocky Yu
  * @since 2022/9/18
  */
-public abstract class ExtensionRunner<T, R> {
+public abstract class ExtensionRunner<R> {
 
     @Getter
     @Setter
@@ -22,10 +22,10 @@ public abstract class ExtensionRunner<T, R> {
 
     @Getter
     @Setter
-    private T model;
+    private IBusinessExt model;
 
 
-    public ExtensionRunner(String extensionCode, T model) {
+    public ExtensionRunner(String extensionCode, IBusinessExt model) {
         this.model = model;
         this.extensionCode = extensionCode;
     }

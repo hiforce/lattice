@@ -215,13 +215,13 @@ public class RunnerCollection<ExtensionPoints, R> {
         @Getter
         TemplateSpec template;
 
-        ExtensionRunner<ExtensionPoints, R> extensionRunner;
+        ExtensionRunner<R> extensionRunner;
 
         public ExtensionRunnerType getRunnerType() {
             return extensionRunner.getType();
         }
 
-        public RunnerItemEntry(TemplateSpec template, ExtensionRunner<ExtensionPoints, R> extensionRunner) {
+        public RunnerItemEntry(TemplateSpec template, ExtensionRunner<R> extensionRunner) {
             this.template = template;
             this.extensionRunner = extensionRunner;
         }
