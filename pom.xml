@@ -18,8 +18,9 @@
 
     <version>1.0.7-SNAPSHOT</version>
     <properties>
+        <version.spring>5.3.23</version.spring>
+        <version.spring.boot>2.7.4</version.spring.boot>
         <version.lattice>1.0.7-SNAPSHOT</version.lattice>
-        <version.spring.boot>2.7.3</version.spring.boot>
         <springext-plugin-version>1.2</springext-plugin-version>
         <dubbo.version>3.1.0</dubbo.version>
         <version.jdk>1.8</version.jdk>
@@ -29,7 +30,6 @@
     <modules>
         <module>lattice-model</module>
         <module>lattice-runtime</module>
-        <module>lattice-test</module>
         <module>lattice-tools</module>
         <module>lattice-tools/lattice-load-config-res</module>
         <module>lattice-remote</module>
@@ -43,10 +43,21 @@
         <dependencies>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-parent</artifactId>
+                <artifactId>spring-boot-starter-web</artifactId>
                 <version>${version.spring.boot}</version>
-                <type>pom</type>
-                <scope>import</scope>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${version.spring}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${version.spring}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.hiforce.lattice</groupId>
@@ -119,11 +130,19 @@
                 <groupId>org.apache.dubbo</groupId>
                 <artifactId>dubbo</artifactId>
                 <version>${dubbo.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
                 <version>1.33</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.nacos</groupId>
+                <artifactId>nacos-spring-context</artifactId>
+                <version>0.3.6</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

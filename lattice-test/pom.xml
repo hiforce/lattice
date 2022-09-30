@@ -11,7 +11,18 @@
 
     <artifactId>lattice-test</artifactId>
 
+    <properties>
+        <version.spring.boot>2.7.3</version.spring.boot>
+    </properties>
+
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-parent</artifactId>
+            <version>${version.spring.boot}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
         <dependency>
             <groupId>org.hiforce.lattice</groupId>
             <artifactId>lattice-model</artifactId>
