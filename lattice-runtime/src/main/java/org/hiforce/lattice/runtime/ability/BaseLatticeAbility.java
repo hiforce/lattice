@@ -152,7 +152,7 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
         }
 
         List<T> results = new ArrayList<>(16);
-        RunnerCollection<BusinessExt, R> runnerCollection = delegate.loadExtensionRunners(extCode, filter);
+        RunnerCollection<R> runnerCollection = delegate.loadExtensionRunners(extCode, filter);
         return runnerCollection.distinct()
                 .reduceExecute(extCode, reducer, (ExtensionCallback<IBusinessExt, T>) callback, results);
     }

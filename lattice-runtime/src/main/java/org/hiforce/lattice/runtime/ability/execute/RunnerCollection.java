@@ -21,7 +21,7 @@ import java.util.function.Predicate;
  */
 @SuppressWarnings("all")
 @Slf4j
-public class RunnerCollection<ExtensionPoints, R> {
+public class RunnerCollection<R> {
 
     public static final Predicate ACCEPT_ALL = o -> true;
     public static final Producer PRODUCE_NULL = () -> null;
@@ -30,9 +30,9 @@ public class RunnerCollection<ExtensionPoints, R> {
 
     private List<RunnerItemEntry<R>> runnerList = Collections.emptyList();
     private Predicate<RunnerItemEntry<R>> predicate = ACCEPT_ALL;
-    private Producer<ExtensionPoints, R> defaultProducer = PRODUCE_NULL;
+    private Producer<R> defaultProducer = PRODUCE_NULL;
 
-    private RunnerCollection<ExtensionPoints, R> parent;
+    private RunnerCollection<R> parent;
 
     private List<InstantItem> finalColl;
 
@@ -43,13 +43,13 @@ public class RunnerCollection<ExtensionPoints, R> {
     private RunnerCollection() {
     }
 
-    public static <ExtensionPoints, R> RunnerCollection<ExtensionPoints, R> of(
+    public static <R> RunnerCollection<R> of(
             IBizObject bizInstance,
             List<RunnerCollection.RunnerItemEntry<R>> runnerList,
             Predicate<RunnerCollection.RunnerItemEntry<R>> predicate,
-            Producer<ExtensionPoints, R> defaultResult, boolean loadBizExt, boolean loadDefaultExtension) {
+            Producer<R> defaultResult, boolean loadBizExt, boolean loadDefaultExtension) {
 
-        RunnerCollection<ExtensionPoints, R> runnerCollection = new RunnerCollection<>();
+        RunnerCollection<R> runnerCollection = new RunnerCollection<>();
         runnerCollection.bizInstance = bizInstance;
         runnerCollection.runnerList = runnerList;
         runnerCollection.predicate = predicate;
@@ -61,16 +61,16 @@ public class RunnerCollection<ExtensionPoints, R> {
         return runnerCollection;
     }
 
-    public static <ExtensionPoints, R> RunnerCollection<ExtensionPoints, R> of(
+    public static <R> RunnerCollection<R> of(
             IBizObject bizInstance,
             List<RunnerCollection.RunnerItemEntry<R>> runnerList,
             Predicate<RunnerCollection.RunnerItemEntry<R>> predicate) {
         return of(bizInstance, runnerList, predicate, null, false, false);
     }
 
-    public static <ExtensionPoints, R> RunnerCollection<ExtensionPoints, R> combine(
-            RunnerCollection<ExtensionPoints, R> runnerCollection, Producer<ExtensionPoints, R> producer, boolean loadBizExt, boolean loadDefaultExtension) {
-        RunnerCollection<ExtensionPoints, R> runnerResult = new RunnerCollection<>();
+    public static <R> RunnerCollection<R> combine(
+            RunnerCollection<R> runnerCollection, Producer<R> producer, boolean loadBizExt, boolean loadDefaultExtension) {
+        RunnerCollection<R> runnerResult = new RunnerCollection<>();
         runnerResult.parent = runnerCollection;
         runnerResult.bizInstance = runnerCollection.bizInstance;
         if (producer != null) {
@@ -81,17 +81,18 @@ public class RunnerCollection<ExtensionPoints, R> {
         return runnerResult;
     }
 
-    public static <ExtensionPoints, R> RunnerCollection<ExtensionPoints, R> combine(RunnerCollection<ExtensionPoints, R> runnerCollection, RunnerCollection<ExtensionPoints, R> runnerCollection2) {
+    public static <R> RunnerCollection<R> combine(
+            RunnerCollection<R> runnerCollection, RunnerCollection<R> runnerCollection2) {
         runnerCollection2.parent = runnerCollection;
         return runnerCollection2;
     }
 
-    static <ExtensionPoints, R> RunnerCollection<ExtensionPoints, R> newEmptyCollection() {
+    static <R> RunnerCollection<R> newEmptyCollection() {
         return new RunnerCollection<>();
     }
 
-    RunnerCollection<ExtensionPoints, R> merge(RunnerCollection<ExtensionPoints, R> runnerCollection, IBizObject bizInstance) {
-        RunnerCollection<ExtensionPoints, R> parent = this.parent;
+    RunnerCollection<R> merge(RunnerCollection<R> runnerCollection, IBizObject bizInstance) {
+        RunnerCollection<R> parent = this.parent;
         if (parent != null) {
             runnerCollection.parent = parent;
             this.parent = runnerCollection;
@@ -102,9 +103,9 @@ public class RunnerCollection<ExtensionPoints, R> {
         return this;
     }
 
-    RunnerCollection<ExtensionPoints, R> withBizInstance(IBizObject bizInstance) {
+    RunnerCollection<R> withBizInstance(IBizObject bizInstance) {
         this.bizInstance = bizInstance;
-        RunnerCollection<ExtensionPoints, R> parent = this.parent;
+        RunnerCollection<R> parent = this.parent;
         while (parent != null && parent.bizInstance == null) {
             parent.bizInstance = bizInstance;
             parent = parent.parent;
@@ -112,7 +113,7 @@ public class RunnerCollection<ExtensionPoints, R> {
         return this;
     }
 
-    private <T> List<InstantItem<ExtensionPoints, T>> generateInstantItem() {
+    private <T> List<InstantItem<T>> generateInstantItem() {
         List result = this.finalColl;
         if (result == null) {
             result = new ArrayList<>(32);
@@ -123,7 +124,7 @@ public class RunnerCollection<ExtensionPoints, R> {
     }
 
     private void collect(List<InstantItem> result) {
-        RunnerCollection<ExtensionPoints, R> parent = this.parent;
+        RunnerCollection<R> parent = this.parent;
         if (parent != null) {
             parent.collect(result);
         }
@@ -152,18 +153,18 @@ public class RunnerCollection<ExtensionPoints, R> {
         this.finalColl = result;
     }
 
-    public RunnerCollection<ExtensionPoints, R> distinct() {
-        List<InstantItem<ExtensionPoints, R>> result = this.generateInstantItem();
+    public RunnerCollection<R> distinct() {
+        List<InstantItem<R>> result = this.generateInstantItem();
         result = distinctRunners(result);
         this.updateResult(result);
         return this;
     }
 
-    private List<InstantItem<ExtensionPoints, R>> distinctRunners(List<InstantItem<ExtensionPoints, R>> runners) {
-        List<InstantItem<ExtensionPoints, R>> output = new ArrayList<>(runners.size());
+    private List<InstantItem<R>> distinctRunners(List<InstantItem<R>> runners) {
+        List<InstantItem<R>> output = new ArrayList<>(runners.size());
         Map<ExtensionRunnerType, Set<String>> map = Maps.newHashMap();
 
-        for (InstantItem<ExtensionPoints, R> runner : runners) {
+        for (InstantItem<R> runner : runners) {
             if (null == runner.runnerItemEntry.template) {
                 output.add(runner);
                 continue;
@@ -178,13 +179,13 @@ public class RunnerCollection<ExtensionPoints, R> {
     }
 
     public <T, R> ExecuteResult<R> reduceExecute(String extCode, Reducer<T, R> reducer, ExtensionCallback<IBusinessExt, T> callback, List<T> results) {
-        List<InstantItem<ExtensionPoints, T>> list = this.generateInstantItem();
+        List<InstantItem<T>> list = this.generateInstantItem();
         if (list.isEmpty()) {
             return ExecuteResult.success(extCode, reducer.reduceName(), reducer.reduce(results), null, null);
         }
 
         List<ExtensionRunner.CollectionRunnerExecuteResult> executeResults = new ArrayList<>(list.size() * 2);
-        for (InstantItem<ExtensionPoints, T> item : list) {
+        for (InstantItem<T> item : list) {
             ExtensionRunner.CollectionRunnerExecuteResult executeResult = new ExtensionRunner.CollectionRunnerExecuteResult();
             List<T> itemResult = item.runAllMatched(callback, executeResult);
             executeResult.setResults(itemResult);
@@ -204,7 +205,7 @@ public class RunnerCollection<ExtensionPoints, R> {
                 reducer.reduce(results), convertToTemplateList(list), executeResults);
     }
 
-    private <T> List<TemplateSpec> convertToTemplateList(List<InstantItem<ExtensionPoints, T>> list) {
+    private <T> List<TemplateSpec> convertToTemplateList(List<InstantItem<T>> list) {
         List<TemplateSpec> templates = new ArrayList<>(list.size());
         list.forEach(p -> templates.add(p.runnerItemEntry.template));
         return templates;
@@ -233,11 +234,11 @@ public class RunnerCollection<ExtensionPoints, R> {
         }
     }
 
-    public interface Producer<ExtensionPoints, R> {
+    public interface Producer<R> {
         RunnerCollection.RunnerItemEntry<R> produce();
     }
 
-    private class InstantItem<ExtensionPoints, R> {
+    private class InstantItem<R> {
         RunnerItemEntry<R> runnerItemEntry;
         IBizObject bizObject;
 

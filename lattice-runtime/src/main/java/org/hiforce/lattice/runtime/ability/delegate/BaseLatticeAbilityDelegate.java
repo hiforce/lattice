@@ -58,7 +58,7 @@ public class BaseLatticeAbilityDelegate {
         this.ability = ability;
     }
 
-    public <BusinessExt extends IBusinessExt, R> RunnerCollection<BusinessExt, R> loadExtensionRunners(
+    public <R> RunnerCollection<R> loadExtensionRunners(
             @Nonnull String extCode, ExtensionFilter filter) {
         String bizCode = ability.getContext().getBizCode();
         String scenario = ability.getContext().getScenario();
@@ -80,7 +80,7 @@ public class BaseLatticeAbilityDelegate {
             return buildDefaultRunnerCollection(extCode, onlyProduct);
         }
 
-        BaseLatticeAbilityDelegate.SessionRelatedFilter<BusinessExt, R> sessionRelatedFilter
+        BaseLatticeAbilityDelegate.SessionRelatedFilter<R> sessionRelatedFilter
                 = filter == ExtensionFilter.DEFAULT_FILTER ?
                 new BaseLatticeAbilityDelegate.NoProductFilterSessionRelatedFilter<>(filter, bizObject, bizCode) :
                 new BaseLatticeAbilityDelegate.SessionRelatedFilter<>(filter, bizObject, bizCode);
@@ -88,7 +88,7 @@ public class BaseLatticeAbilityDelegate {
         boolean loadBizExt = filter.isLoadBusinessExt();
         boolean loadDefaultExtension = ability.hasDefaultExtension();
 
-        RunnerCollection<BusinessExt, R> businessRunnerCollection = RunnerCollection.of(bizObject,
+        RunnerCollection<R> businessRunnerCollection = RunnerCollection.of(bizObject,
                 filterEffectiveRunners(cachedRunners), sessionRelatedFilter,
                 getDefaultRunnerProducer(bizCode, extCode, scenario), loadBizExt, loadDefaultExtension);
 
@@ -117,7 +117,7 @@ public class BaseLatticeAbilityDelegate {
         return runners;
     }
 
-    private <BusinessExt extends IBusinessExt, R> RunnerCollection<BusinessExt, R> buildCustomRunnerCollection(
+    private <R> RunnerCollection<R> buildCustomRunnerCollection(
             String extensionCode, IBizObject bizInstance) {
         IRunnerCollectionBuilder runnerCollectionBuilder = LatticeSpiFactory.getInstance().getRunnerCollectionBuilder();
         if (!runnerCollectionBuilder.isSupport(ability, extensionCode)) {
@@ -239,7 +239,7 @@ public class BaseLatticeAbilityDelegate {
     }
 
     @SuppressWarnings("all")
-    public <BusinessExt extends IBusinessExt, R> RunnerCollection<BusinessExt, R> buildDefaultRunnerCollection(
+    public <R> RunnerCollection<R> buildDefaultRunnerCollection(
             String extCode, boolean onlyProduct) {
         String bizCode = ability.getContext().getBizObject().getBizCode();
         String scenario = ability.getContext().getScenario();
@@ -247,7 +247,7 @@ public class BaseLatticeAbilityDelegate {
         boolean loadDefaultExt = ability.hasDefaultExtension();//Whether load the default ext realization.
 
 
-        RunnerCollection<BusinessExt, R> runnerCollection = LatticeSpiFactory.getInstance()
+        RunnerCollection<R> runnerCollection = LatticeSpiFactory.getInstance()
                 .getRunnerCollectionBuilder().buildCustomRunnerCollection(
                         ability, extCode);
 
@@ -261,7 +261,7 @@ public class BaseLatticeAbilityDelegate {
 
 
     @SuppressWarnings("all")
-    private <ExtensionPoints extends IBusinessExt, R> RunnerCollection.Producer<ExtensionPoints, R> getDefaultRunnerProducer(
+    private <R> RunnerCollection.Producer<R> getDefaultRunnerProducer(
             String bizCode,
             String extensionCode,
             String scenario) {
@@ -402,7 +402,7 @@ public class BaseLatticeAbilityDelegate {
     }
 
 
-    private static class SessionRelatedFilter<ExtensionPoints, R> implements Predicate<RunnerCollection.RunnerItemEntry<R>> {
+    private static class SessionRelatedFilter<R> implements Predicate<RunnerCollection.RunnerItemEntry<R>> {
 
         private ProductFilter productFilter;
         private ExtensionFilter extensionFilter;
@@ -429,7 +429,7 @@ public class BaseLatticeAbilityDelegate {
         }
     }
 
-    private static class NoProductFilterSessionRelatedFilter<ExtensionPoints, R> extends SessionRelatedFilter<ExtensionPoints, R> {
+    private static class NoProductFilterSessionRelatedFilter<R> extends SessionRelatedFilter<R> {
         public NoProductFilterSessionRelatedFilter(ExtensionFilter extensionRunnerFilter, IBizObject bizInstance, String bizCode) {
             super(extensionRunnerFilter, bizInstance, bizCode);
         }
