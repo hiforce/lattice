@@ -2,10 +2,10 @@ package org.hiforce.lattice.runtime.ability.execute;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.hifforce.lattice.extension.ExtensionRunner;
 import org.hifforce.lattice.extension.ExtensionRunnerType;
+import org.hifforce.lattice.extension.RunnerItemEntry;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.ability.execute.ExtensionCallback;
 import org.hifforce.lattice.model.ability.execute.Reducer;
@@ -45,8 +45,8 @@ public class RunnerCollection<R> {
 
     public static <R> RunnerCollection<R> of(
             IBizObject bizInstance,
-            List<RunnerCollection.RunnerItemEntry<R>> runnerList,
-            Predicate<RunnerCollection.RunnerItemEntry<R>> predicate,
+            List<RunnerItemEntry<R>> runnerList,
+            Predicate<RunnerItemEntry<R>> predicate,
             Producer<R> defaultResult, boolean loadBizExt, boolean loadDefaultExtension) {
 
         RunnerCollection<R> runnerCollection = new RunnerCollection<>();
@@ -63,8 +63,8 @@ public class RunnerCollection<R> {
 
     public static <R> RunnerCollection<R> of(
             IBizObject bizInstance,
-            List<RunnerCollection.RunnerItemEntry<R>> runnerList,
-            Predicate<RunnerCollection.RunnerItemEntry<R>> predicate) {
+            List<RunnerItemEntry<R>> runnerList,
+            Predicate<RunnerItemEntry<R>> predicate) {
         return of(bizInstance, runnerList, predicate, null, false, false);
     }
 
@@ -165,12 +165,12 @@ public class RunnerCollection<R> {
         Map<ExtensionRunnerType, Set<String>> map = Maps.newHashMap();
 
         for (InstantItem<R> runner : runners) {
-            if (null == runner.runnerItemEntry.template) {
+            if (null == runner.runnerItemEntry.getTemplate()) {
                 output.add(runner);
                 continue;
             }
             Set<String> set = map.computeIfAbsent(runner.runnerItemEntry.getRunnerType(), k -> Sets.newHashSet());
-            boolean newAdd = set.add(runner.runnerItemEntry.template.getCode());
+            boolean newAdd = set.add(runner.runnerItemEntry.getTemplate().getCode());
             if (newAdd) {
                 output.add(runner);
             }
@@ -207,35 +207,12 @@ public class RunnerCollection<R> {
 
     private <T> List<TemplateSpec> convertToTemplateList(List<InstantItem<T>> list) {
         List<TemplateSpec> templates = new ArrayList<>(list.size());
-        list.forEach(p -> templates.add(p.runnerItemEntry.template));
+        list.forEach(p -> templates.add(p.runnerItemEntry.getTemplate()));
         return templates;
     }
 
-    public static class RunnerItemEntry<R> {
-
-        @Getter
-        TemplateSpec template;
-
-        ExtensionRunner<R> extensionRunner;
-
-        public ExtensionRunnerType getRunnerType() {
-            return extensionRunner.getType();
-        }
-
-        public RunnerItemEntry(TemplateSpec template, ExtensionRunner<R> extensionRunner) {
-            this.template = template;
-            this.extensionRunner = extensionRunner;
-        }
-
-        @Override
-        public String toString() {
-            return "[" + template.getCode() + "|"
-                    + (extensionRunner.getModel() != null ? extensionRunner.getModel().getClass().getName() : null) + "]";
-        }
-    }
-
     public interface Producer<R> {
-        RunnerCollection.RunnerItemEntry<R> produce();
+        RunnerItemEntry<R> produce();
     }
 
     private class InstantItem<R> {
@@ -252,7 +229,7 @@ public class RunnerCollection<R> {
                 ExtensionCallback<IBusinessExt, R> callback, ExtensionRunner.RunnerExecuteResult result) {
             RunnerItemEntry<R> entry = this.runnerItemEntry;
             try {
-                return entry.extensionRunner.runAllMatched(this.bizObject, callback, result);
+                return entry.getRunner().runAllMatched(this.bizObject, callback, result);
             } catch (Exception ex) {
                 log.error(ex.getMessage(), ex);
                 throw ex;
