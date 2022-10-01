@@ -1,4 +1,4 @@
-package org.hiforce.lattice.remote.client;
+package org.hiforce.lattice.remote.client.properties;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -11,7 +11,7 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * @since 2022/9/30
  */
 @Slf4j
-public class PropertiesUtils {
+public class ApplicationProperties {
     private static PropertiesConfiguration propertiesConfiguration = null;
 
     private static void initProperties() {
@@ -19,7 +19,7 @@ public class PropertiesUtils {
         FileBasedConfigurationBuilder.setDefaultEncoding(PropertiesConfiguration.class, "UTF-8");
         try {
             propertiesConfiguration = configurations.properties(
-                    PropertiesUtils.class.getClassLoader().getResource("application.properties"));
+                    ApplicationProperties.class.getClassLoader().getResource("application.properties"));
         } catch (ConfigurationException e) {
             log.error(e.getMessage(), e);
         }

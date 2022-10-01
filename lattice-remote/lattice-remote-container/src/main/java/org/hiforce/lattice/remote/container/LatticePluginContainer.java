@@ -3,6 +3,7 @@ package org.hiforce.lattice.remote.container;
 import org.apache.dubbo.config.*;
 import org.hifforce.lattice.model.register.BusinessSpec;
 import org.hiforce.lattice.remote.client.LatticeRemoteInvoker;
+import org.hiforce.lattice.remote.client.properties.LatticeRemoteClientProperties;
 import org.hiforce.lattice.remote.container.service.LatticeRemoteInvokerImpl;
 import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
@@ -30,8 +31,8 @@ public class LatticePluginContainer {
         Lattice.getInstance().start();
 
         ApplicationConfig application = new ApplicationConfig();
-        application.setName("lattice-remote-container");
-        application.setId("lattice-remote-container");
+        application.setName("lattice-plugin-server");
+        application.setId("lattice-plugin-server");
 
         MonitorConfig monitorConfig = new MonitorConfig();
         monitorConfig.setProtocol("dubbo-registry");
@@ -43,11 +44,10 @@ public class LatticePluginContainer {
         protocol.setThreads(200);
 
         RegistryConfig registry = new RegistryConfig();
-        registry.setAddress("nacos://172.18.70.228:8848");
-        registry.getMetaData().put("report.address", "nacos://172.18.70.228:8848");
 
-//        ProviderConfig providerConfig = new ProviderConfig();
-//        providerConfig.setFilter("testFilter");
+        registry.setAddress(LatticeRemoteClientProperties.getInstance().getRegistryAddress());
+        registry.getMetaData().put("report.address",
+                LatticeRemoteClientProperties.getInstance().getRegistryAddress());
 
 
         for (BusinessSpec businessSpec : TemplateRegister.getInstance().getBusinesses()) {
@@ -58,7 +58,6 @@ public class LatticePluginContainer {
             service.setInterface(LatticeRemoteInvoker.class);
             service.setRef(new LatticeRemoteInvokerImpl());
             service.setVersion("1.0.0");
-//            service.setProvider(providerConfig);
             service.setGroup(String.format("lattice-%s", businessSpec.getCode()));
             service.export();
         }

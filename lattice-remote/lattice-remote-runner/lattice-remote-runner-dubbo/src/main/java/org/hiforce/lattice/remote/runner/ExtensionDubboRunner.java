@@ -66,7 +66,6 @@ public class ExtensionDubboRunner<R> extends ExtensionRemoteRunner<R> {
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(businessExt.getClass());
         enhancer.setCallback((MethodInterceptor) (o, method, params, methodProxy) -> {
-            System.out.println("调用方法:" + method);
             if (null != params) {
                 for (Object p : params) {
                     extParams.add(p);

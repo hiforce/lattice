@@ -2,7 +2,7 @@ package org.hiforce.lattice.remote.client.properties;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hiforce.lattice.remote.client.PropertiesUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
@@ -28,8 +28,21 @@ public class LatticeRemoteClientProperties implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         instance = this;
-
-        registryAddress = PropertiesUtils.getValueString("lattice.remote.registry.address");
-
+        registryAddress = ApplicationProperties.getValueString("lattice.remote.registry.address");
+        if (StringUtils.isEmpty(registryAddress)) {
+            registryAddress = ApplicationProperties.getValueString("dubbo.registry.address");
+        }
+        if (StringUtils.isEmpty(registryAddress)) {
+            String value = ApplicationProperties.getValueString("spring.cloud.nacos.config.server-addr");
+            if (StringUtils.isNotEmpty(value)) {
+                registryAddress = "nacos://" + value;
+            }
+        }
+        if (StringUtils.isEmpty(registryAddress)) {
+            String value = BootstrapProperties.getValueString("spring.cloud.nacos.config.server-addr");
+            if (StringUtils.isNotEmpty(value)) {
+                registryAddress = "nacos://" + value;
+            }
+        }
     }
 }
