@@ -56,7 +56,7 @@ public interface IAbility<BusinessExt extends IBusinessExt> {
      *
      * @return the ExtensionPoints realization.
      */
-    IBusinessExt getDefaultRealization();
+    BusinessExt getDefaultRealization();
 
     /**
      * Execute the extension's customization.

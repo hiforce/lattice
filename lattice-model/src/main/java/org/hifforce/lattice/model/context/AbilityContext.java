@@ -1,9 +1,12 @@
 package org.hifforce.lattice.model.context;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.hifforce.lattice.model.business.IBizObject;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * @author Rocky Yu
@@ -21,6 +24,14 @@ public class AbilityContext implements Serializable {
 
     @Getter
     private final String bizCode;
+
+    @Getter
+    @Setter
+    private List<Object> invokeParams;
+
+    @Getter
+    @Setter
+    private Method extMethod;
 
 
     public AbilityContext(IBizObject bizObject) {

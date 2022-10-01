@@ -1,5 +1,6 @@
 package org.hiforce.lattice.runtime.ability;
 
+import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -19,8 +20,11 @@ import org.hiforce.lattice.runtime.ability.delegate.BaseLatticeAbilityDelegate;
 import org.hiforce.lattice.runtime.ability.execute.ExecuteResult;
 import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 import org.hiforce.lattice.runtime.ability.execute.filter.ExtensionFilter;
+import org.springframework.cglib.proxy.Enhancer;
+import org.springframework.cglib.proxy.MethodInterceptor;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +46,8 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
 
     private final BaseLatticeAbilityDelegate delegate;
 
+    private AbilityContext context;
+
     public BaseLatticeAbility(IBizObject bizObject) {
         this.bizObject = bizObject;
         this.instanceCode = this.getClass().getName();
@@ -49,7 +55,10 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
     }
 
     public AbilityContext getContext() {
-        return new AbilityContext(bizObject);
+        if (null == context) {
+            context = new AbilityContext(bizObject);
+        }
+        return context;
     }
 
     public String getCode() {
@@ -136,6 +145,8 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
                                     .map(p -> p.getBizInfo()).orElse(getContext().getBizObject().getBizId().toString()), extCode));
         }
 
+        enrichAbilityInvokeContext(extCode, callback);
+
         ExtensionPointSpec extensionPointSpec =
                 Lattice.getInstance().getLatticeRuntimeCache().getExtensionPointSpecByCode(extCode);
         if (null == extensionPointSpec && !Lattice.getInstance().isSimpleMode()) {
@@ -155,5 +166,27 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
         RunnerCollection<R> runnerCollection = delegate.loadExtensionRunners(extCode, filter);
         return runnerCollection.distinct()
                 .reduceExecute(extCode, reducer, (ExtensionCallback<IBusinessExt, T>) callback, results);
+    }
+
+    @SuppressWarnings("all")
+    private <T> void enrichAbilityInvokeContext(
+            String extCode, ExtensionCallback<BusinessExt, T> callback) {
+        BusinessExt businessExt = this.getDefaultRealization();
+        List<Object> extParams = Lists.newArrayList();
+        Enhancer enhancer = new Enhancer();
+        Method extMethod = null;
+        enhancer.setSuperclass(businessExt.getClass());
+        enhancer.setCallback((MethodInterceptor) (o, method, params, methodProxy) -> {
+            this.getContext().setExtMethod(method);
+            if (null != params) {
+                for (Object p : params) {
+                    extParams.add(p);
+                }
+            }
+            this.getContext().setInvokeParams(extParams);
+            return null;
+        });
+        businessExt = (BusinessExt) enhancer.create();
+        callback.apply(businessExt);
     }
 }

@@ -12,10 +12,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @SuppressWarnings("all")
-public class DubboExtensionRunnerBuilder implements RemoteExtensionRunnerBuilderBean {
+public class DubboRunnerBuilder implements RemoteExtensionRunnerBuilderBean {
     @Override
     public <R> ExtensionRemoteRunner<R> build(IAbility ability, TemplateSpec templateSpec, String extCode, String scenario) {
-        ExtensionDubboRunner<R> runner = new ExtensionDubboRunner<R>(extCode);
+        DubboExtensionRunner<R> runner = new DubboExtensionRunner<R>(extCode);
         runner.setAbility(ability);
         runner.setTemplate(templateSpec);
         runner.setScenario(scenario);
