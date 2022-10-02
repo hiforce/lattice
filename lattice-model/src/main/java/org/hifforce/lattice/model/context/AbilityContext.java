@@ -27,6 +27,10 @@ public class AbilityContext implements Serializable {
 
     @Getter
     @Setter
+    private String extCode;
+
+    @Getter
+    @Setter
     private List<Object> invokeParams;
 
     @Getter

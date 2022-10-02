@@ -13,9 +13,11 @@ import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.stream.Collectors;
 
 /**
  * @author Rocky Yu
@@ -32,7 +34,13 @@ public class LatticeAnnotationUtils extends AnnotationUtils {
             if (null == annotation) {
                 continue;
             }
-            return parser.buildAnnotationInfo(annotation);
+            ExtensionAnnotation output = parser.buildAnnotationInfo(annotation);
+            String extCode = StringUtils.isNotEmpty(output.getCode()) ?
+                    output.getCode() : String.format("%s#%s#%s", method.getReturnType().getSimpleName(),
+                    method.getName(), Arrays.stream(method.getParameterTypes())
+                            .map(p -> p.getSimpleName()).collect(Collectors.joining("_")));
+            output.setCode(extCode);
+            return output;
         }
         return null;
     }
@@ -143,6 +151,9 @@ public class LatticeAnnotationUtils extends AnnotationUtils {
     }
 
     public static <A extends Annotation> A findAnnotation(Method method, Class<A> annotationType) {
+        if (null == method) {
+            return null;
+        }
         A annotation = method.getAnnotation(annotationType);
         if (null != annotation)
             return annotation;

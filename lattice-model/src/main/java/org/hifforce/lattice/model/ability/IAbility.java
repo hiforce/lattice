@@ -68,4 +68,12 @@ public interface IAbility<BusinessExt extends IBusinessExt> {
      */
     <T, R> R reduceExecute(String extCode, ExtensionCallback<BusinessExt, T> callback,
                            @Nonnull Reducer<T, R> reducer);
+
+    /**
+     * @param callback callback of the function.
+     * @param reducer  The multi-result reduce policy.
+     * @return the result of extension customization.
+     */
+    <T, R> R reduceExecute(ExtensionCallback<BusinessExt, T> callback,
+                           @Nonnull Reducer<T, R> reducer);
 }

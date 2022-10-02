@@ -1,5 +1,6 @@
 package org.hifforce.lattice.spi.annotation;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hifforce.lattice.annotation.model.ExtensionAnnotation;
 import org.hifforce.lattice.annotation.model.ProtocolType;
 import org.hifforce.lattice.annotation.model.ReduceType;

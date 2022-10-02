@@ -17,7 +17,7 @@ public @interface Extension {
 
     String name() default "";
 
-    String code();
+    String code() default "";
 
     String desc() default "";
 

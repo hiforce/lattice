@@ -8,8 +8,6 @@ import org.hiforce.lattice.test.ability.ext.BlankSampleAbilityExt;
 
 import java.util.Objects;
 
-import static org.hiforce.lattice.test.ability.ext.SampleAbilityExt.EXT_SAMPLE_EXTENSION;
-
 @Ability(name = "SampleAbility")
 public class SampleAbility extends BaseLatticeAbility<BlankSampleAbilityExt> {
     public SampleAbility(IBizObject bizObject) {
@@ -18,7 +16,7 @@ public class SampleAbility extends BaseLatticeAbility<BlankSampleAbilityExt> {
 
 
     public void invokeExtension() {
-        String value = this.reduceExecute(EXT_SAMPLE_EXTENSION,
+        String value = this.reduceExecute(
                 extension -> extension.sampleExtensionInvoke("Rocky", "Yu"),
                 Reducers.firstOf(Objects::nonNull));
         System.out.println(value);
