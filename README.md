@@ -16,3 +16,4 @@ The main ideas of Lattice's architecture design are:
 * [Load Local Configuration](https://github.com/hiforce/lattice/wiki/Load-Local-Configuration)
 * [Reduce Strategy](https://github.com/hiforce/lattice/wiki/Reduce-Strategy)
 * [UseCase Precipitation and Reuse](https://github.com/hiforce/lattice/wiki/UseCase-Precipitation-and-Reuse)
+* [RPC Invoke Extension](https://github.com/hiforce/lattice/wiki/RPC-Invoke-Extension)
