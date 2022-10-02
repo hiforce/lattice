@@ -180,6 +180,8 @@ public class AbilityRegister {
             instanceDesc.getExtensions().addAll(scanAbilityExtensions(instance, abilitySpec));
             abilitySpec.addAbilityInstance(instanceDesc);
             return AbilityInstBuildResult.success(instanceDesc);
+        } catch (LatticeRuntimeException ex) {
+            throw ex;
         } catch (Exception e) {
             return AbilityInstBuildResult.failed(Message.code("LATTICE-CORE-RT-0003", instanceClass, e.getMessage()));
         }
@@ -189,12 +191,17 @@ public class AbilityRegister {
         try {
 
             Class<?> returnType = ability.getDefaultRealization().getClass();
+            if (returnType.isAnonymousClass() || returnType.isInterface()) {
+                throw new LatticeRuntimeException("LATTICE-CORE-RT-0022", returnType.getName());
+            }
             return new HashSet<>(scanAbilityExtensions(Sets.newHashSet(), returnType, abilitySpec));
+        } catch (LatticeRuntimeException ex) {
+            throw ex;
         } catch (Throwable th) {
             Message message = Message.code("LATTICE-CORE-RT-0004", ability.getClass().getName(),
                     th.getMessage());
             log.error(message.getText(), th);
-            throw th;
+            throw new LatticeRuntimeException(message);
         }
     }
 
