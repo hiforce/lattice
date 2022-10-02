@@ -181,7 +181,7 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
     @SuppressWarnings("all")
     private <T> void enrichAbilityInvokeContext(ExtensionCallback<BusinessExt, T> callback) {
         if (null != this.getContext().getExtMethod() &&
-                null == this.getContext().getInvokeParams()) {
+                null != this.getContext().getInvokeParams()) {
             return;
         }
         BusinessExt businessExt = this.getDefaultRealization();
