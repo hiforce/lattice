@@ -15,7 +15,7 @@ public abstract class BaseBuilder {
     private final LatticeBuildPlugin plugin;
 
     @Getter
-    private ClassLoader classLoader;
+    private final ClassLoader classLoader;
 
     public BaseBuilder(LatticeBuildPlugin plugin, ClassLoader classLoader) {
         this.plugin = plugin;
