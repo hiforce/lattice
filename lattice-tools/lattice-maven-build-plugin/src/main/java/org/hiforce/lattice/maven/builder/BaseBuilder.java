@@ -1,6 +1,8 @@
 package org.hiforce.lattice.maven.builder;
 
 import lombok.Getter;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.hiforce.lattice.maven.LatticeBuildPlugin;
 
 /**
@@ -20,4 +22,5 @@ public abstract class BaseBuilder {
         this.classLoader = classLoader;
     }
 
+    public abstract void build() throws MojoExecutionException, MojoFailureException;
 }
