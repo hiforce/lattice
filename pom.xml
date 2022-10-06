@@ -37,6 +37,7 @@
         <module>lattice-remote/lattice-remote-container</module>
         <module>lattice-remote/lattice-remote-runner/lattice-remote-runner-dubbo</module>
         <module>lattice-remote/lattice-remote-client</module>
+        <module>lattice-tools/lattice-maven-build-plugin</module>
     </modules>
 
     <dependencyManagement>
