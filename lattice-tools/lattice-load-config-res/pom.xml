@@ -5,7 +5,7 @@
     <parent>
         <artifactId>lattice</artifactId>
         <groupId>org.hiforce.lattice</groupId>
-        <version>1.0.8.3</version>
+        <version>1.0.9-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -13,7 +13,7 @@
     <artifactId>lattice-load-config-res</artifactId>
 
     <properties>
-        <version.jackson>2.13.4</version.jackson>
+        <version.jackson>2.14.0-rc1</version.jackson>
     </properties>
 
     <dependencies>
