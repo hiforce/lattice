@@ -1,5 +1,6 @@
 package org.hiforce.lattice.maven;
 
+import com.google.common.collect.Lists;
 import lombok.Getter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -8,12 +9,19 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.hifforce.lattice.utils.JacksonUtils;
 import org.hiforce.lattice.maven.builder.AbilityInfoBuilder;
+import org.hiforce.lattice.maven.builder.LatticeInfoBuilder;
+import org.hiforce.lattice.maven.model.LatticeInfo;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,35 +33,94 @@ import java.util.List;
 public class LatticeBuildPlugin extends AbstractMojo {
 
     @Getter
+    private final LatticeInfo latticeInfo = new LatticeInfo();
+
+    private static final String LATTICE_DIR = "META-INF" + File.separator + "lattice";
+
+    private static final String LATTICE_FILE = LATTICE_DIR + File.separator + "lattice.json";
+
+    @Getter
     @Parameter(defaultValue = "${project}")
     public MavenProject mavenProject;
 
     @Parameter(defaultValue = "${project.build.outputDirectory}")
     protected String outputDirectory;
 
-    private ClassLoader classLoader;
+    @Getter
+    private ClassLoader totalClassLoader;
+
+    @Getter
+    private ClassLoader projectClassLoader;
+
+    @Getter
+    private ClassLoader importClassLoader;
+
+    private final List<LatticeInfoBuilder> builders = Lists.newArrayList(
+            new AbilityInfoBuilder(this)
+    );
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info(">> LatticeBuildPlugin start....");
         getLog().info(">> Project: " + mavenProject.getName());
 
-        AbilityInfoBuilder abilityInfoBuilder = new AbilityInfoBuilder(this, getClassLoader());
-        abilityInfoBuilder.build();
+        totalClassLoader = loadClassLoader(false, false);
+        projectClassLoader = loadClassLoader(true, false);
+        importClassLoader = loadClassLoader(false, true);
+
+        builders.forEach(LatticeInfoBuilder::build);
+
+        writeLatticeInfo();
+    }
+
+    @SuppressWarnings("all")
+    private void writeLatticeInfo() throws MojoExecutionException {
+
+        String fullFileDir = outputDirectory + File.separator + LATTICE_DIR;
+        String fullFilePath = outputDirectory + File.separator + LATTICE_FILE;
+
+        OutputStreamWriter oStreamWriter = null;
+        try {
+            File resourceFile = new File(fullFilePath);
+            if (resourceFile.exists()) {
+                resourceFile.delete();
+            } else {
+                File tmp = new File(fullFileDir);
+                tmp.mkdirs();
+                resourceFile.createNewFile();
+            }
+            oStreamWriter = new OutputStreamWriter(Files.newOutputStream(resourceFile.toPath()), StandardCharsets.UTF_8);
+            oStreamWriter.append(JacksonUtils.serializeWithoutException(getLatticeInfo()));
+            oStreamWriter.flush();
+        } catch (IOException e) {
+            throw new MojoExecutionException(">> Lattice maven plugin write file failed: " + fullFilePath, e);
+        } finally {
+            if (oStreamWriter != null) {
+                try {
+                    oStreamWriter.close();
+                } catch (IOException ignored) {
+
+                }
+            }
+        }
     }
 
 
-    public ClassLoader getClassLoader() {
-        if (null != classLoader) {
-            return classLoader;
-        }
+    @SuppressWarnings("all")
+    public ClassLoader loadClassLoader(boolean onlyProject, boolean onlyImport) {
         ClassLoader originClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             List<String> classPath = mavenProject.getCompileClasspathElements();
             List<URL> urls = new ArrayList<>();
             for (String cls : classPath) {
                 try {
-                    getLog().warn(">>>> cls: " + cls);
+                    if (onlyProject && cls.endsWith(".jar")) {
+                        continue;
+                    }
+                    if (onlyImport && (cls.endsWith("classes") || cls.endsWith("classes" + File.separator))) {
+                        continue;
+                    }
+
                     if (!cls.endsWith(".jar") && !cls.endsWith(File.separator)) {
                         cls = cls + File.separator;
                     }
@@ -63,11 +130,8 @@ public class LatticeBuildPlugin extends AbstractMojo {
                 }
             }
             URL[] urlArrays = urls.toArray(new URL[urls.size()]);
-            classLoader = new URLClassLoader(urlArrays, originClassLoader);
-            Thread.currentThread().setContextClassLoader(classLoader);
-            getLog().warn(">>>> Lattice ClassLoader: " + classLoader);
-            return classLoader;
-        }catch (Exception ex){
+            return new URLClassLoader(urlArrays, originClassLoader);
+        } catch (Exception ex) {
             getLog().error(ex.getMessage());
             return originClassLoader;
         }

@@ -121,4 +121,12 @@ public class AbilitySpec extends BaseSpec {
         }
         return this.getCode().hashCode();
     }
+
+    @Override
+    public String toString() {
+        return "Ability{" +
+                "code='" + getCode() + '\'' +
+                "name='" + getName() + '\'' +
+                '}';
+    }
 }

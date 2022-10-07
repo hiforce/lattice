@@ -318,10 +318,9 @@ public class Lattice {
                 .findFirst().orElse(null);
     }
 
+    public static List<String> getServiceProviderValues(String spiClassName, ClassLoader originLoader) {
 
-    public static Set<Class<?>> getServiceProviderClasses(String spiClassName, ClassLoader originLoader) {
-
-        Set<Class<?>> classList = Sets.newHashSet();
+        List<String> classNames = Lists.newArrayList();
 
         try {
             List<ClassLoader> classLoaders = Lists.newArrayList(
@@ -330,20 +329,33 @@ public class Lattice {
                 Enumeration<URL> enumeration = classLoader.getResources("META-INF/services/" + spiClassName);
                 while (enumeration.hasMoreElements()) {
                     URL url = enumeration.nextElement();
-                    List<String> classNames = loadSpiFileContent(url);
-                    for (String className : classNames) {
-                        try {
-                            classList.add(classLoader.loadClass(className));
-                        } catch (Exception e) {
-                            log.warn(e.getMessage(), e);
-                        }
-                    }
+                    classNames.addAll(loadSpiFileContent(url));
+
                 }
             }
         } catch (IOException e) {
             log.warn(e.getMessage(), e);
         }
-        return classList;
+        return classNames;
+    }
+
+    private static Class<?> loadClass(String className, ClassLoader classLoader) {
+        if (StringUtils.isEmpty(className)) {
+            return null;
+        }
+        try {
+            return classLoader.loadClass(className);
+        } catch (ClassNotFoundException e) {
+            throw new LatticeRuntimeException(e);
+        }
+    }
+
+    public static Set<Class<?>> getServiceProviderClasses(String spiClassName, ClassLoader originLoader) {
+        ClassLoader classLoader = null == originLoader ? Thread.currentThread().getContextClassLoader() : originLoader;
+        List<String> classNames = getServiceProviderValues(spiClassName, originLoader);
+        return classNames.stream().filter(StringUtils::isNotEmpty)
+                .map(p -> loadClass(p, classLoader))
+                .collect(Collectors.toSet());
     }
 
     private static List<String> loadSpiFileContent(URL url) {

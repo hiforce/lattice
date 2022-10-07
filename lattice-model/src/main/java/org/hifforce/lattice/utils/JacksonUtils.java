@@ -1,4 +1,4 @@
-package org.hiforce.lattice.tool;
+package org.hifforce.lattice.utils;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -47,16 +47,10 @@ public class JacksonUtils {
                         withGetterVisibility(JsonAutoDetect.Visibility.NONE).
                         withIsGetterVisibility(JsonAutoDetect.Visibility.NONE)
         );
-        /**
-         * 精简输出！
-         */
         attachSimplify(objectMapper);
     }
 
 
-    /**
-     * 异常必须抛给上层处理，否则会出现很多坑爹问题
-     */
     public static String serialize(Object serialized) throws Exception {
         if (serialized == null) {
             return null;

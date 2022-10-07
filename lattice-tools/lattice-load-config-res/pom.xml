@@ -12,36 +12,11 @@
 
     <artifactId>lattice-load-config-res</artifactId>
 
-    <properties>
-        <version.jackson>2.14.0-rc1</version.jackson>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.hiforce.lattice</groupId>
             <artifactId>lattice-model</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${version.jackson}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${version.jackson}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>${version.jackson}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>${version.jackson}</version>
-        </dependency>
-
     </dependencies>
 
 </project>
