@@ -2,13 +2,11 @@ package org.hiforce.lattice.maven.builder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.Dependency;
-import org.apache.maven.plugin.logging.Log;
 import org.hifforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.model.register.AbilitySpec;
 import org.hiforce.lattice.maven.LatticeBuildPlugin;
 import org.hiforce.lattice.maven.model.AbilityInfo;
 import org.hiforce.lattice.maven.model.DependencyInfo;
-import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.runtime.ability.register.AbilityBuildRequest;
 import org.hiforce.lattice.runtime.ability.register.AbilityRegister;
 
@@ -25,31 +23,29 @@ import java.util.stream.Collectors;
  */
 public class AbilityInfoBuilder extends LatticeInfoBuilder {
 
+    @Override
+    public String getSpiClassName() {
+        return IAbility.class.getName();
+    }
+
     public AbilityInfoBuilder(
             LatticeBuildPlugin plugin) {
         super(plugin);
     }
 
     public void build() {
-        getLog().info(">>> AbilityInfoBuilder build...");
-        List<String> definedAbilityNames = Lattice.getServiceProviderValues(
-                IAbility.class.getName(), getProjectClassLoader());
+        getLog().info(">> Lattice AbilityInfoBuilder build~~~");
+        List<String> definedAbilityNames = getProvidedInfoClassNames();
+        List<AbilityInfo> providedAbilities = getLoadAbilityClass(definedAbilityNames);
+        getPlugin().getLatticeInfo().getProvidedAbilities().addAll(providedAbilities);
 
-        getLog().info(">>> " + getPlugin().getMavenProject().getName() + " defined abilities: " + String.join(",", definedAbilityNames));
-
-        List<String> importAbilityNames = Lattice.getServiceProviderValues(
-                IAbility.class.getName(), getImportClassLoader());
-
+        List<String> importAbilityNames = getImportInfoClassNames();
         List<AbilityInfo> importedAbilityInfos = getLoadAbilityClass(importAbilityNames);
         getPlugin().getLatticeInfo().getUsingAbilities().addAll(importedAbilityInfos);
-
-        getLog().info(">>> Imported abilities = [ " +
-                importedAbilityInfos.stream().map(AbilityInfo::toString).collect(Collectors.joining(",")) + " ] ");
     }
 
     @SuppressWarnings("all")
     private List<AbilityInfo> getLoadAbilityClass(List<String> classNames) {
-
         AbilityRegister register = AbilityRegister.getInstance();
         List<AbilitySpec> abilitySpecs = register.register(new AbilityBuildRequest(null, loadTargetClassList(classNames)));
         abilitySpecs.forEach(p -> getLog().info(abilitySpecs.toString()));
@@ -87,10 +83,5 @@ public class AbilityInfoBuilder extends LatticeInfoBuilder {
             throw new RuntimeException(e);
         }
         return info;
-    }
-
-
-    private Log getLog() {
-        return getPlugin().getLog();
     }
 }

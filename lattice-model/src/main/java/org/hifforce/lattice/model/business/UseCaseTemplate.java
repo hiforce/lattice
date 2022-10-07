@@ -11,7 +11,7 @@ import org.hifforce.lattice.model.scenario.ScenarioRequest;
  * @author Rocky Yu
  * @since 2022/9/28
  */
-public abstract class UseCaseTemplate extends ProductTemplate {
+public abstract class UseCaseTemplate extends ProductTemplate implements IUseCase{
 
     @Override
     public TemplateType getType() {

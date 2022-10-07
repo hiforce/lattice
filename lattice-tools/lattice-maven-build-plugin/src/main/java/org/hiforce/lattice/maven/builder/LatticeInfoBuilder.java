@@ -2,7 +2,9 @@ package org.hiforce.lattice.maven.builder;
 
 import com.google.common.collect.Sets;
 import lombok.Getter;
+import org.apache.maven.plugin.logging.Log;
 import org.hiforce.lattice.maven.LatticeBuildPlugin;
+import org.hiforce.lattice.runtime.Lattice;
 
 import java.util.List;
 import java.util.Set;
@@ -24,6 +26,19 @@ public abstract class LatticeInfoBuilder {
 
     @Getter
     private final ClassLoader projectClassLoader;
+
+    @SuppressWarnings("all")
+    public abstract String getSpiClassName();
+
+    public List<String> getProvidedInfoClassNames() {
+        return Lattice.getServiceProviderValues(
+                getSpiClassName(), getProjectClassLoader());
+    }
+
+    public List<String> getImportInfoClassNames() {
+        return Lattice.getServiceProviderValues(
+                getSpiClassName(), getImportClassLoader());
+    }
 
     public LatticeInfoBuilder(LatticeBuildPlugin plugin) {
 
@@ -48,5 +63,9 @@ public abstract class LatticeInfoBuilder {
             }
         }
         return classList;
+    }
+
+    public Log getLog() {
+        return getPlugin().getLog();
     }
 }

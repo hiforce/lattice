@@ -12,6 +12,7 @@ import org.apache.maven.project.MavenProject;
 import org.hifforce.lattice.utils.JacksonUtils;
 import org.hiforce.lattice.maven.builder.AbilityInfoBuilder;
 import org.hiforce.lattice.maven.builder.LatticeInfoBuilder;
+import org.hiforce.lattice.maven.builder.UseCaseInfoBuilder;
 import org.hiforce.lattice.maven.model.LatticeInfo;
 
 import java.io.File;
@@ -55,9 +56,6 @@ public class LatticeBuildPlugin extends AbstractMojo {
     @Getter
     private ClassLoader importClassLoader;
 
-    private final List<LatticeInfoBuilder> builders = Lists.newArrayList(
-            new AbilityInfoBuilder(this)
-    );
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -68,6 +66,10 @@ public class LatticeBuildPlugin extends AbstractMojo {
         projectClassLoader = loadClassLoader(true, false);
         importClassLoader = loadClassLoader(false, true);
 
+        List<LatticeInfoBuilder> builders = Lists.newArrayList(
+                new AbilityInfoBuilder(this),
+                new UseCaseInfoBuilder(this)
+        );
         builders.forEach(LatticeInfoBuilder::build);
 
         writeLatticeInfo();

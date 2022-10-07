@@ -19,4 +19,10 @@ public class LatticeInfo implements Serializable {
 
     @Getter
     private final List<AbilityInfo> usingAbilities = Lists.newArrayList();
+
+    @Getter
+    private final List<UseCaseInfo> providedUseCases = Lists.newArrayList();
+
+    @Getter
+    private final List<UseCaseInfo> usingUseCases = Lists.newArrayList();
 }

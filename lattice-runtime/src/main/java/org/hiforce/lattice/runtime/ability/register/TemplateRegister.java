@@ -17,6 +17,7 @@ import org.hifforce.lattice.model.scenario.ScenarioRequest;
 import org.hifforce.lattice.utils.BizCodeUtils;
 import org.hifforce.lattice.utils.BusinessExtUtils;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -63,7 +64,7 @@ public class TemplateRegister {
     }
 
     @SuppressWarnings("rawtypes")
-    public List<BusinessSpec> registerBusinesses(Set<Class<?>> classSet) {
+    public List<BusinessSpec> registerBusinesses(Set<Class> classSet) {
         for (Class clz : classSet) {
             BusinessAnnotation annotation = getBusinessAnnotation(clz);
             if (null == annotation) {
@@ -84,7 +85,7 @@ public class TemplateRegister {
     }
 
     @SuppressWarnings("rawtypes")
-    public List<UseCaseSpec> registerUseCases(Set<Class<?>> classSet) {
+    public List<UseCaseSpec> registerUseCases(Set<Class> classSet) {
         for (Class clz : classSet) {
             UseCaseAnnotation annotation = getUseCaseAnnotation(clz);
             if (null == annotation) {
@@ -108,7 +109,7 @@ public class TemplateRegister {
     }
 
     @SuppressWarnings("rawtypes")
-    public List<ProductSpec> registerProducts(Set<Class<?>> classSet) {
+    public List<ProductSpec> registerProducts(Set<Class> classSet) {
         for (Class clz : classSet) {
             ProductAnnotation annotation = getProductAnnotation(clz);
             if (null == annotation) {
@@ -130,7 +131,7 @@ public class TemplateRegister {
     }
 
     @SuppressWarnings("rawtypes")
-    public List<RealizationSpec> registerRealizations(Set<Class<?>> classSet) {
+    public List<RealizationSpec> registerRealizations(Set<Class> classSet) {
         for (Class clz : classSet) {
             RealizationAnnotation annotation = getRealizationAnnotation(clz);
             if (null == annotation) {

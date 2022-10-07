@@ -295,6 +295,7 @@ public class Lattice {
                 .findFirst().orElse(null);
     }
 
+    @SuppressWarnings("rawtypes")
     public TemplateSpec getTemplateSpec(String code, TemplateType type) {
         if (type == TemplateType.BUSINESS) {
             return getRegisteredBusinessByCode(code);
@@ -350,7 +351,8 @@ public class Lattice {
         }
     }
 
-    public static Set<Class<?>> getServiceProviderClasses(String spiClassName, ClassLoader originLoader) {
+    @SuppressWarnings("rawtypes")
+    public static Set<Class> getServiceProviderClasses(String spiClassName, ClassLoader originLoader) {
         ClassLoader classLoader = null == originLoader ? Thread.currentThread().getContextClassLoader() : originLoader;
         List<String> classNames = getServiceProviderValues(spiClassName, originLoader);
         return classNames.stream().filter(StringUtils::isNotEmpty)
@@ -372,34 +374,39 @@ public class Lattice {
         return contentList;
     }
 
+    @SuppressWarnings("rawtypes")
     private void registerRealizations() {
-        Set<Class<?>> classSet = getServiceProviderClasses(IBusinessExt.class.getName(), null);
+        Set<Class> classSet = getServiceProviderClasses(IBusinessExt.class.getName(), null);
         TemplateRegister.getInstance().registerRealizations(classSet);
     }
 
+    @SuppressWarnings("rawtypes")
     private void registerAbilities() {
-        Set<Class<?>> abilityClasses = getServiceProviderClasses(IAbility.class.getName(), null);
+        Set<Class> abilityClasses = getServiceProviderClasses(IAbility.class.getName(), null);
         registeredAbilities.addAll(AbilityRegister.getInstance()
                 .register(new AbilityBuildRequest(null, mergeAbilityInstancePackage(abilityClasses))));
     }
 
+    @SuppressWarnings("rawtypes")
     private void registerBusinesses() {
-        Set<Class<?>> classSet = getServiceProviderClasses(IBusiness.class.getName(), null);
+        Set<Class> classSet = getServiceProviderClasses(IBusiness.class.getName(), null);
         TemplateRegister.getInstance().registerBusinesses(classSet);
     }
 
+    @SuppressWarnings("rawtypes")
     private void registerProducts() {
-        Set<Class<?>> classSet = getServiceProviderClasses(IProduct.class.getName(), null);
+        Set<Class> classSet = getServiceProviderClasses(IProduct.class.getName(), null);
         TemplateRegister.getInstance().registerProducts(classSet);
     }
 
+    @SuppressWarnings("rawtypes")
     private void registerUseCases() {
-        Set<Class<?>> classSet = getServiceProviderClasses(IUseCase.class.getName(), null);
+        Set<Class> classSet = getServiceProviderClasses(IUseCase.class.getName(), null);
         TemplateRegister.getInstance().registerUseCases(classSet);
     }
 
     @SuppressWarnings("rawtypes")
-    private Set<Class> mergeAbilityInstancePackage(Set<Class<?>> abilityClasses) {
+    private Set<Class> mergeAbilityInstancePackage(Set<Class> abilityClasses) {
         Set<Class> classesSet = Sets.newHashSet(abilityClasses);
         Set<String> packageSet = abilityClasses.stream().map(p -> p.getPackage().getName()).collect(Collectors.toSet());
         for (String pkg : packageSet) {
