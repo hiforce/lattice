@@ -1,9 +1,11 @@
 package org.hiforce.lattice.maven.model;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -19,7 +21,10 @@ public class UseCaseInfo extends BaseInfo {
     private String sdk;
 
     @Getter
-    private final Set<ExtensionInfo> openExtensions = Sets.newHashSet();
+    private final Set<ExtensionInfo> extensions = Sets.newHashSet();
+
+    @Getter
+    private final List<ExtensionInfo> customized = Lists.newArrayList();
 
     @Getter
     @Setter

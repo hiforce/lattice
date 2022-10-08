@@ -101,7 +101,7 @@ public class TemplateRegister {
                     .filter(p -> StringUtils.equals(p.getCode(), spec.getCode()))
                     .collect(Collectors.toList()));
 
-            spec.getOpenExtensions().addAll(scanBusinessExtensions(annotation.getSdk()));
+            spec.getExtensions().addAll(scanBusinessExtensions(annotation.getSdk()));
             useCases.add(spec);
         }
         useCases.sort(Comparator.comparingInt(UseCaseSpec::getPriority));

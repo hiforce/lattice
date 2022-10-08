@@ -1,12 +1,10 @@
 package org.hiforce.lattice.maven.builder;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.hifforce.lattice.annotation.model.ExtensionAnnotation;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.business.IBusiness;
 import org.hifforce.lattice.model.register.BusinessSpec;
-import org.hifforce.lattice.model.register.RealizationSpec;
 import org.hiforce.lattice.maven.LatticeBuildPlugin;
 import org.hiforce.lattice.maven.model.BusinessInfo;
 import org.hiforce.lattice.maven.model.ExtParam;
@@ -19,8 +17,6 @@ import java.lang.reflect.Parameter;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static org.hifforce.lattice.utils.LatticeAnnotationUtils.getExtensionAnnotation;
 
 /**
  * @author Rocky Yu
@@ -71,7 +67,7 @@ public class BusinessInfoBuilder extends LatticeInfoBuilder {
 
         List<RealizationInfo> realizationInfos =
                 spec.getRealizations().stream()
-                        .map(this::buildRealizationInfo)
+                        .map(LatticeInfoBuilder::buildRealizationInfo)
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList());
         try {
@@ -79,27 +75,12 @@ public class BusinessInfoBuilder extends LatticeInfoBuilder {
                 IBusinessExt businessExt = (IBusinessExt) getTotalClassLoader()
                         .loadClass(realizationInfo.getBusinessExtClass())
                         .newInstance();
-                info.getCustomized().addAll(buildBusinessCustomizedExtensionInfos(businessExt));
+                info.getCustomized().addAll(buildCustomizedExtensionInfos(businessExt));
             }
         } catch (Exception ex) {
             getLog().error(ex.getMessage(), ex);
         }
         return info;
-    }
-
-    private List<ExtensionInfo> buildBusinessCustomizedExtensionInfos(IBusinessExt businessExt) {
-        List<ExtensionInfo> extensionInfos = Lists.newArrayList();
-        for (Method method : businessExt.getClass().getDeclaredMethods()) {
-            ExtensionAnnotation annotation = getExtensionAnnotation(method);
-            if (null != annotation) {
-                ExtensionInfo extensionInfo = buildExtensionInfo(businessExt.getClass(), annotation, method);
-                extensionInfos.add(extensionInfo);
-            }
-        }
-        for (IBusinessExt subBusinessExt : businessExt.getAllSubBusinessExt()) {
-            extensionInfos.addAll(buildBusinessCustomizedExtensionInfos(subBusinessExt));
-        }
-        return extensionInfos;
     }
 
     public static ExtensionInfo buildExtensionInfo(Class<?> facadeClass, ExtensionAnnotation annotation, Method method) {
@@ -121,17 +102,6 @@ public class BusinessInfoBuilder extends LatticeInfoBuilder {
             param.setTypeName(parameter.getType().getTypeName());
             info.getParams().add(param);
         }
-        return info;
-    }
-
-    private RealizationInfo buildRealizationInfo(RealizationSpec spec) {
-        if (null == spec) {
-            return null;
-        }
-        RealizationInfo info = new RealizationInfo();
-        info.setScenario(spec.getScenario());
-        info.setBusinessExtClass(spec.getBusinessExtClass().getName());
-        info.getExtensionCodes().addAll(spec.getExtensionCodes());
         return info;
     }
 }

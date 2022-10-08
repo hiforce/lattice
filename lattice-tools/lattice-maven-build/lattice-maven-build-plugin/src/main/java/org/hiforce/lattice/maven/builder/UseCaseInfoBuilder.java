@@ -3,10 +3,12 @@ package org.hiforce.lattice.maven.builder;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.Dependency;
+import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.business.IUseCase;
 import org.hifforce.lattice.model.register.UseCaseSpec;
 import org.hiforce.lattice.maven.LatticeBuildPlugin;
 import org.hiforce.lattice.maven.model.DependencyInfo;
+import org.hiforce.lattice.maven.model.RealizationInfo;
 import org.hiforce.lattice.maven.model.UseCaseInfo;
 import org.hiforce.lattice.runtime.ability.register.AbilityRegister;
 import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
@@ -16,6 +18,7 @@ import java.net.URI;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -65,9 +68,27 @@ public class UseCaseInfoBuilder extends LatticeInfoBuilder {
         info.setName(useCaseSpec.getName());
         info.setClassName(useCaseSpec.getUseCaseClass().getName());
         info.setSdk(useCaseSpec.getSdk().getName());
-        info.getOpenExtensions().addAll(
-                useCaseSpec.getOpenExtensions().stream()
+        info.getExtensions().addAll(
+                useCaseSpec.getExtensions().stream()
                         .map(AbilityInfoBuilder::buildExtensionInfo).collect(Collectors.toSet()));
+
+
+        List<RealizationInfo> realizationInfos =
+                useCaseSpec.getRealizations().stream()
+                        .map(LatticeInfoBuilder::buildRealizationInfo)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+        try {
+            for (RealizationInfo realizationInfo : realizationInfos) {
+                IBusinessExt businessExt = (IBusinessExt) getTotalClassLoader()
+                        .loadClass(realizationInfo.getBusinessExtClass())
+                        .newInstance();
+                info.getCustomized().addAll(buildCustomizedExtensionInfos(businessExt));
+            }
+        } catch (Exception ex) {
+            getLog().error(ex.getMessage(), ex);
+        }
+
 
         try {
             ProtectionDomain protectionDomain = useCaseSpec.getUseCaseClass().getProtectionDomain();
