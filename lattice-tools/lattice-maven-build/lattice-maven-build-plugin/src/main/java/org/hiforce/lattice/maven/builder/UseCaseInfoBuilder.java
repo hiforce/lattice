@@ -36,11 +36,11 @@ public class UseCaseInfoBuilder extends LatticeInfoBuilder {
         getLog().info(">> Lattice UseCaseInfoBuilder build~~~");
         List<String> providedClassNames = getProvidedInfoClassNames();
         List<UseCaseInfo> provided = getUseCaseInfo(providedClassNames);
-        getPlugin().getLatticeInfo().getProvidedUseCases().addAll(provided);
+        getPlugin().getLatticeInfo().getUseCase().getProviding().addAll(provided);
 
         List<String> importClassNames = getImportInfoClassNames();
         List<UseCaseInfo> imported = getUseCaseInfo(importClassNames);
-        getPlugin().getLatticeInfo().getUsingUseCases().addAll(imported);
+        getPlugin().getLatticeInfo().getUseCase().getUsing().addAll(imported);
     }
 
     @SuppressWarnings("all")
@@ -64,6 +64,10 @@ public class UseCaseInfoBuilder extends LatticeInfoBuilder {
         info.setCode(useCaseSpec.getCode());
         info.setName(useCaseSpec.getName());
         info.setClassName(useCaseSpec.getUseCaseClass().getName());
+        info.setSdk(useCaseSpec.getSdk().getName());
+        info.getOpenExtensions().addAll(
+                useCaseSpec.getOpenExtensions().stream()
+                        .map(AbilityInfoBuilder::buildExtensionInfo).collect(Collectors.toSet()));
 
         try {
             ProtectionDomain protectionDomain = useCaseSpec.getUseCaseClass().getProtectionDomain();

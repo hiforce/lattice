@@ -57,7 +57,8 @@ public class ExtensionPointSpec extends BaseSpec {
         ExtensionPointSpec extensionPointSpec = new ExtensionPointSpec(invokeMethod);
         extensionPointSpec.abilityCode = abilityCode;
         extensionPointSpec.setCode(extensionCode);
-        extensionPointSpec.setName(extensionName);
+        extensionPointSpec.setName(
+                StringUtils.isNotEmpty(extensionCode) ? invokeMethod.getName() : extensionName);
         extensionPointSpec.setDescription(extensionDesc);
         return extensionPointSpec;
     }

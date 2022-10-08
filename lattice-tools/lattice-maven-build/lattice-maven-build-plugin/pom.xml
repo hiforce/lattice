@@ -3,10 +3,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>lattice</artifactId>
+        <artifactId>lattice-maven-build</artifactId>
         <groupId>org.hiforce.lattice</groupId>
         <version>1.0.9-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>maven-plugin</packaging>
@@ -21,6 +20,10 @@
         <dependency>
             <groupId>org.hiforce.lattice</groupId>
             <artifactId>lattice-runtime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hiforce.lattice</groupId>
+            <artifactId>lattice-maven-build-model</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>

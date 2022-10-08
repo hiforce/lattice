@@ -1,23 +1,21 @@
 package org.hiforce.lattice.runtime.ability.register;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import lombok.Getter;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hifforce.lattice.annotation.model.BusinessAnnotation;
-import org.hifforce.lattice.annotation.model.ProductAnnotation;
-import org.hifforce.lattice.annotation.model.RealizationAnnotation;
-import org.hifforce.lattice.annotation.model.UseCaseAnnotation;
+import org.hifforce.lattice.annotation.model.*;
 import org.hifforce.lattice.exception.LatticeRuntimeException;
+import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.business.BusinessTemplate;
-import org.hifforce.lattice.model.register.BusinessSpec;
-import org.hifforce.lattice.model.register.ProductSpec;
-import org.hifforce.lattice.model.register.RealizationSpec;
-import org.hifforce.lattice.model.register.UseCaseSpec;
+import org.hifforce.lattice.model.business.IBusiness;
+import org.hifforce.lattice.model.register.*;
 import org.hifforce.lattice.model.scenario.ScenarioRequest;
 import org.hifforce.lattice.utils.BizCodeUtils;
 import org.hifforce.lattice.utils.BusinessExtUtils;
 
-import java.util.Collection;
+import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -102,10 +100,44 @@ public class TemplateRegister {
             spec.getRealizations().addAll(realizations.stream()
                     .filter(p -> StringUtils.equals(p.getCode(), spec.getCode()))
                     .collect(Collectors.toList()));
+
+            spec.getOpenExtensions().addAll(scanBusinessExtensions(annotation.getSdk()));
             useCases.add(spec);
         }
         useCases.sort(Comparator.comparingInt(UseCaseSpec::getPriority));
         return useCases;
+    }
+
+    @SuppressWarnings("all")
+    private Set<ExtensionPointSpec> scanBusinessExtensions(Class<? extends IBusinessExt> businessExt) {
+        Set<ExtensionPointSpec> extensionPointSpecList = Sets.newHashSet();
+
+        Method[] methods = businessExt.getMethods();
+        for (Method method : methods) {
+            ExtensionAnnotation annotation = getExtensionAnnotation(method);
+            if (null == annotation) {
+                if (ClassUtils.isAssignable(method.getReturnType(), IBusiness.class)) {
+                    extensionPointSpecList.addAll(scanBusinessExtensions(
+                            (Class<? extends IBusinessExt>) method.getReturnType()));
+                }
+                continue;
+            }
+            ExtensionPointSpec extensionPointSpec = buildExtensionPointSpec(annotation, method);
+            if (null != extensionPointSpec) {
+                extensionPointSpecList.add(extensionPointSpec);
+            }
+        }
+        return extensionPointSpecList;
+    }
+
+    private ExtensionPointSpec buildExtensionPointSpec(ExtensionAnnotation annotation, Method invokeMethod) {
+        ExtensionPointSpec spec = new ExtensionPointSpec(invokeMethod);
+        spec.setProtocolType(annotation.getProtocolType());
+        spec.setCode(annotation.getCode());
+        spec.setName(StringUtils.isEmpty(annotation.getName()) ? invokeMethod.getName() : annotation.getName());
+        spec.setReduceType(annotation.getReduceType());
+        spec.setDescription(annotation.getDesc());
+        return spec;
     }
 
     @SuppressWarnings("rawtypes")

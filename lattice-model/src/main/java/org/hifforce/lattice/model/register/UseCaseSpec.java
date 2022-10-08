@@ -1,5 +1,6 @@
 package org.hifforce.lattice.model.register;
 
+import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -7,6 +8,8 @@ import org.hifforce.lattice.exception.LatticeRuntimeException;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.business.TemplateType;
 import org.hifforce.lattice.model.business.UseCaseTemplate;
+
+import java.util.Set;
 
 /**
  * @author Rocky Yu
@@ -23,6 +26,9 @@ public class UseCaseSpec extends TemplateSpec<UseCaseTemplate> {
     @Getter
     @Setter
     private Class<? extends IBusinessExt> sdk;
+
+    @Getter
+    public Set<ExtensionPointSpec> openExtensions = Sets.newHashSet();
 
     public UseCaseSpec() {
         this.setPriority(100);

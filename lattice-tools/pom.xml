@@ -12,4 +12,9 @@
 
     <artifactId>lattice-tools</artifactId>
 
+    <modules>
+        <module>lattice-load-config-res</module>
+        <module>lattice-maven-build</module>
+    </modules>
+
 </project>

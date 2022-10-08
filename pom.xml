@@ -32,13 +32,11 @@
         <module>lattice-model</module>
         <module>lattice-runtime</module>
         <module>lattice-tools</module>
-        <module>lattice-tools/lattice-load-config-res</module>
         <module>lattice-remote</module>
         <module>lattice-remote/lattice-remote-runner</module>
         <module>lattice-remote/lattice-remote-container</module>
         <module>lattice-remote/lattice-remote-runner/lattice-remote-runner-dubbo</module>
         <module>lattice-remote/lattice-remote-client</module>
-        <module>lattice-tools/lattice-maven-build-plugin</module>
     </modules>
 
     <dependencyManagement>
@@ -77,6 +75,11 @@
             <dependency>
                 <groupId>org.hiforce.lattice</groupId>
                 <artifactId>lattice-remote-container</artifactId>
+                <version>${version.lattice}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hiforce.lattice</groupId>
+                <artifactId>lattice-maven-build-model</artifactId>
                 <version>${version.lattice}</version>
             </dependency>
             <dependency>

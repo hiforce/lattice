@@ -1,6 +1,5 @@
 package org.hiforce.lattice.runtime.ability.register;
 
-import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hifforce.lattice.annotation.model.AbilityAnnotation;
@@ -189,12 +188,11 @@ public class AbilityRegister {
 
     private Set<ExtensionPointSpec> scanAbilityExtensions(IAbility<?> ability, AbilitySpec abilitySpec) {
         try {
-
             Class<?> returnType = ability.getDefaultRealization().getClass();
             if (returnType.isAnonymousClass() || returnType.isInterface()) {
                 throw new LatticeRuntimeException("LATTICE-CORE-RT-0022", returnType.getName());
             }
-            return new HashSet<>(scanAbilityExtensions(Sets.newHashSet(), returnType, abilitySpec));
+            return new HashSet<>(scanAbilityExtensions(returnType, abilitySpec));
         } catch (LatticeRuntimeException ex) {
             throw ex;
         } catch (Throwable th) {
@@ -205,7 +203,7 @@ public class AbilityRegister {
         }
     }
 
-    private Set<ExtensionPointSpec> scanAbilityExtensions(Set<String> existedSet, Class<?> itfClass, AbilitySpec abilitySpec) {
+    private Set<ExtensionPointSpec> scanAbilityExtensions(Class<?> itfClass, AbilitySpec abilitySpec) {
         Set<ExtensionPointSpec> extensionPointSpecList = new HashSet<>();
         Method[] methods = itfClass.getMethods();
         for (Method method : methods) {
@@ -213,8 +211,6 @@ public class AbilityRegister {
             if (null == annotation) {
                 continue;
             }
-            if (existedSet.contains(annotation.getCode()))
-                continue;
             ExtensionPointSpec extensionPointSpec = buildExtensionPointSpec(annotation, abilitySpec, itfClass, method);
             if (null != extensionPointSpec) {
                 extensionPointSpecList.add(extensionPointSpec);

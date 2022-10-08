@@ -1,8 +1,11 @@
 package org.hiforce.lattice.maven.model;
 
+import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
 import org.hifforce.lattice.utils.JacksonUtils;
+
+import java.util.List;
 
 /**
  * @author Rocky Yu
@@ -15,6 +18,9 @@ public class AbilityInfo extends BaseInfo {
     @Getter
     @Setter
     private DependencyInfo dependency;
+
+    @Getter
+    private final List<AbilityInstInfo> instances = Lists.newArrayList();
 
     @Override
     public String toString() {
