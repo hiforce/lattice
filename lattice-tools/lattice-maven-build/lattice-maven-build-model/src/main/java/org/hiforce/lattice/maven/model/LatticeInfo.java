@@ -1,11 +1,9 @@
 package org.hiforce.lattice.maven.model;
 
-import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author Rocky Yu
@@ -22,5 +20,9 @@ public class LatticeInfo implements Serializable {
     @Getter
     @Setter
     private UseCaseSet useCase = new UseCaseSet();
+
+    @Getter
+    @Setter
+    private BusinessSet business = new BusinessSet();
 
 }
