@@ -15,6 +15,18 @@ public class LatticeInfo implements Serializable {
 
     @Getter
     @Setter
+    private String groupId;
+
+    @Getter
+    @Setter
+    private String artifactId;
+
+    @Getter
+    @Setter
+    private String version;
+
+    @Getter
+    @Setter
     private AbilitySet ability = new AbilitySet();
 
     @Getter

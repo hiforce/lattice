@@ -3,16 +3,23 @@ package org.hiforce.lattice.maven.builder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.logging.Log;
 import org.hifforce.lattice.annotation.model.ExtensionAnnotation;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.register.RealizationSpec;
 import org.hiforce.lattice.maven.LatticeBuildPlugin;
+import org.hiforce.lattice.maven.model.DependencyInfo;
 import org.hiforce.lattice.maven.model.ExtensionInfo;
 import org.hiforce.lattice.maven.model.RealizationInfo;
 import org.hiforce.lattice.runtime.Lattice;
 
+import java.io.File;
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.List;
 import java.util.Set;
 
@@ -89,6 +96,37 @@ public abstract class LatticeInfoBuilder {
         info.setBusinessExtClass(spec.getBusinessExtClass().getName());
         info.getExtensionCodes().addAll(spec.getExtensionCodes());
         return info;
+    }
+
+    @SuppressWarnings("unchecked")
+    public DependencyInfo getDependencyInfo(Class<?> targetClass) {
+        if (null == targetClass) {
+            return null;
+        }
+
+        try {
+
+            ProtectionDomain protectionDomain = targetClass.getProtectionDomain();
+            CodeSource codeSource = protectionDomain.getCodeSource();
+            URI location = (codeSource != null) ? codeSource.getLocation().toURI() : null;
+            String path = (location != null) ? location.getSchemeSpecificPart() : null;
+            if (null == path) {
+                return null;
+            }
+
+            File file = new File(path);
+
+            List<Dependency> dependencies = getPlugin().getMavenProject().getRuntimeDependencies();
+            return dependencies.stream()
+                    .filter(p -> StringUtils.equals(file.getName(),
+                            String.format("%s-%s.jar", p.getArtifactId(), p.getVersion())))
+                    .findFirst()
+                    .map(p -> DependencyInfo.of(p.getGroupId(), p.getArtifactId(), p.getVersion()))
+                    .orElse(null);
+        } catch (Exception ex) {
+            getLog().error(ex.getMessage(), ex);
+            return null;
+        }
     }
 
     public List<ExtensionInfo> buildCustomizedExtensionInfos(IBusinessExt businessExt) {

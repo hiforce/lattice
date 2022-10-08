@@ -61,6 +61,10 @@ public class LatticeBuildPlugin extends AbstractMojo {
         getLog().info(">> LatticeBuildPlugin start....");
         getLog().info(">> Project: " + mavenProject.getName());
 
+        latticeInfo.setGroupId(mavenProject.getGroupId());
+        latticeInfo.setArtifactId(mavenProject.getArtifactId());
+        latticeInfo.setVersion(mavenProject.getVersion());
+
         totalClassLoader = loadClassLoader(false, false);
         projectClassLoader = loadClassLoader(true, false);
         importClassLoader = loadClassLoader(false, true);

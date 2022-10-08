@@ -24,4 +24,8 @@ public class AbilityInstInfo extends BaseInfo {
 
     @Getter
     private final List<ExtensionInfo> extensions = Lists.newArrayList();
+
+    @Getter
+    @Setter
+    private DependencyInfo dependency;
 }

@@ -1,21 +1,15 @@
 package org.hiforce.lattice.maven.builder;
 
 import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.Dependency;
 import org.hifforce.lattice.model.ability.IBusinessExt;
 import org.hifforce.lattice.model.business.IProduct;
 import org.hifforce.lattice.model.register.ProductSpec;
 import org.hiforce.lattice.maven.LatticeBuildPlugin;
-import org.hiforce.lattice.maven.model.DependencyInfo;
 import org.hiforce.lattice.maven.model.ProductInfo;
 import org.hiforce.lattice.maven.model.RealizationInfo;
 import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
 
-import java.io.File;
-import java.net.URI;
-import java.security.CodeSource;
-import java.security.ProtectionDomain;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -81,27 +75,7 @@ public class ProductInfoBuilder extends LatticeInfoBuilder {
         } catch (Exception ex) {
             getLog().error(ex.getMessage(), ex);
         }
-
-
-        try {
-            ProtectionDomain protectionDomain = spec.getProductClass().getProtectionDomain();
-            CodeSource codeSource = protectionDomain.getCodeSource();
-            URI location = (codeSource != null) ? codeSource.getLocation().toURI() : null;
-            String path = (location != null) ? location.getSchemeSpecificPart() : null;
-
-            File file = new File(path);
-            DependencyInfo dependency = dependencies.stream()
-                    .filter(p -> StringUtils.equals(file.getName(),
-                            String.format("%s-%s.jar", p.getArtifactId(), p.getVersion())))
-                    .findFirst()
-                    .map(p -> DependencyInfo.of(p.getGroupId(), p.getArtifactId(), p.getVersion()))
-                    .orElse(null);
-            if (null != dependency) {
-                info.setDependency(dependency);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        info.setDependency(getDependencyInfo(spec.getProductClass()));
         return info;
     }
 }
