@@ -4,13 +4,12 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.Dependency;
 import org.hifforce.lattice.model.ability.IBusinessExt;
-import org.hifforce.lattice.model.business.IUseCase;
-import org.hifforce.lattice.model.register.UseCaseSpec;
+import org.hifforce.lattice.model.business.IProduct;
+import org.hifforce.lattice.model.register.ProductSpec;
 import org.hiforce.lattice.maven.LatticeBuildPlugin;
 import org.hiforce.lattice.maven.model.DependencyInfo;
+import org.hiforce.lattice.maven.model.ProductInfo;
 import org.hiforce.lattice.maven.model.RealizationInfo;
-import org.hiforce.lattice.maven.model.UseCaseInfo;
-import org.hiforce.lattice.runtime.ability.register.AbilityRegister;
 import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
 
 import java.io.File;
@@ -23,38 +22,36 @@ import java.util.stream.Collectors;
 
 /**
  * @author Rocky Yu
- * @since 2022/10/7
+ * @since 2022/10/8
  */
-public class UseCaseInfoBuilder extends LatticeInfoBuilder {
-    @Override
-    public String getSpiClassName() {
-        return IUseCase.class.getName();
-    }
-
-    public UseCaseInfoBuilder(LatticeBuildPlugin plugin) {
+public class ProductInfoBuilder extends LatticeInfoBuilder {
+    public ProductInfoBuilder(LatticeBuildPlugin plugin) {
         super(plugin);
     }
 
+    @Override
+    public String getSpiClassName() {
+        return IProduct.class.getName();
+    }
+
+    @Override
     public void build() {
-        getLog().info(">> Lattice UseCaseInfoBuilder build~~~");
-        List<String> providedClassNames = getProvidedInfoClassNames();
-        List<UseCaseInfo> provided = getUseCaseInfo(providedClassNames);
-        getPlugin().getLatticeInfo().getUseCase().getProviding().addAll(provided);
+        List<ProductInfo> provided = getProductInfo(getProvidedInfoClassNames());
+        getPlugin().getLatticeInfo().getProduct().getProviding().addAll(provided);
 
-        TemplateRegister.getInstance().getUseCases().clear();
+        TemplateRegister.getInstance().getProducts().clear();
 
-        List<String> importClassNames = getImportInfoClassNames();
-        List<UseCaseInfo> imported = getUseCaseInfo(importClassNames);
-        getPlugin().getLatticeInfo().getUseCase().getUsing().addAll(imported);
+        List<ProductInfo> imported = getProductInfo(getImportInfoClassNames());
+        getPlugin().getLatticeInfo().getProduct().getUsing().addAll(imported);
     }
 
     @SuppressWarnings("all")
-    private List<UseCaseInfo> getUseCaseInfo(List<String> classNames) {
+    private List<ProductInfo> getProductInfo(List<String> classNames) {
         try {
-            AbilityRegister register = AbilityRegister.getInstance();
-            List<UseCaseSpec> specs = TemplateRegister.getInstance().registerUseCases(loadTargetClassList(classNames));
+            List<ProductSpec> specs = TemplateRegister.getInstance()
+                    .registerProducts(loadTargetClassList(classNames));
             return specs.stream()
-                    .map(p -> buildUseCaseInfo(p))
+                    .map(p -> buildProductInfo(p))
                     .collect(Collectors.toList());
         } catch (Throwable th) {
             th.printStackTrace();
@@ -63,20 +60,14 @@ public class UseCaseInfoBuilder extends LatticeInfoBuilder {
     }
 
     @SuppressWarnings("all")
-    private UseCaseInfo buildUseCaseInfo(UseCaseSpec useCaseSpec) {
-        UseCaseInfo info = new UseCaseInfo();
+    private ProductInfo buildProductInfo(ProductSpec spec) {
+        ProductInfo info = new ProductInfo();
         List<Dependency> dependencies = getPlugin().getMavenProject().getRuntimeDependencies();
-        info.setCode(useCaseSpec.getCode());
-        info.setName(useCaseSpec.getName());
-        info.setClassName(useCaseSpec.getUseCaseClass().getName());
-        info.setSdk(useCaseSpec.getSdk().getName());
-        info.getExtensions().addAll(
-                useCaseSpec.getExtensions().stream()
-                        .map(AbilityInfoBuilder::buildExtensionInfo).collect(Collectors.toSet()));
-
-
+        info.setCode(spec.getCode());
+        info.setName(spec.getName());
+        info.setClassName(spec.getProductClass().getName());
         List<RealizationInfo> realizationInfos =
-                useCaseSpec.getRealizations().stream()
+                spec.getRealizations().stream()
                         .map(LatticeInfoBuilder::buildRealizationInfo)
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList());
@@ -93,7 +84,7 @@ public class UseCaseInfoBuilder extends LatticeInfoBuilder {
 
 
         try {
-            ProtectionDomain protectionDomain = useCaseSpec.getUseCaseClass().getProtectionDomain();
+            ProtectionDomain protectionDomain = spec.getProductClass().getProtectionDomain();
             CodeSource codeSource = protectionDomain.getCodeSource();
             URI location = (codeSource != null) ? codeSource.getLocation().toURI() : null;
             String path = (location != null) ? location.getSchemeSpecificPart() : null;
@@ -113,6 +104,4 @@ public class UseCaseInfoBuilder extends LatticeInfoBuilder {
         }
         return info;
     }
-
-
 }

@@ -25,4 +25,8 @@ public class LatticeInfo implements Serializable {
     @Setter
     private BusinessSet business = new BusinessSet();
 
+    @Getter
+    @Setter
+    private ProductSet product = new ProductSet();
+
 }

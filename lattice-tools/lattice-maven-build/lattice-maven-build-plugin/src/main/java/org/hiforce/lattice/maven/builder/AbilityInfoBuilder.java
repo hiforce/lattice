@@ -8,6 +8,7 @@ import org.hifforce.lattice.model.register.AbilitySpec;
 import org.hifforce.lattice.model.register.ExtensionPointSpec;
 import org.hiforce.lattice.maven.LatticeBuildPlugin;
 import org.hiforce.lattice.maven.model.*;
+import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.runtime.ability.register.AbilityBuildRequest;
 import org.hiforce.lattice.runtime.ability.register.AbilityRegister;
 

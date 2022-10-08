@@ -44,6 +44,8 @@ public class BusinessInfoBuilder extends LatticeInfoBuilder {
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList()));
 
+        TemplateRegister.getInstance().getBusinesses().clear();
+
         businessSpecs = TemplateRegister.getInstance()
                 .registerBusinesses(loadTargetClassList(getImportInfoClassNames()));
 

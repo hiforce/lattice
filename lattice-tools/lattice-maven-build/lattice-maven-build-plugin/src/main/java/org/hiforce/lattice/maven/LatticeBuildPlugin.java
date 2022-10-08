@@ -68,6 +68,7 @@ public class LatticeBuildPlugin extends AbstractMojo {
         List<LatticeInfoBuilder> builders = Lists.newArrayList(
                 new RealizationInfoBuilder(this),
                 new AbilityInfoBuilder(this),
+                new ProductInfoBuilder(this),
                 new UseCaseInfoBuilder(this),
                 new BusinessInfoBuilder(this)
         );
