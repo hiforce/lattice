@@ -6,6 +6,8 @@ import org.hifforce.lattice.cache.invoke.InvokeCache;
 import org.hifforce.lattice.model.business.ITemplate;
 import org.hifforce.lattice.model.register.TemplateSpec;
 
+import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +24,16 @@ public class BizSessionContext {
     private final Map<String, List<TemplateSpec<? extends ITemplate>>>
             effectiveTemplates = Maps.newConcurrentMap();
 
-    public static BizSessionContext currentBizSessionContext() {
+
+    public <T> void addExtObject(Class<? super T> klass, Object id, @Nullable T instance) {
+        InvokeCache.instance().put(klass, id, instance);
+    }
+
+    public <T> T getExtObject(Class<? extends T> klass, Object id) {
+        return InvokeCache.instance().get(klass, id);
+    }
+
+    public static BizSessionContext currentContext() {
         BizSessionContext context = InvokeCache.instance().get(BizSessionContext.class, BizSessionContext.class);
         if (null != context) {
             return context;
