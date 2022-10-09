@@ -9,13 +9,6 @@ import java.util.Optional;
  */
 public interface IBizObject {
 
-    IBizObject DUMMY = new IBizObject() {
-        @Override
-        public BizContext getBizContext() {
-            return null;
-        }
-    };
-
     BizContext getBizContext();
 
     default String getBizCode() {
@@ -23,7 +16,7 @@ public interface IBizObject {
                 .map(BizContext::getBizCode).orElse(null);
     }
 
-    default Serializable getBizId(){
+    default Serializable getBizId() {
         return Optional.ofNullable(getBizContext())
                 .map(BizContext::getBizId).orElse(null);
     }

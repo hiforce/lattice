@@ -24,11 +24,12 @@ public class BizSessionContext {
     private final Map<String, List<TemplateSpec<? extends ITemplate>>>
             effectiveTemplates = Maps.newConcurrentMap();
 
-
+    @SuppressWarnings("unused")
     public <T> void addExtObject(Class<? super T> klass, Object id, @Nullable T instance) {
         InvokeCache.instance().put(klass, id, instance);
     }
 
+    @SuppressWarnings("unused")
     public <T> T getExtObject(Class<? extends T> klass, Object id) {
         return InvokeCache.instance().get(klass, id);
     }

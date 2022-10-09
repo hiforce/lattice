@@ -1,7 +1,9 @@
 package org.hifforce.lattice.model.business;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hifforce.lattice.cache.invoke.InvokeCache;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 
 /**
@@ -24,6 +26,16 @@ public abstract class BizContext implements Serializable {
 
 
     private int hashCode;
+
+    @SuppressWarnings("unused")
+    public <T> void addExtObject(Class<? super T> klass, @Nullable T instance) {
+        InvokeCache.instance().put(klass, getBizId(), instance);
+    }
+
+    @SuppressWarnings("unused")
+    public <T> T getExtObject(Class<? extends T> klass) {
+        return InvokeCache.instance().get(klass, getBizId());
+    }
 
     @Override
     public boolean equals(Object o) {

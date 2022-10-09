@@ -34,6 +34,7 @@ public final class InvokeCache {
 
     public static void main(String[] args) {
         System.out.println(InvokeCache.isThreadLocalInit());
+        InvokeCache.instance().put(String.class, "rocky", "yu");
         InvokeCache.instance();
         System.out.println(InvokeCache.isThreadLocalInit());
         InvokeCache.initInvokeCache();
@@ -71,8 +72,9 @@ public final class InvokeCache {
      * @param <T>      要缓存对象的类型
      */
     public <T> void put(Class<? super T> klass, Object id, @Nullable T instance) {
-        if (!isThreadLocalInit())
-            return;
+        if (!isThreadLocalInit()) {
+            throw new LatticeRuntimeException("LATTICE-CORE-006");
+        }
         if (instance != null)
             checkArgument(klass.isInstance(instance), "incompatible class and instance");
 
@@ -152,14 +154,7 @@ public final class InvokeCache {
     @Nullable
     private <T> Object get0(Class<T> klass, Object id, @Nullable Callable<? extends T> callbackOnMiss) {
         if (!isThreadLocalInit()) {
-            try {
-                if (null != callbackOnMiss) {
-                    return callbackOnMiss.call();
-                }
-                return null;
-            } catch (Exception ex) {
-                handleCallException(klass, Lists.newArrayList(id), ex);
-            }
+            throw new LatticeRuntimeException("LATTICE-CORE-006");
         }
         Map<Object, Object> idToInstanceCache = cache.get(klass);
         Object ret = idToInstanceCache == null ? null : idToInstanceCache.get(id);
