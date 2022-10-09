@@ -15,12 +15,21 @@ import java.util.Map;
  */
 public class BizSessionContext {
 
-    private static ThreadLocal<BizSessionContext> SESSION_CONTEXT_THREAD_LOCAL =
+    private static final ThreadLocal<BizSessionContext> SESSION_CONTEXT_THREAD_LOCAL =
             ThreadLocal.withInitial(BizSessionContext::new);
 
     @Getter
     private final Map<String, List<TemplateSpec<? extends ITemplate>>>
             effectiveTemplates = Maps.newConcurrentMap();
+
+    public static BizSessionContext currentBizSessionContext() {
+        BizSessionContext context = InvokeCache.instance().get(BizSessionContext.class, BizSessionContext.class);
+        if (null != context) {
+            return context;
+        }
+        return init();
+    }
+
 
     public static BizSessionContext init() {
         BizSessionContext context = SESSION_CONTEXT_THREAD_LOCAL.get();
