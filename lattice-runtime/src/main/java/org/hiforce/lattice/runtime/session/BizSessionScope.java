@@ -71,8 +71,7 @@ public abstract class BizSessionScope<Resp, BizObject extends IBizObject>
         if (!invokeCacheInit) {
             InvokeCache.initInvokeCache();
         }
-        context = BizSessionContext.SESSION_CONTEXT_THREAD_LOCAL.get();
-        InvokeCache.instance().put(BizSessionContext.class, BizSessionContext.class, context);
+        context = BizSessionContext.init();
         initScenarioRequest();
         buildEffectProducts();
     }
@@ -141,8 +140,7 @@ public abstract class BizSessionScope<Resp, BizObject extends IBizObject>
         if (!invokeCacheInit) { //if InvokeCache is init by BizSessionScope, release it.
             InvokeCache.forceClear();
         }
-        BizSessionContext.SESSION_CONTEXT_THREAD_LOCAL.set(null);
-        BizSessionContext.SESSION_CONTEXT_THREAD_LOCAL.remove();
+        BizSessionContext.destroy();
     }
 
     @Override
