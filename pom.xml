@@ -179,18 +179,23 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
     <profiles>
+        <profile>
+            <id>hiforce</id>
+            <distributionManagement>
+                <repository>
+                    <id>quadtalent-quadtalent-release</id>
+                    <name>release</name>
+                    <url>https://quadtalent-maven.pkg.coding.net/repository/quadtalent/release/</url>
+                </repository>
+                <snapshotRepository>
+                    <id>quadtalent-quadtalent-snapshot</id>
+                    <name>snapshot</name>
+                    <url>https://quadtalent-maven.pkg.coding.net/repository/quadtalent/snapshot/</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
         <profile>
             <id>deploy</id>
             <build>
@@ -240,6 +245,16 @@
                     </plugin>
                 </plugins>
             </build>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
         </profile>
         <profile>
             <id>ossrh</id>
@@ -274,6 +289,9 @@
                 <configuration>
                     <source>${version.jdk}</source>
                     <target>${version.jdk}</target>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
