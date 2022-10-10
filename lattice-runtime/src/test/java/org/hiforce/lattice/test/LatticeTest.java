@@ -1,6 +1,6 @@
 package org.hiforce.lattice.test;
 
-import org.hifforce.lattice.model.business.BizContext;
+import org.hiforce.lattice.model.business.BizContext;
 import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.test.ability.SampleAbility;
 

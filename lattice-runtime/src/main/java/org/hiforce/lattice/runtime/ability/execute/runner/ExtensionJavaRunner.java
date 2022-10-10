@@ -2,12 +2,12 @@ package org.hiforce.lattice.runtime.ability.execute.runner;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.hifforce.lattice.extension.ExtensionRunner;
-import org.hifforce.lattice.extension.ExtensionRunnerType;
-import org.hifforce.lattice.message.Message;
-import org.hifforce.lattice.model.ability.IBusinessExt;
-import org.hifforce.lattice.model.ability.execute.ExtensionCallback;
-import org.hifforce.lattice.model.business.IBizObject;
+import org.hiforce.lattice.extension.ExtensionRunner;
+import org.hiforce.lattice.extension.ExtensionRunnerType;
+import org.hiforce.lattice.message.Message;
+import org.hiforce.lattice.model.ability.IBusinessExt;
+import org.hiforce.lattice.model.ability.execute.ExtensionCallback;
+import org.hiforce.lattice.model.business.IBizObject;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;

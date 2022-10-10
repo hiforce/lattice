@@ -1,7 +1,7 @@
 package org.hiforce.lattice.runtime.spi;
 
 
-import org.hifforce.lattice.model.ability.IAbility;
+import org.hiforce.lattice.model.ability.IAbility;
 import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 
 /**

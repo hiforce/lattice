@@ -1,7 +1,7 @@
 package org.hiforce.lattice.test.ability;
 
-import org.hifforce.lattice.annotation.Ability;
-import org.hifforce.lattice.model.business.IBizObject;
+import org.hiforce.lattice.annotation.Ability;
+import org.hiforce.lattice.model.business.IBizObject;
 import org.hiforce.lattice.runtime.ability.BaseLatticeAbility;
 import org.hiforce.lattice.runtime.ability.reduce.Reducers;
 import org.hiforce.lattice.test.ability.ext.BlankSampleAbilityExt;

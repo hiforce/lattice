@@ -1,6 +1,6 @@
 package org.hiforce.lattice.maven.builder;
 
-import org.hifforce.lattice.model.ability.IBusinessExt;
+import org.hiforce.lattice.model.ability.IBusinessExt;
 import org.hiforce.lattice.maven.LatticeBuildPlugin;
 import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
 

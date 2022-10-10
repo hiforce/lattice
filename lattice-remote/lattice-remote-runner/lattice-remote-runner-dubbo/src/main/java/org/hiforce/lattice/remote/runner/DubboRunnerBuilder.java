@@ -1,9 +1,9 @@
 package org.hiforce.lattice.remote.runner;
 
-import org.hifforce.lattice.extension.ExtensionRemoteRunner;
-import org.hifforce.lattice.extension.RemoteExtensionRunnerBuilderBean;
-import org.hifforce.lattice.model.ability.IAbility;
-import org.hifforce.lattice.model.register.TemplateSpec;
+import org.hiforce.lattice.extension.ExtensionRemoteRunner;
+import org.hiforce.lattice.extension.RemoteExtensionRunnerBuilderBean;
+import org.hiforce.lattice.model.ability.IAbility;
+import org.hiforce.lattice.model.register.TemplateSpec;
 import org.springframework.stereotype.Service;
 
 /**

@@ -1,8 +1,8 @@
 package org.hiforce.lattice.runtime.ability.register;
 
 import lombok.Getter;
-import org.hifforce.lattice.message.Message;
-import org.hifforce.lattice.model.register.AbilityInstSpec;
+import org.hiforce.lattice.message.Message;
+import org.hiforce.lattice.model.register.AbilityInstSpec;
 
 /**
  * @author Rocky Yu

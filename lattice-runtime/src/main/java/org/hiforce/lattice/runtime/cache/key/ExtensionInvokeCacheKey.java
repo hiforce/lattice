@@ -1,7 +1,7 @@
 package org.hiforce.lattice.runtime.cache.key;
 
 import lombok.Getter;
-import org.hifforce.lattice.model.register.TemplateSpec;
+import org.hiforce.lattice.model.register.TemplateSpec;
 
 import java.util.Objects;
 

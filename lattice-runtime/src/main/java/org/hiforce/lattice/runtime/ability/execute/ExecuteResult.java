@@ -3,9 +3,9 @@ package org.hiforce.lattice.runtime.ability.execute;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
-import org.hifforce.lattice.message.Message;
-import org.hifforce.lattice.model.register.TemplateSpec;
-import org.hifforce.lattice.extension.ExtensionRunner;
+import org.hiforce.lattice.message.Message;
+import org.hiforce.lattice.model.register.TemplateSpec;
+import org.hiforce.lattice.extension.ExtensionRunner;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,7 +1,7 @@
 package org.hiforce.lattice.remote.container;
 
 import org.apache.dubbo.config.*;
-import org.hifforce.lattice.model.register.BusinessSpec;
+import org.hiforce.lattice.model.register.BusinessSpec;
 import org.hiforce.lattice.remote.client.LatticeRemoteInvoker;
 import org.hiforce.lattice.remote.client.properties.LatticeRemoteClientProperties;
 import org.hiforce.lattice.remote.container.service.LatticeRemoteInvokerImpl;

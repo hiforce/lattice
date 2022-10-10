@@ -9,7 +9,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.hifforce.lattice.utils.JacksonUtils;
+import org.hiforce.lattice.utils.JacksonUtils;
 import org.hiforce.lattice.maven.builder.*;
 import org.hiforce.lattice.maven.model.LatticeInfo;
 

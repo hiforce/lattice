@@ -3,8 +3,8 @@ package org.hiforce.lattice.maven.model;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
-import org.hifforce.lattice.annotation.model.ProtocolType;
-import org.hifforce.lattice.annotation.model.ReduceType;
+import org.hiforce.lattice.annotation.model.ProtocolType;
+import org.hiforce.lattice.annotation.model.ReduceType;
 
 import java.util.List;
 

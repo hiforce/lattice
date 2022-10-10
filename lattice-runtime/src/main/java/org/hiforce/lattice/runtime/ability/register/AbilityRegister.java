@@ -2,19 +2,19 @@ package org.hiforce.lattice.runtime.ability.register;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
-import org.hifforce.lattice.annotation.model.AbilityAnnotation;
-import org.hifforce.lattice.annotation.model.ExtensionAnnotation;
-import org.hifforce.lattice.annotation.model.ProtocolType;
-import org.hifforce.lattice.annotation.model.ReduceType;
-import org.hifforce.lattice.exception.LatticeRuntimeException;
-import org.hifforce.lattice.message.Message;
-import org.hifforce.lattice.model.ability.IAbility;
-import org.hifforce.lattice.model.register.AbilityInstSpec;
-import org.hifforce.lattice.model.register.AbilitySpec;
-import org.hifforce.lattice.model.register.ExtensionPointSpec;
-import org.hifforce.lattice.spi.LatticeAnnotationSpiFactory;
-import org.hifforce.lattice.spi.annotation.AbilityAnnotationParser;
-import org.hifforce.lattice.utils.LatticeClassUtils;
+import org.hiforce.lattice.annotation.model.AbilityAnnotation;
+import org.hiforce.lattice.annotation.model.ExtensionAnnotation;
+import org.hiforce.lattice.annotation.model.ProtocolType;
+import org.hiforce.lattice.annotation.model.ReduceType;
+import org.hiforce.lattice.exception.LatticeRuntimeException;
+import org.hiforce.lattice.message.Message;
+import org.hiforce.lattice.model.ability.IAbility;
+import org.hiforce.lattice.model.register.AbilityInstSpec;
+import org.hiforce.lattice.model.register.AbilitySpec;
+import org.hiforce.lattice.model.register.ExtensionPointSpec;
+import org.hiforce.lattice.spi.LatticeAnnotationSpiFactory;
+import org.hiforce.lattice.spi.annotation.AbilityAnnotationParser;
+import org.hiforce.lattice.utils.LatticeClassUtils;
 import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
 import org.springframework.aop.support.AopUtils;
@@ -24,7 +24,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-import static org.hifforce.lattice.utils.LatticeAnnotationUtils.getExtensionAnnotation;
+import static org.hiforce.lattice.utils.LatticeAnnotationUtils.getExtensionAnnotation;
 import static org.hiforce.lattice.runtime.utils.LatticeBeanUtils.getAndCreateSpringBeanViaClass;
 
 /**

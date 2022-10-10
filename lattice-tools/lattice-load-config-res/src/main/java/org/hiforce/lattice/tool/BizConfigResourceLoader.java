@@ -4,9 +4,9 @@ import com.google.auto.service.AutoService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.hifforce.lattice.model.config.BusinessConfig;
-import org.hifforce.lattice.spi.config.BusinessConfigLoadSpi;
-import org.hifforce.lattice.utils.JacksonUtils;
+import org.hiforce.lattice.model.config.BusinessConfig;
+import org.hiforce.lattice.spi.config.BusinessConfigLoadSpi;
+import org.hiforce.lattice.utils.JacksonUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

@@ -1,9 +1,9 @@
 package org.hiforce.lattice.maven.builder;
 
-import org.hifforce.lattice.model.ability.IAbility;
-import org.hifforce.lattice.model.register.AbilityInstSpec;
-import org.hifforce.lattice.model.register.AbilitySpec;
-import org.hifforce.lattice.model.register.ExtensionPointSpec;
+import org.hiforce.lattice.model.ability.IAbility;
+import org.hiforce.lattice.model.register.AbilityInstSpec;
+import org.hiforce.lattice.model.register.AbilitySpec;
+import org.hiforce.lattice.model.register.ExtensionPointSpec;
 import org.hiforce.lattice.maven.LatticeBuildPlugin;
 import org.hiforce.lattice.maven.model.AbilityInfo;
 import org.hiforce.lattice.maven.model.AbilityInstInfo;

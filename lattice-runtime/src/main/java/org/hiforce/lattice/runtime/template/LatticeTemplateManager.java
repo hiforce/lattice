@@ -2,7 +2,7 @@ package org.hiforce.lattice.runtime.template;
 
 import com.google.common.collect.Lists;
 import lombok.Getter;
-import org.hifforce.lattice.model.ability.IBusinessExt;
+import org.hiforce.lattice.model.ability.IBusinessExt;
 
 import java.util.List;
 

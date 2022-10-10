@@ -2,8 +2,8 @@ package org.hiforce.lattice.runtime.ability.reduce;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
-import org.hifforce.lattice.annotation.model.ReduceType;
-import org.hifforce.lattice.model.ability.execute.Reducer;
+import org.hiforce.lattice.annotation.model.ReduceType;
+import org.hiforce.lattice.model.ability.execute.Reducer;
 
 import java.util.Collection;
 import java.util.List;

@@ -2,9 +2,9 @@ package org.hiforce.lattice.maven.builder;
 
 import com.google.common.collect.Lists;
 import org.apache.maven.model.Dependency;
-import org.hifforce.lattice.model.ability.IBusinessExt;
-import org.hifforce.lattice.model.business.IUseCase;
-import org.hifforce.lattice.model.register.UseCaseSpec;
+import org.hiforce.lattice.model.ability.IBusinessExt;
+import org.hiforce.lattice.model.business.IUseCase;
+import org.hiforce.lattice.model.register.UseCaseSpec;
 import org.hiforce.lattice.maven.LatticeBuildPlugin;
 import org.hiforce.lattice.maven.model.RealizationInfo;
 import org.hiforce.lattice.maven.model.UseCaseInfo;

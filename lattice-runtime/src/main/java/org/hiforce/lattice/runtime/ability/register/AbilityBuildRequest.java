@@ -1,7 +1,7 @@
 package org.hiforce.lattice.runtime.ability.register;
 
 import lombok.Getter;
-import org.hifforce.lattice.model.register.BaseSpec;
+import org.hiforce.lattice.model.register.BaseSpec;
 
 import java.io.Serializable;
 import java.util.Collection;

@@ -6,9 +6,9 @@ import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.logging.Log;
-import org.hifforce.lattice.annotation.model.ExtensionAnnotation;
-import org.hifforce.lattice.model.ability.IBusinessExt;
-import org.hifforce.lattice.model.register.RealizationSpec;
+import org.hiforce.lattice.annotation.model.ExtensionAnnotation;
+import org.hiforce.lattice.model.ability.IBusinessExt;
+import org.hiforce.lattice.model.register.RealizationSpec;
 import org.hiforce.lattice.maven.LatticeBuildPlugin;
 import org.hiforce.lattice.maven.model.DependencyInfo;
 import org.hiforce.lattice.maven.model.ExtensionInfo;
@@ -23,7 +23,7 @@ import java.security.ProtectionDomain;
 import java.util.List;
 import java.util.Set;
 
-import static org.hifforce.lattice.utils.LatticeAnnotationUtils.getExtensionAnnotation;
+import static org.hiforce.lattice.utils.LatticeAnnotationUtils.getExtensionAnnotation;
 import static org.hiforce.lattice.maven.builder.BusinessInfoBuilder.buildExtensionInfo;
 
 /**

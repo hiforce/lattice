@@ -2,8 +2,8 @@ package org.hiforce.lattice.runtime.ability.execute;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hifforce.lattice.model.business.TemplateType;
-import org.hifforce.lattice.extension.ExtensionRunnerType;
+import org.hiforce.lattice.model.business.TemplateType;
+import org.hiforce.lattice.extension.ExtensionRunnerType;
 
 import java.util.List;
 

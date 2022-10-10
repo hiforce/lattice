@@ -3,7 +3,7 @@ package org.hiforce.lattice.maven.model;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
-import org.hifforce.lattice.utils.JacksonUtils;
+import org.hiforce.lattice.utils.JacksonUtils;
 
 import java.util.List;
 

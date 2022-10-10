@@ -1,10 +1,10 @@
 package org.hiforce.lattice.maven.builder;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hifforce.lattice.annotation.model.ExtensionAnnotation;
-import org.hifforce.lattice.model.ability.IBusinessExt;
-import org.hifforce.lattice.model.business.IBusiness;
-import org.hifforce.lattice.model.register.BusinessSpec;
+import org.hiforce.lattice.annotation.model.ExtensionAnnotation;
+import org.hiforce.lattice.model.ability.IBusinessExt;
+import org.hiforce.lattice.model.business.IBusiness;
+import org.hiforce.lattice.model.register.BusinessSpec;
 import org.hiforce.lattice.maven.LatticeBuildPlugin;
 import org.hiforce.lattice.maven.model.BusinessInfo;
 import org.hiforce.lattice.maven.model.ExtParam;

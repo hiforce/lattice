@@ -1,7 +1,6 @@
 package org.hiforce.lattice.remote.runner.key;
 
 import lombok.Getter;
-import org.hifforce.lattice.model.register.TemplateSpec;
 
 import java.io.Serializable;
 import java.util.Objects;

@@ -1,6 +1,6 @@
 package org.hiforce.lattice.runtime.cache;
 
-import org.hifforce.lattice.model.register.AbilitySpec;
+import org.hiforce.lattice.model.register.AbilitySpec;
 import org.hiforce.lattice.runtime.cache.spec.ExtensionSpecCache;
 
 import java.util.Collection;

@@ -1,6 +1,6 @@
 package org.hiforce.lattice.runtime.session;
 
-import org.hifforce.lattice.exception.LatticeRuntimeException;
+import org.hiforce.lattice.exception.LatticeRuntimeException;
 
 /**
  * @author Rocky Yu

@@ -6,17 +6,17 @@ import com.google.common.collect.Table;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hifforce.lattice.annotation.model.ScanSkipAnnotation;
-import org.hifforce.lattice.model.ability.IBusinessExt;
-import org.hifforce.lattice.model.ability.cache.IBusinessExtCache;
-import org.hifforce.lattice.utils.BusinessExtUtils;
+import org.hiforce.lattice.annotation.model.ScanSkipAnnotation;
+import org.hiforce.lattice.model.ability.IBusinessExt;
+import org.hiforce.lattice.model.ability.cache.IBusinessExtCache;
+import org.hiforce.lattice.utils.BusinessExtUtils;
 import org.hiforce.lattice.runtime.utils.LatticeBeanUtils;
 
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
 
-import static org.hifforce.lattice.utils.LatticeAnnotationUtils.getScanSkipAnnotation;
+import static org.hiforce.lattice.utils.LatticeAnnotationUtils.getScanSkipAnnotation;
 
 
 /**

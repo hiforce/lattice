@@ -1,8 +1,8 @@
 package org.hiforce.lattice.remote.container.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hifforce.lattice.model.register.RealizationSpec;
-import org.hifforce.lattice.utils.BusinessExtUtils;
+import org.hiforce.lattice.model.register.RealizationSpec;
+import org.hiforce.lattice.utils.BusinessExtUtils;
 import org.hiforce.lattice.remote.client.LatticeRemoteInvoker;
 import org.hiforce.lattice.runtime.Lattice;
 

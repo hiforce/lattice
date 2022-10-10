@@ -2,9 +2,9 @@ package org.hiforce.lattice.runtime.spi;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
-import org.hifforce.lattice.model.ability.IAbility;
+import org.hiforce.lattice.model.ability.IAbility;
 import org.hifforce.lattice.spi.classloader.CustomClassLoaderSpi;
-import org.hifforce.lattice.spi.config.BusinessConfigLoadSpi;
+import org.hiforce.lattice.spi.config.BusinessConfigLoadSpi;
 import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 
 import java.util.Comparator;

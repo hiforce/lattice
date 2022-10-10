@@ -1,6 +1,6 @@
 package org.hiforce.lattice.test.business;
 
-import org.hifforce.lattice.annotation.Realization;
+import org.hiforce.lattice.annotation.Realization;
 import org.hiforce.lattice.test.ability.ext.BlankSampleAbilityExt;
 
 @Realization(codes = BusinessA.CODE)

@@ -1,10 +1,10 @@
 package org.hiforce.lattice.runtime.utils;
 
 
-import org.hifforce.lattice.model.ability.IAbility;
-import org.hifforce.lattice.model.ability.IBusinessExt;
-import org.hifforce.lattice.spi.LatticeAnnotationSpiFactory;
-import org.hifforce.lattice.utils.LatticeClassUtils;
+import org.hiforce.lattice.model.ability.IAbility;
+import org.hiforce.lattice.model.ability.IBusinessExt;
+import org.hiforce.lattice.spi.LatticeAnnotationSpiFactory;
+import org.hiforce.lattice.utils.LatticeClassUtils;
 
 import java.util.Set;
 import java.util.TreeSet;

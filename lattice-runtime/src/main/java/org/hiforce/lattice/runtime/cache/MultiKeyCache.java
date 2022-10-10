@@ -1,7 +1,7 @@
 package org.hiforce.lattice.runtime.cache;
 
 
-import org.hifforce.lattice.cache.IMultiKeyCache;
+import org.hiforce.lattice.cache.IMultiKeyCache;
 
 import java.util.Collection;
 import java.util.Map;

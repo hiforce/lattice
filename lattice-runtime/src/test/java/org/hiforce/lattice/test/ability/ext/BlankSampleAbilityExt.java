@@ -1,6 +1,6 @@
 package org.hiforce.lattice.test.ability.ext;
 
-import org.hifforce.lattice.model.ability.BusinessExt;
+import org.hiforce.lattice.model.ability.BusinessExt;
 
 public class BlankSampleAbilityExt extends BusinessExt implements SampleAbilityExt {
     @Override

@@ -1,7 +1,7 @@
 package org.hiforce.lattice.runtime.cache;
 
 import lombok.NonNull;
-import org.hifforce.lattice.model.ability.IBusinessExt;
+import org.hiforce.lattice.model.ability.IBusinessExt;
 
 import java.util.List;
 
