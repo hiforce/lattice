@@ -9,6 +9,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.utils.JacksonUtils;
 import org.hiforce.lattice.maven.builder.*;
 import org.hiforce.lattice.maven.model.LatticeInfo;
@@ -56,7 +57,8 @@ public class LatticeBuildPlugin extends AbstractMojo {
 
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public synchronized void execute() throws MojoExecutionException, MojoFailureException {
+        Lattice.getInstance().clear();
 
         getLog().info(">> LatticeBuildPlugin start....");
         getLog().info(">> Project: " + mavenProject.getName());

@@ -117,12 +117,16 @@ public class Lattice {
         Thread.currentThread().setContextClassLoader(latticeClassLoader);
     }
 
-    public void reload() {
+    public final void clear(){
         latticeRuntimeCache.clear();
         registeredAbilities.clear();
         TemplateRegister.getInstance().clear();
         businessConfigs.clear();
         initialized = false;
+    }
+
+    public void reload() {
+        clear();
         start();
     }
 
