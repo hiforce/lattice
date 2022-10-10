@@ -33,10 +33,6 @@
         <module>lattice-runtime</module>
         <module>lattice-tools</module>
         <module>lattice-remote</module>
-        <module>lattice-remote/lattice-remote-runner</module>
-        <module>lattice-remote/lattice-remote-container</module>
-        <module>lattice-remote/lattice-remote-runner/lattice-remote-runner-dubbo</module>
-        <module>lattice-remote/lattice-remote-client</module>
     </modules>
 
     <dependencyManagement>

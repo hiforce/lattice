@@ -13,4 +13,10 @@
 
     <packaging>pom</packaging>
 
+    <modules>
+        <module>lattice-remote-runner</module>
+        <module>lattice-remote-container</module>
+        <module>lattice-remote-client</module>
+    </modules>
+
 </project>
