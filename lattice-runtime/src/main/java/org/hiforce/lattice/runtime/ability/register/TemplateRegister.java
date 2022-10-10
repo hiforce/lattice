@@ -185,4 +185,11 @@ public class TemplateRegister {
         }
         return realizations;
     }
+
+    public void clear() {
+        realizations.clear();
+        products.clear();
+        useCases.clear();
+        businesses.clear();
+    }
 }

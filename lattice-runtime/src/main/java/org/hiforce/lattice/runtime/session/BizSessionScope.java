@@ -69,6 +69,9 @@ public abstract class BizSessionScope<Resp, BizObject extends IBizObject>
 
     @Override
     protected void entrance() {
+        if( !Lattice.getInstance().isInitialized()){
+            throw new LatticeRuntimeException("LATTICE-CORE-RT-0023");
+        }
         invokeCacheInit = InvokeCache.isThreadLocalInit();
         if (!invokeCacheInit) {
             InvokeCache.initInvokeCache();

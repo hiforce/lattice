@@ -66,8 +66,7 @@ public class Lattice {
 
     @Getter
     @Setter
-    private LatticeClassLoader latticeClassLoader =
-            new LatticeClassLoader(Lattice.class.getClassLoader());
+    private LatticeClassLoader latticeClassLoader;
 
     @Getter
     private final List<BusinessConfig> businessConfigs = Lists.newArrayList();
@@ -107,6 +106,7 @@ public class Lattice {
     }
 
     private void initLatticeClassLoader() {
+        latticeClassLoader = new LatticeClassLoader(Lattice.class.getClassLoader());
         List<CustomClassLoaderSpi> customClassLoaders =
                 LatticeRuntimeSpiFactory.getInstance().getCustomClassLoaders();
         latticeClassLoader.getCustomLoaders().addAll(
@@ -115,6 +115,15 @@ public class Lattice {
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList()));
         Thread.currentThread().setContextClassLoader(latticeClassLoader);
+    }
+
+    public void reload() {
+        latticeRuntimeCache.clear();
+        registeredAbilities.clear();
+        TemplateRegister.getInstance().clear();
+        businessConfigs.clear();
+        initialized = false;
+        start();
     }
 
     private void initLatticeCache() {

@@ -26,7 +26,6 @@ import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -92,6 +91,9 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
 
     @Override
     public <T, R> R reduceExecute(ExtensionCallback<BusinessExt, T> callback, @NotNull Reducer<T, R> reducer) {
+        if( !Lattice.getInstance().isInitialized()){
+            throw new LatticeRuntimeException("LATTICE-CORE-RT-0023");
+        }
         enrichAbilityInvokeContext(callback);
         String extCode = getContext().getExtCode();
         return reduceExecute(extCode, callback, reducer);
@@ -109,7 +111,9 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
     public final <T, R> R reduceExecute(String extensionCode,
                                         ExtensionCallback<BusinessExt, T> callback,
                                         @Nonnull Reducer<T, R> reducer) {
-
+        if( !Lattice.getInstance().isInitialized()){
+            throw new LatticeRuntimeException("LATTICE-CORE-RT-0023");
+        }
         return reduceExecute(extensionCode, callback, reducer, DEFAULT_FILTER);
     }
 
@@ -118,6 +122,9 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
                                         ExtensionCallback<BusinessExt, T> callback,
                                         @Nonnull Reducer<T, R> reducer, ExtensionFilter filter) {
 
+        if( !Lattice.getInstance().isInitialized()){
+            throw new LatticeRuntimeException("LATTICE-CORE-RT-0023");
+        }
         ExecuteResult<R> result = reduceExecuteWithDetailResult(
                 extensionCode, callback, reducer, filter);
         if (null == result || null == result.getResult()) {
@@ -134,6 +141,9 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
     public final <T, R> ExecuteResult<R> reduceExecuteWithDetailResult(
             String extCode, ExtensionCallback<BusinessExt, T> callback,
             @Nonnull Reducer<T, R> reducer, ExtensionFilter filter) {
+        if( !Lattice.getInstance().isInitialized()){
+            throw new LatticeRuntimeException("LATTICE-CORE-RT-0023");
+        }
 
         if (StringUtils.isEmpty(extCode)) {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0007");

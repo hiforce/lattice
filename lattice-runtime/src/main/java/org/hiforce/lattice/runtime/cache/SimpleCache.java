@@ -1,6 +1,7 @@
 package org.hiforce.lattice.runtime.cache;
 
 import org.hifforce.lattice.model.register.AbilitySpec;
+import org.hiforce.lattice.runtime.cache.spec.ExtensionSpecCache;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,5 +36,10 @@ public class SimpleCache {
 
     public ExtensionSpecCache getExtensionSpecCache() {
         return CACHE_EXTENSION_POINT_SPEC;
+    }
+
+    public void clear() {
+        CACHE_ABILITY_SPEC.clear();
+        CACHE_EXTENSION_POINT_SPEC.clear();
     }
 }

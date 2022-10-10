@@ -20,6 +20,14 @@ public class BizCodeUtils {
         return isPatternCodeMatched(code, specificCode);
     }
 
+    public static boolean isCodeMatched(String code, String specificCode) {
+        if (StringUtils.equals(code, specificCode))
+            return true;
+        if (!StringUtils.contains(code, "*"))
+            return false;
+        return isPatternCodeMatched(code, specificCode);
+    }
+
     public static boolean isPatternCodeMatched(String code, String specificCode) {
         String patternStr;
         if (code.startsWith("*.")) {

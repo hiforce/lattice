@@ -31,7 +31,7 @@ import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 import org.hiforce.lattice.runtime.ability.execute.filter.ExtensionFilter;
 import org.hiforce.lattice.runtime.ability.execute.filter.ProductFilter;
 import org.hiforce.lattice.runtime.ability.execute.runner.ExtensionJavaRunner;
-import org.hiforce.lattice.runtime.cache.ExtensionInvokeCache;
+import org.hiforce.lattice.runtime.cache.exension.ExtensionInvokeCache;
 import org.hiforce.lattice.runtime.cache.ExtensionRunnerCacheKey;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
 import org.hiforce.lattice.runtime.cache.NotExistedExtensionPointRealization;
@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static org.hifforce.lattice.utils.BizCodeUtils.isCodeMatched;
 import static org.hiforce.lattice.runtime.ability.execute.RunnerCollection.ACCEPT_ALL;
 
 /**
@@ -422,7 +423,7 @@ public class BaseLatticeAbilityDelegate {
                 }
                 IBusinessExt facade = realization.getBusinessExt();
                 if (facade != null
-                        && templateCache.templateCodeMatched(realization.getCode(), template.getCode())
+                        && isCodeMatched(realization.getCode(), template.getCode())
                         && null != facade.getBusinessExtByCode(extPointCode, scenario)) {
                     extFacade = facade;
                     break;
@@ -433,7 +434,7 @@ public class BaseLatticeAbilityDelegate {
                 if (StringUtils.equals(scenario, realization.getScenario())) {
                     IBusinessExt facade = realization.getBusinessExt();
                     if (facade != null
-                            && templateCache.templateCodeMatched(realization.getCode(), template.getCode())
+                            && isCodeMatched(realization.getCode(), template.getCode())
                             && null != facade.getBusinessExtByCode(extPointCode, scenario)) {
                         extFacade = facade;
                         break;
@@ -447,7 +448,7 @@ public class BaseLatticeAbilityDelegate {
                     }
                     IBusinessExt facade = realization.getBusinessExt();
                     if (facade != null
-                            && templateCache.templateCodeMatched(realization.getCode(), template.getCode())
+                            && isCodeMatched(realization.getCode(), template.getCode())
                             && null != facade.getBusinessExtByCode(extPointCode, scenario)) {
                         extFacade = facade;
                         break;

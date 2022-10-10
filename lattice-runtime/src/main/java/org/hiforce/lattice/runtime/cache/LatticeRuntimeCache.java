@@ -18,6 +18,7 @@ import org.hifforce.lattice.model.register.RealizationSpec;
 import org.hifforce.lattice.sequence.SequenceGenerator;
 import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.runtime.ability.cache.BusinessExtCache;
+import org.hiforce.lattice.runtime.cache.template.TemplateCache;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,25 +33,34 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings("unused")
 @AutoService(ILatticeRuntimeCache.class)
-public class LatticeRuntimeCache extends SimpleCache implements ILatticeRuntimeCache {
+public class LatticeRuntimeCache extends SimpleCache implements ILatticeRuntimeCache, LatticeCache {
 
     public TemplateCache CACHE_TEMPLATE_REALIZATION = new TemplateCache();
 
-    private final Map<Class<?>, Map<Long, Object>> abilityExtRunnerCollectionCache = Maps.newConcurrentMap();
+    private final Map<Class<?>, Map<Long, Object>> ABILITY_RUNNER_COLLECTION_CACHE = Maps.newConcurrentMap();
 
-    private final Map<String, ExtensionPointSpec> extensionCache = Maps.newConcurrentMap();
+    private final Map<String, ExtensionPointSpec> EXTENSION_SPEC_CACHE = Maps.newConcurrentMap();
 
     @Override
     public IBusinessExtCache getBusinessExtCache() {
         return BusinessExtCache.getInstance();
     }
 
+
+    public void clear() {
+        super.clear();
+        CACHE_TEMPLATE_REALIZATION.clear();
+        ABILITY_RUNNER_COLLECTION_CACHE.clear();
+        EXTENSION_SPEC_CACHE.clear();
+        extensionRunnerCacheReady = false;
+    }
+
     public void doCacheExtensionSpec(Set<ExtensionPointSpec> extensionSet) {
-        extensionSet.forEach(p -> extensionCache.put(p.getCode(), p));
+        extensionSet.forEach(p -> EXTENSION_SPEC_CACHE.put(p.getCode(), p));
     }
 
     public ExtensionPointSpec getExtensionPointSpecByCode(String extCode) {
-        return extensionCache.get(extCode);
+        return EXTENSION_SPEC_CACHE.get(extCode);
     }
 
     public AbilitySpec doCacheAbilitySpec(AbilityAnnotation ability, Class<?> targetClass) {
@@ -79,7 +89,7 @@ public class LatticeRuntimeCache extends SimpleCache implements ILatticeRuntimeC
 
     @SuppressWarnings("rawtypes")
     public Object getCachedExtensionRunner(IAbility ability, ExtensionRunnerCacheKey key) {
-        Map<Long, Object> cache = abilityExtRunnerCollectionCache.get(ability.getClass());
+        Map<Long, Object> cache = ABILITY_RUNNER_COLLECTION_CACHE.get(ability.getClass());
         if (null == cache) {
             return null;
         }
@@ -134,10 +144,10 @@ public class LatticeRuntimeCache extends SimpleCache implements ILatticeRuntimeC
 
     @SuppressWarnings("rawtypes")
     public void doCacheExtensionRunner(IAbility ability, ExtensionRunnerCacheKey key, Object runner) {
-        Map<Long, Object> cache = abilityExtRunnerCollectionCache.get(ability.getClass());
+        Map<Long, Object> cache = ABILITY_RUNNER_COLLECTION_CACHE.get(ability.getClass());
         if (MapUtils.isEmpty(cache)) {
             cache = new ConcurrentHashMap<>(200);
-            abilityExtRunnerCollectionCache.put(ability.getClass(), cache);
+            ABILITY_RUNNER_COLLECTION_CACHE.put(ability.getClass(), cache);
         }
         cache.put(key.getUniqueId(), runner);
     }

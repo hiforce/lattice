@@ -1,12 +1,13 @@
-package org.hiforce.lattice.runtime.cache;
+package org.hiforce.lattice.runtime.cache.exension;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hifforce.lattice.model.ability.IBusinessExt;
+import org.hiforce.lattice.runtime.cache.LatticeCache;
+import org.hiforce.lattice.runtime.cache.NotExistedExtensionPointRealization;
 import org.hiforce.lattice.runtime.cache.key.ExtensionInvokeCacheKey;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ForkJoinPool;
 
 
 /**
@@ -14,7 +15,7 @@ import java.util.concurrent.ForkJoinPool;
  * @since 2022/9/19
  */
 @Slf4j
-public class ExtensionInvokeCache {
+public class ExtensionInvokeCache implements LatticeCache {
 
     private static ExtensionInvokeCache INSTANCE;
 
@@ -38,8 +39,8 @@ public class ExtensionInvokeCache {
     }
 
     public IBusinessExt doCacheExtensionRealization(ExtensionInvokeCacheKey cacheKey, IBusinessExt realization) {
-        //不存在才put
-        EXT_REALIZATION_CACHE.putIfAbsent(cacheKey.getUniqueId(), null == realization ? new NotExistedExtensionPointRealization() : realization);
+        EXT_REALIZATION_CACHE.putIfAbsent(cacheKey.getUniqueId(), null == realization ?
+                new NotExistedExtensionPointRealization() : realization);
         return realization;
     }
 
@@ -50,4 +51,8 @@ public class ExtensionInvokeCache {
         return EXT_REALIZATION_CACHE.get(cacheKey.getUniqueId());
     }
 
+    @Override
+    public void clear() {
+        EXT_REALIZATION_CACHE.clear();
+    }
 }

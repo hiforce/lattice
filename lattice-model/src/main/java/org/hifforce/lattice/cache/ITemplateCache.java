@@ -8,6 +8,4 @@ import org.hifforce.lattice.model.register.BaseSpec;
  */
 public interface ITemplateCache extends IMultiKeyCache<String, Long, BaseSpec> {
 
-    boolean templateCodeMatched(String code, String specificCode);
-
 }
