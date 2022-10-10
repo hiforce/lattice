@@ -1,8 +1,8 @@
 package org.hiforce.lattice.runtime.cache.template;
 
 
-import org.hifforce.lattice.cache.ITemplateCache;
-import org.hifforce.lattice.model.register.BaseSpec;
+import org.hiforce.lattice.cache.ITemplateCache;
+import org.hiforce.lattice.model.register.BaseSpec;
 import org.hiforce.lattice.runtime.cache.LatticeCache;
 import org.hiforce.lattice.runtime.cache.MultiKeyCache;
 

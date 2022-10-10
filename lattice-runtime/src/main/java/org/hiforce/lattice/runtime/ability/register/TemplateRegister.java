@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.hiforce.lattice.utils.LatticeAnnotationUtils.*;
+
 /**
  * @author Rocky Yu
  * @since 2022/9/18

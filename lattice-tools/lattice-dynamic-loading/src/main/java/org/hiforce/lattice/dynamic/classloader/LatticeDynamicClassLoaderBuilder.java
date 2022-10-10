@@ -2,7 +2,7 @@ package org.hiforce.lattice.dynamic.classloader;
 
 import com.google.auto.service.AutoService;
 import com.google.common.collect.Lists;
-import org.hifforce.lattice.spi.classloader.CustomClassLoaderSpi;
+import org.hiforce.lattice.spi.classloader.CustomClassLoaderSpi;
 import org.hiforce.lattice.dynamic.properties.LatticeDynamicProperties;
 
 import java.io.File;

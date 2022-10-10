@@ -1,6 +1,6 @@
 package org.hiforce.lattice.runtime.cache.spec;
 
-import org.hifforce.lattice.model.register.ExtensionPointSpec;
+import org.hiforce.lattice.model.register.ExtensionPointSpec;
 import org.hiforce.lattice.runtime.cache.LatticeCache;
 import org.hiforce.lattice.runtime.cache.MultiKeyCache;
 

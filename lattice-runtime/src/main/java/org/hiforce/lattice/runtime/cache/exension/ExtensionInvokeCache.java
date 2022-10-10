@@ -1,7 +1,7 @@
 package org.hiforce.lattice.runtime.cache.exension;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hifforce.lattice.model.ability.IBusinessExt;
+import org.hiforce.lattice.model.ability.IBusinessExt;
 import org.hiforce.lattice.runtime.cache.LatticeCache;
 import org.hiforce.lattice.runtime.cache.NotExistedExtensionPointRealization;
 import org.hiforce.lattice.runtime.cache.key.ExtensionInvokeCacheKey;

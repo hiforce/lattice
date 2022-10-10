@@ -1,6 +1,5 @@
 package org.hiforce.lattice.spi;
 
-import org.hifforce.lattice.spi.annotation.*;
 import org.hiforce.lattice.spi.annotation.*;
 
 import java.util.List;
