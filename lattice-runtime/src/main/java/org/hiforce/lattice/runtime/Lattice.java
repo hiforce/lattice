@@ -19,6 +19,8 @@ import org.hifforce.lattice.model.config.*;
 import org.hifforce.lattice.model.config.builder.BusinessConfigBuilder;
 import org.hifforce.lattice.model.register.*;
 import org.hifforce.lattice.model.scenario.ScenarioRequest;
+import org.hifforce.lattice.spi.classloader.CustomClassLoaderSpi;
+import org.hifforce.lattice.spi.classloader.LatticeClassLoader;
 import org.hifforce.lattice.utils.BizCodeUtils;
 import org.hiforce.lattice.runtime.ability.register.AbilityBuildRequest;
 import org.hiforce.lattice.runtime.ability.register.AbilityRegister;
@@ -63,6 +65,11 @@ public class Lattice {
     private boolean simpleMode = false;
 
     @Getter
+    @Setter
+    private LatticeClassLoader latticeClassLoader =
+            new LatticeClassLoader(Lattice.class.getClassLoader());
+
+    @Getter
     private final List<BusinessConfig> businessConfigs = Lists.newArrayList();
 
     @Getter
@@ -88,6 +95,7 @@ public class Lattice {
     }
 
     public final void start() {
+        initLatticeClassLoader();
         registerAbilities();//Register the Ability Instances during runtime.
         registerRealizations();//Register the business extension realization during runtime.
         registerBusinesses();
@@ -96,6 +104,17 @@ public class Lattice {
         buildBusinessConfig();
         initLatticeCache();
         initialized = true;
+    }
+
+    private void initLatticeClassLoader() {
+        List<CustomClassLoaderSpi> customClassLoaders =
+                LatticeRuntimeSpiFactory.getInstance().getCustomClassLoaders();
+        latticeClassLoader.getCustomLoaders().addAll(
+                customClassLoaders.stream()
+                        .map(CustomClassLoaderSpi::getCustomClassLoader)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList()));
+        Thread.currentThread().setContextClassLoader(latticeClassLoader);
     }
 
     private void initLatticeCache() {
@@ -352,7 +371,8 @@ public class Lattice {
     }
 
     @SuppressWarnings("rawtypes")
-    public static Set<Class> getServiceProviderClasses(String spiClassName, ClassLoader originLoader) {
+    public static Set<Class> getServiceProviderClasses(String spiClassName) {
+        ClassLoader originLoader = Lattice.getInstance().getLatticeClassLoader();
         ClassLoader classLoader = null == originLoader ? Thread.currentThread().getContextClassLoader() : originLoader;
         List<String> classNames = getServiceProviderValues(spiClassName, originLoader);
         return classNames.stream().filter(StringUtils::isNotEmpty)
@@ -362,7 +382,8 @@ public class Lattice {
 
     private static List<String> loadSpiFileContent(URL url) {
         List<String> contentList = new ArrayList<>();
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
+        try (BufferedReader bufferedReader =
+                     new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
             String eachLine;
             while (StringUtils.isNotBlank(eachLine = bufferedReader.readLine())) {
                 eachLine = eachLine.trim();
@@ -376,32 +397,32 @@ public class Lattice {
 
     @SuppressWarnings("rawtypes")
     private void registerRealizations() {
-        Set<Class> classSet = getServiceProviderClasses(IBusinessExt.class.getName(), null);
+        Set<Class> classSet = getServiceProviderClasses(IBusinessExt.class.getName());
         TemplateRegister.getInstance().registerRealizations(classSet);
     }
 
     @SuppressWarnings("rawtypes")
     private void registerAbilities() {
-        Set<Class> abilityClasses = getServiceProviderClasses(IAbility.class.getName(), null);
+        Set<Class> abilityClasses = getServiceProviderClasses(IAbility.class.getName());
         registeredAbilities.addAll(AbilityRegister.getInstance()
                 .register(new AbilityBuildRequest(null, mergeAbilityInstancePackage(abilityClasses))));
     }
 
     @SuppressWarnings("rawtypes")
     private void registerBusinesses() {
-        Set<Class> classSet = getServiceProviderClasses(IBusiness.class.getName(), null);
+        Set<Class> classSet = getServiceProviderClasses(IBusiness.class.getName());
         TemplateRegister.getInstance().registerBusinesses(classSet);
     }
 
     @SuppressWarnings("rawtypes")
     private void registerProducts() {
-        Set<Class> classSet = getServiceProviderClasses(IProduct.class.getName(), null);
+        Set<Class> classSet = getServiceProviderClasses(IProduct.class.getName());
         TemplateRegister.getInstance().registerProducts(classSet);
     }
 
     @SuppressWarnings("rawtypes")
     private void registerUseCases() {
-        Set<Class> classSet = getServiceProviderClasses(IUseCase.class.getName(), null);
+        Set<Class> classSet = getServiceProviderClasses(IUseCase.class.getName());
         TemplateRegister.getInstance().registerUseCases(classSet);
     }
 

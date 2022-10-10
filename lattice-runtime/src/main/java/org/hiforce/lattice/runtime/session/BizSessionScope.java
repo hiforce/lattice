@@ -40,6 +40,8 @@ public abstract class BizSessionScope<Resp, BizObject extends IBizObject>
 
     private boolean invokeCacheInit;
 
+    private ClassLoader originClassLoader;
+
 
     public BizSessionScope(List<BizObject> bizObjects) {
         if (CollectionUtils.isEmpty(bizObjects)) {
@@ -74,6 +76,7 @@ public abstract class BizSessionScope<Resp, BizObject extends IBizObject>
         context = BizSessionContext.init();
         initScenarioRequest();
         buildEffectProducts();
+
     }
 
     @SuppressWarnings("all")

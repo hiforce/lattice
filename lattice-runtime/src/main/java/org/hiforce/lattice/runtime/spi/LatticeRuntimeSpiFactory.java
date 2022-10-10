@@ -3,6 +3,7 @@ package org.hiforce.lattice.runtime.spi;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hifforce.lattice.model.ability.IAbility;
+import org.hifforce.lattice.spi.classloader.CustomClassLoaderSpi;
 import org.hifforce.lattice.spi.config.BusinessConfigLoadSpi;
 import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 
@@ -22,13 +23,14 @@ public class LatticeRuntimeSpiFactory {
 
     private static volatile LatticeRuntimeSpiFactory instance;
 
-    private static ClassLoader classLoader;
-
 
     private IRunnerCollectionBuilder runnerCollectionBuilder;
 
 
     private List<BusinessConfigLoadSpi> businessConfigLoads;
+
+
+    private List<CustomClassLoaderSpi> customClassLoaders;
 
     private LatticeRuntimeSpiFactory() {
 
@@ -39,11 +41,17 @@ public class LatticeRuntimeSpiFactory {
             synchronized (LatticeRuntimeSpiFactory.class) {
                 if (null == instance) {
                     instance = new LatticeRuntimeSpiFactory();
-                    classLoader = LatticeRuntimeSpiFactory.class.getClassLoader();
                 }
             }
         }
         return instance;
+    }
+
+    public List<CustomClassLoaderSpi> getCustomClassLoaders() {
+        if (null == customClassLoaders) {
+            customClassLoaders = getCustomServiceProviders(CustomClassLoaderSpi.class);
+        }
+        return customClassLoaders;
     }
 
     public List<BusinessConfigLoadSpi> getBusinessConfigLoads() {
@@ -60,13 +68,13 @@ public class LatticeRuntimeSpiFactory {
     public <T> List<T> getCustomServiceProviders(Class<T> spiClass) {
 
         ServiceLoader<T> serializers;
-        serializers = ServiceLoader.load(spiClass, classLoader);
+        serializers = ServiceLoader.load(spiClass, getClassLoader());
         return StreamSupport.stream(serializers.spliterator(), false)
                 .distinct().collect(Collectors.toList());
     }
 
     private ClassLoader getClassLoader() {
-        return Thread.currentThread().getContextClassLoader();//TODO: 未来可以增加自定义ClassLoader
+        return Thread.currentThread().getContextClassLoader();
     }
 
     public IRunnerCollectionBuilder getRunnerCollectionBuilder() {
@@ -76,7 +84,7 @@ public class LatticeRuntimeSpiFactory {
         synchronized (LatticeRuntimeSpiFactory.class) {
             if (null == runnerCollectionBuilder) {
                 ServiceLoader<IRunnerCollectionBuilder> serializers =
-                        ServiceLoader.load(IRunnerCollectionBuilder.class, classLoader);
+                        ServiceLoader.load(IRunnerCollectionBuilder.class, getClassLoader());
                 final Optional<IRunnerCollectionBuilder> serializer =
                         StreamSupport.stream(serializers.spliterator(), false)
                                 .findFirst();

@@ -15,6 +15,7 @@
     <modules>
         <module>lattice-load-config-res</module>
         <module>lattice-maven-build</module>
+        <module>lattice-dynamic-loading</module>
     </modules>
 
 </project>
