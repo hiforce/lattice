@@ -49,6 +49,7 @@ public class LatticeRuntimeCache implements ILatticeRuntimeCache, LatticeCache {
         getTemplateCache().init();
         getInvokeCache().init();
         getBusinessConfigCache().init();
+        getBusinessExtCache().init();
     }
 
     public void clear() {
@@ -58,5 +59,6 @@ public class LatticeRuntimeCache implements ILatticeRuntimeCache, LatticeCache {
         getAbilityCache().clear();
         getInvokeCache().clear();
         getBusinessConfigCache().clear();
+        getBusinessExtCache().clear();
     }
 }
