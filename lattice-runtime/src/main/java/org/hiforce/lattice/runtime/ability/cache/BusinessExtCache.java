@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hiforce.lattice.annotation.model.ScanSkipAnnotation;
 import org.hiforce.lattice.model.ability.IBusinessExt;
 import org.hiforce.lattice.model.ability.cache.IBusinessExtCache;
+import org.hiforce.lattice.runtime.cache.LatticeCache;
 import org.hiforce.lattice.utils.BusinessExtUtils;
 import org.hiforce.lattice.runtime.utils.LatticeBeanUtils;
 
@@ -24,7 +25,7 @@ import static org.hiforce.lattice.utils.LatticeAnnotationUtils.getScanSkipAnnota
  * @since 2022/9/16
  */
 @Slf4j
-public class BusinessExtCache implements IBusinessExtCache {
+public class BusinessExtCache implements IBusinessExtCache, LatticeCache {
 
     private static BusinessExtCache instance;
 
@@ -46,6 +47,17 @@ public class BusinessExtCache implements IBusinessExtCache {
         }
         return instance;
     }
+
+    @Override
+    public void init() {
+
+    }
+
+    @Override
+    public void clear() {
+        BIZ_EXT_TABLE.clear();
+    }
+
 
     @SuppressWarnings("SynchronizationOnGetClass")
     public IBusinessExt getCachedBusinessExt(IBusinessExt businessExt, String extCode, String scenario) {
@@ -132,7 +144,6 @@ public class BusinessExtCache implements IBusinessExtCache {
         }
         return businessExt;
     }
-
 
     static class ExtKey {
         private final String scenario;

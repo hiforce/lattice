@@ -7,9 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
 
-import static org.hiforce.lattice.runtime.cache.LatticeRuntimeCache.BIZ_CODE_IDX_MAP;
-import static org.hiforce.lattice.runtime.cache.LatticeRuntimeCache.SCENARIO_IDX_MAP;
-
 /**
  * @author Rocky Yu
  * @since 2022/9/16
@@ -88,7 +85,7 @@ public abstract class BaseObjectCacheKey {
     }
 
     protected void generateUniqueId() {
-        if (getUniqueId() != null && getUniqueId().longValue() > 0)
+        if (getUniqueId() != null && getUniqueId() > 0)
             return;
 
         if (!validateIndex()) {
@@ -112,24 +109,26 @@ public abstract class BaseObjectCacheKey {
     protected void buildObjectCacheUniqueId() {
         if (getUniqueId() != null && getUniqueId().longValue() > 0)
             return;
-        LatticeRuntimeCache latticeRuntimeCache = Lattice.getInstance().getLatticeRuntimeCache();
+        LatticeRuntimeCache runtimeCache = Lattice.getInstance().getLatticeRuntimeCache();
         if (null == bizCodeIndex) {
-            bizCodeIndex = null == getBizCode() ? null : BIZ_CODE_IDX_MAP.get(getBizCode());
+            bizCodeIndex = null == getBizCode() ? null : runtimeCache.getTemplateCodeCache()
+                    .getCodeIndex(getBizCode());
         }
         if (null == extCodeIndex) {
-            extCodeIndex = null == getExtensionCode() ? null : latticeRuntimeCache.getExtensionSpecCache()
+            extCodeIndex = null == getExtensionCode() ? null : runtimeCache
+                    .getExtensionCache().getExtensionIndex()
                     .getSecondKeyViaFirstKey(getExtensionCode());
         }
         if (null == scenarioIndex) {
             if (StringUtils.isEmpty(getScenario())) {
                 scenarioIndex = 0L;
             } else {
-                Long scenario = SCENARIO_IDX_MAP.get(getScenario());
+                Long scenario = runtimeCache.getInvokeCache().getScenarioIndex(getScenario());
                 scenarioIndex = scenario == null ? 0L : scenario;
             }
         }
         if (null == templateIndex || templateIndex <= 0) {
-            templateIndex = null == getTemplateCode() ? null : latticeRuntimeCache
+            templateIndex = null == getTemplateCode() ? null : runtimeCache
                     .getTemplateCache().getSecondKeyViaFirstKey(getTemplateCode());
         }
         generateUniqueId();

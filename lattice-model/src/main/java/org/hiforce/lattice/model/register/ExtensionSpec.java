@@ -13,10 +13,10 @@ import java.lang.reflect.Method;
  * @author Rocky Yu
  * @since 2022/9/17
  */
-public class ExtensionPointSpec extends BaseSpec {
+public class ExtensionSpec extends BaseSpec {
 
     @Getter
-    private final long internalId = SequenceGenerator.next(ExtensionPointSpec.class.getName());
+    private final long internalId = SequenceGenerator.next(ExtensionSpec.class.getName());
 
     @Getter
     @Setter
@@ -48,19 +48,19 @@ public class ExtensionPointSpec extends BaseSpec {
     @Setter
     private Class<?> itfClass;
 
-    public ExtensionPointSpec(Method invokeMethod) {
+    public ExtensionSpec(Method invokeMethod) {
         this.invokeMethod = invokeMethod;
     }
 
-    public static ExtensionPointSpec of(Method invokeMethod, String abilityCode,
-                                        String extensionCode, String extensionName, String extensionDesc) {
-        ExtensionPointSpec extensionPointSpec = new ExtensionPointSpec(invokeMethod);
-        extensionPointSpec.abilityCode = abilityCode;
-        extensionPointSpec.setCode(extensionCode);
-        extensionPointSpec.setName(
+    public static ExtensionSpec of(Method invokeMethod, String abilityCode,
+                                   String extensionCode, String extensionName, String extensionDesc) {
+        ExtensionSpec extensionSpec = new ExtensionSpec(invokeMethod);
+        extensionSpec.abilityCode = abilityCode;
+        extensionSpec.setCode(extensionCode);
+        extensionSpec.setName(
                 StringUtils.isNotEmpty(extensionCode) ? invokeMethod.getName() : extensionName);
-        extensionPointSpec.setDescription(extensionDesc);
-        return extensionPointSpec;
+        extensionSpec.setDescription(extensionDesc);
+        return extensionSpec;
     }
 
     @Override
@@ -69,10 +69,10 @@ public class ExtensionPointSpec extends BaseSpec {
             return false;
         }
 
-        if (!(obj instanceof ExtensionPointSpec)) {
+        if (!(obj instanceof ExtensionSpec)) {
             return false;
         }
-        ExtensionPointSpec target = (ExtensionPointSpec) obj;
+        ExtensionSpec target = (ExtensionSpec) obj;
         return StringUtils.equals(target.getCode(), this.getCode());
     }
 

@@ -11,12 +11,12 @@ import org.hiforce.lattice.message.Message;
 import org.hiforce.lattice.model.ability.IAbility;
 import org.hiforce.lattice.model.register.AbilityInstSpec;
 import org.hiforce.lattice.model.register.AbilitySpec;
-import org.hiforce.lattice.model.register.ExtensionPointSpec;
+import org.hiforce.lattice.model.register.ExtensionSpec;
+import org.hiforce.lattice.runtime.Lattice;
+import org.hiforce.lattice.runtime.cache.ability.AbilityCache;
 import org.hiforce.lattice.spi.LatticeAnnotationSpiFactory;
 import org.hiforce.lattice.spi.annotation.AbilityAnnotationParser;
 import org.hiforce.lattice.utils.LatticeClassUtils;
-import org.hiforce.lattice.runtime.Lattice;
-import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
 import org.springframework.aop.support.AopUtils;
 
 import java.lang.annotation.Annotation;
@@ -24,8 +24,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-import static org.hiforce.lattice.utils.LatticeAnnotationUtils.getExtensionAnnotation;
 import static org.hiforce.lattice.runtime.utils.LatticeBeanUtils.getAndCreateSpringBeanViaClass;
+import static org.hiforce.lattice.utils.LatticeAnnotationUtils.getExtensionAnnotation;
 
 /**
  * @author Rocky Yu
@@ -49,10 +49,6 @@ public class AbilityRegister {
         return instance;
     }
 
-    public LatticeRuntimeCache getRuntimeCache() {
-        return Lattice.getInstance().getLatticeRuntimeCache();
-    }
-
     public List<AbilitySpec> register(AbilityBuildRequest regDTO) {
 
         List<AbilitySpec> abilitySpecList = new ArrayList<>();
@@ -71,7 +67,7 @@ public class AbilityRegister {
                     continue;
                 }
             }
-            AbilitySpec abilitySpec = getRuntimeCache().doCacheAbilitySpec(ability, targetClass);
+            AbilitySpec abilitySpec = AbilityCache.getInstance().doCacheAbilitySpec(ability, targetClass);
             abilitySpecList.add(abilitySpec);
             abilitySpec.addAbilityInstance(scanAbilityInstance(abilitySpec, regDTO.getClassSet()));
 
@@ -111,7 +107,7 @@ public class AbilityRegister {
                 continue;
             }
             if (!LatticeClassUtils.isSubClassOf(targetClass, abilitySpec.getAbilityClass())) {
-                continue;//不能是自己，同时是ability的子类
+                continue;
             }
             AbilityInstBuildResult result = innerRegisterAbilityInstance(abilitySpec, targetClass);
             if (!result.isSuccess() && !result.isRegistered()) {
@@ -157,6 +153,7 @@ public class AbilityRegister {
             AbilityInstSpec abilityInstanceSpec = result.getInstanceSpec();
             if (null != abilityInstanceSpec) {
                 Lattice.getInstance().getLatticeRuntimeCache()
+                        .getExtensionCache()
                         .doCacheExtensionSpec(abilityInstanceSpec.getExtensions());
             }
         }
@@ -186,7 +183,7 @@ public class AbilityRegister {
         }
     }
 
-    private Set<ExtensionPointSpec> scanAbilityExtensions(IAbility<?> ability, AbilitySpec abilitySpec) {
+    private Set<ExtensionSpec> scanAbilityExtensions(IAbility<?> ability, AbilitySpec abilitySpec) {
         try {
             Class<?> returnType = ability.getDefaultRealization().getClass();
             if (returnType.isAnonymousClass() || returnType.isInterface()) {
@@ -203,24 +200,24 @@ public class AbilityRegister {
         }
     }
 
-    private Set<ExtensionPointSpec> scanAbilityExtensions(Class<?> itfClass, AbilitySpec abilitySpec) {
-        Set<ExtensionPointSpec> extensionPointSpecList = new HashSet<>();
+    private Set<ExtensionSpec> scanAbilityExtensions(Class<?> itfClass, AbilitySpec abilitySpec) {
+        Set<ExtensionSpec> extensionSpecList = new HashSet<>();
         Method[] methods = itfClass.getMethods();
         for (Method method : methods) {
             ExtensionAnnotation annotation = getExtensionAnnotation(method);
             if (null == annotation) {
                 continue;
             }
-            ExtensionPointSpec extensionPointSpec = buildExtensionPointSpec(annotation, abilitySpec, itfClass, method);
-            if (null != extensionPointSpec) {
-                extensionPointSpecList.add(extensionPointSpec);
+            ExtensionSpec extensionSpec = buildExtensionPointSpec(annotation, abilitySpec, itfClass, method);
+            if (null != extensionSpec) {
+                extensionSpecList.add(extensionSpec);
             }
         }
 
-        return extensionPointSpecList;
+        return extensionSpecList;
     }
 
-    public ExtensionPointSpec buildExtensionPointSpec(
+    public ExtensionSpec buildExtensionPointSpec(
             ExtensionAnnotation annotation,
             AbilitySpec abilitySpec, Class<?> itfClass, Method method) {
 
@@ -232,19 +229,19 @@ public class AbilityRegister {
                 annotation.getReduceType(), annotation.getProtocolType());
     }
 
-    private ExtensionPointSpec buildExtensionPointSpec(AbilitySpec abilitySpec, String extensionCode,
-                                                       String extensionName,
-                                                       String extensionDesc,
-                                                       Class<?> itfClass, Method method,
-                                                       ReduceType reduceType,
-                                                       ProtocolType protocolType) {
+    private ExtensionSpec buildExtensionPointSpec(AbilitySpec abilitySpec, String extensionCode,
+                                                  String extensionName,
+                                                  String extensionDesc,
+                                                  Class<?> itfClass, Method method,
+                                                  ReduceType reduceType,
+                                                  ProtocolType protocolType) {
 
-        ExtensionPointSpec extensionPointSpec =
-                ExtensionPointSpec.of(method, abilitySpec.getCode(),
+        ExtensionSpec extensionSpec =
+                ExtensionSpec.of(method, abilitySpec.getCode(),
                         extensionCode, extensionName, extensionDesc);
-        extensionPointSpec.setReduceType(reduceType);
-        extensionPointSpec.setProtocolType(protocolType);
-        extensionPointSpec.setItfClass(itfClass);
-        return extensionPointSpec;
+        extensionSpec.setReduceType(reduceType);
+        extensionSpec.setProtocolType(protocolType);
+        extensionSpec.setItfClass(itfClass);
+        return extensionSpec;
     }
 }

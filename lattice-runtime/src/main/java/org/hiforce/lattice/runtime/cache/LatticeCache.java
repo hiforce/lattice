@@ -6,5 +6,7 @@ package org.hiforce.lattice.runtime.cache;
  */
 public interface LatticeCache {
 
+    void init();
+
     void clear();
 }

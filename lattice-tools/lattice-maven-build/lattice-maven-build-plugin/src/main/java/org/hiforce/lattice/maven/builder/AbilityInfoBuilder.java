@@ -3,7 +3,7 @@ package org.hiforce.lattice.maven.builder;
 import org.hiforce.lattice.model.ability.IAbility;
 import org.hiforce.lattice.model.register.AbilityInstSpec;
 import org.hiforce.lattice.model.register.AbilitySpec;
-import org.hiforce.lattice.model.register.ExtensionPointSpec;
+import org.hiforce.lattice.model.register.ExtensionSpec;
 import org.hiforce.lattice.maven.LatticeBuildPlugin;
 import org.hiforce.lattice.maven.model.AbilityInfo;
 import org.hiforce.lattice.maven.model.AbilityInstInfo;
@@ -81,7 +81,7 @@ public class AbilityInfoBuilder extends LatticeInfoBuilder {
         return instInfo;
     }
 
-    public static ExtensionInfo buildExtensionInfo(ExtensionPointSpec spec) {
+    public static ExtensionInfo buildExtensionInfo(ExtensionSpec spec) {
         ExtensionInfo info = new ExtensionInfo();
         info.setCode(spec.getCode());
         info.setName(spec.getName());

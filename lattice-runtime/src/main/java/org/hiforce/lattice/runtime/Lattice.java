@@ -23,6 +23,7 @@ import org.hiforce.lattice.runtime.ability.register.AbilityBuildRequest;
 import org.hiforce.lattice.runtime.ability.register.AbilityRegister;
 import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
+import org.hiforce.lattice.runtime.cache.config.BusinessConfigCache;
 import org.hiforce.lattice.runtime.spi.LatticeRuntimeSpiFactory;
 import org.hiforce.lattice.runtime.template.LatticeTemplateManager;
 import org.hiforce.lattice.runtime.utils.ClassLoaderUtil;
@@ -68,8 +69,6 @@ public class Lattice {
     @Setter
     private LatticeClassLoader latticeClassLoader;
 
-    @Getter
-    private final List<BusinessConfig> businessConfigs = Lists.newArrayList();
 
     @Getter
     private final LatticeTemplateManager templateManager = new LatticeTemplateManager();
@@ -121,7 +120,6 @@ public class Lattice {
         latticeRuntimeCache.clear();
         registeredAbilities.clear();
         TemplateRegister.getInstance().clear();
-        businessConfigs.clear();
         initialized = false;
     }
 
@@ -131,7 +129,7 @@ public class Lattice {
     }
 
     private void initLatticeCache() {
-        getLatticeRuntimeCache().buildExtensionRunnerCache();
+        getLatticeRuntimeCache().init();
         initErrorMessageCode();
         ClassPathScanHandler.clearCache();
     }
@@ -142,8 +140,7 @@ public class Lattice {
     }
 
     public BusinessConfig getBusinessConfigByBizCode(String bizCode) {
-        BusinessConfig config = businessConfigs.stream().filter(p -> StringUtils.equals(bizCode, p.getBizCode()))
-                .findFirst().orElse(null);
+        BusinessConfig config = BusinessConfigCache.getInstance().getBusinessConfigByBizCode(bizCode);
         if (null == config) {
             return null;
         }
@@ -158,14 +155,14 @@ public class Lattice {
         List<BusinessConfig> configs = LatticeRuntimeSpiFactory.getInstance().getBusinessConfigLoads().stream()
                 .flatMap(p -> p.loadBusinessConfigs(bizCodes).stream())
                 .collect(Collectors.toList());
-        businessConfigs.addAll(configs);
+        BusinessConfigCache.getInstance().addBusinessConfigs(configs);
 
         if (isSimpleMode()) {
             //auto-config business and products.
             autoBuildBusinessConfig();
         }
-        businessConfigs.forEach(p -> autoBuildUseCaseExtPriorityConfig(p, buildUseCaseExtPriorityConfigMap()));
-        businessConfigs.sort(Comparator.comparingInt(BusinessConfig::getPriority));
+        BusinessConfigCache.getInstance().getBusinessConfigs().forEach(p -> autoBuildUseCaseExtPriorityConfig(p, buildUseCaseExtPriorityConfigMap()));
+        BusinessConfigCache.getInstance().getBusinessConfigs().sort(Comparator.comparingInt(BusinessConfig::getPriority));
     }
 
     private void autoBuildUseCaseExtPriorityConfig(BusinessConfig businessConfig, Map<String, ExtPriorityConfig> priorityMap) {
@@ -210,10 +207,10 @@ public class Lattice {
             throw new LatticeRuntimeException(message);
         }
 
-        businessConfigs.stream()
+        BusinessConfigCache.getInstance().getBusinessConfigs().stream()
                 .filter(p -> StringUtils.equals(config.getBizCode(), p.getBizCode()))
-                .findFirst().ifPresent(businessConfigs::remove);
-        businessConfigs.add(config);
+                .findFirst().ifPresent(BusinessConfigCache.getInstance().getBusinessConfigs()::remove);
+        BusinessConfigCache.getInstance().getBusinessConfigs().add(config);
     }
 
     private Message checkBusinessConfig(BusinessConfig config) {
@@ -228,7 +225,7 @@ public class Lattice {
                 .map(this::buildProductConfig)
                 .collect(Collectors.toList());
         for (BusinessSpec businessSpec : getAllRegisteredBusinesses()) {
-            if (businessConfigs.stream()
+            if (BusinessConfigCache.getInstance().getBusinessConfigs().stream()
                     .anyMatch(p -> StringUtils.equals(p.getBizCode(), businessSpec.getCode()))) {
                 continue; //不重复构建
             }
@@ -243,7 +240,7 @@ public class Lattice {
                     .install(productConfigs)
                     .extension(priorityConfigs)
                     .build();
-            businessConfigs.add(businessConfig);
+            BusinessConfigCache.getInstance().getBusinessConfigs().add(businessConfig);
         }
     }
 
@@ -302,7 +299,7 @@ public class Lattice {
 
 
     public Collection<AbilitySpec> getAllRegisteredAbilities() {
-        return Lattice.getInstance().getLatticeRuntimeCache().getAllCachedAbilities();
+        return getLatticeRuntimeCache().getAbilityCache().getAllCachedAbilities();
     }
 
     public List<UseCaseSpec> getAllRegisteredUseCases() {

@@ -1,4 +1,4 @@
-package org.hiforce.lattice.runtime.cache;
+package org.hiforce.lattice.runtime.cache.exension;
 
 import lombok.NonNull;
 import org.hiforce.lattice.model.ability.IBusinessExt;
@@ -9,7 +9,7 @@ import java.util.List;
  * @author Rocky Yu
  * @since 2022/9/19
  */
-public class NotExistedExtensionPointRealization implements IBusinessExt {
+public class NotExistedRealization implements IBusinessExt {
 
 
     @Override

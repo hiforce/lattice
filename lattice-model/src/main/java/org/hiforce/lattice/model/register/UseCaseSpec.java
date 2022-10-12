@@ -28,7 +28,7 @@ public class UseCaseSpec extends TemplateSpec<UseCaseTemplate> {
     private Class<? extends IBusinessExt> sdk;
 
     @Getter
-    public Set<ExtensionPointSpec> extensions = Sets.newHashSet();
+    public Set<ExtensionSpec> extensions = Sets.newHashSet();
 
     public UseCaseSpec() {
         this.setPriority(100);

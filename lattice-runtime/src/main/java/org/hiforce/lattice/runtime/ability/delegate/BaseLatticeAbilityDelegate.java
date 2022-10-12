@@ -21,32 +21,33 @@ import org.hiforce.lattice.model.config.ExtPriority;
 import org.hiforce.lattice.model.config.ExtPriorityConfig;
 import org.hiforce.lattice.model.context.BizSessionContext;
 import org.hiforce.lattice.model.register.BusinessSpec;
-import org.hiforce.lattice.model.register.ExtensionPointSpec;
+import org.hiforce.lattice.model.register.ExtensionSpec;
 import org.hiforce.lattice.model.register.RealizationSpec;
 import org.hiforce.lattice.model.register.TemplateSpec;
-import org.hiforce.lattice.utils.BizCodeUtils;
 import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.runtime.ability.BaseLatticeAbility;
 import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 import org.hiforce.lattice.runtime.ability.execute.filter.ExtensionFilter;
 import org.hiforce.lattice.runtime.ability.execute.filter.ProductFilter;
 import org.hiforce.lattice.runtime.ability.execute.runner.ExtensionJavaRunner;
-import org.hiforce.lattice.runtime.cache.exension.ExtensionInvokeCache;
-import org.hiforce.lattice.runtime.cache.ExtensionRunnerCacheKey;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
-import org.hiforce.lattice.runtime.cache.NotExistedExtensionPointRealization;
+import org.hiforce.lattice.runtime.cache.exension.NotExistedRealization;
+import org.hiforce.lattice.runtime.cache.ability.AbilityCache;
+import org.hiforce.lattice.runtime.cache.exension.ExtensionInvokeCache;
 import org.hiforce.lattice.runtime.cache.key.ExtensionInvokeCacheKey;
+import org.hiforce.lattice.runtime.cache.key.ExtensionRunnerCacheKey;
 import org.hiforce.lattice.runtime.spi.IRunnerCollectionBuilder;
 import org.hiforce.lattice.runtime.spi.LatticeRuntimeSpiFactory;
 import org.hiforce.lattice.runtime.utils.SpringApplicationContextHolder;
+import org.hiforce.lattice.utils.BizCodeUtils;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static org.hiforce.lattice.utils.BizCodeUtils.isCodeMatched;
 import static org.hiforce.lattice.runtime.ability.execute.RunnerCollection.ACCEPT_ALL;
+import static org.hiforce.lattice.utils.BizCodeUtils.isCodeMatched;
 
 /**
  * @author Rocky Yu
@@ -75,15 +76,15 @@ public class BaseLatticeAbilityDelegate {
 
         List<RunnerItemEntry<R>> cachedRunners = null;
         LatticeRuntimeCache runtimeCache = Lattice.getInstance().getLatticeRuntimeCache();
-        ExtensionPointSpec extensionPointSpec = runtimeCache.getExtensionSpecCache().getKey1Only(extCode);
-        if (null == extensionPointSpec) {
+        ExtensionSpec extensionSpec = runtimeCache.getExtensionCache().getExtensionIndex().getKey1Only(extCode);
+        if (null == extensionSpec) {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0006", extCode);
         }
 
         BusinessConfig businessConfig = Lattice.getInstance().getBusinessConfigByBizCode(bizCode);
         if (null == businessConfig) {
             if (Lattice.getInstance().isSimpleMode()) {
-                if (extensionPointSpec.getProtocolType() == ProtocolType.LOCAL) {
+                if (extensionSpec.getProtocolType() == ProtocolType.LOCAL) {
                     return buildDefaultRunnerCollection(extCode, onlyProduct);
                 }
                 cachedRunners = getCachedRemoteRunners(extCode, businessConfig);
@@ -95,7 +96,7 @@ public class BaseLatticeAbilityDelegate {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0012", bizCode);
         }
 
-        if (extensionPointSpec.getProtocolType() == ProtocolType.REMOTE) {
+        if (extensionSpec.getProtocolType() == ProtocolType.REMOTE) {
             cachedRunners = getCachedRemoteRunners(extCode, businessConfig);
         } else {
             cachedRunners = getCachedLocalRunners(extCode, businessConfig, filter);
@@ -174,7 +175,8 @@ public class BaseLatticeAbilityDelegate {
         LatticeRuntimeCache runtimeCache = Lattice.getInstance().getLatticeRuntimeCache();
         ExtensionRunnerCacheKey key = new ExtensionRunnerCacheKey(
                 extCode, bizCode, scenario, true, false);
-        Object result = runtimeCache.getCachedExtensionRunner(ability, key);
+
+        Object result = AbilityCache.getInstance().getCachedExtensionRunner(ability.getClass(), key);
         if (result != null) {
             if (result == NULL_OBJECT) {
                 return null;
@@ -201,7 +203,7 @@ public class BaseLatticeAbilityDelegate {
 
         ExtensionRemoteRunner<R> runner = builderBean.build(ability, businessSpec, extCode, scenario);
         RunnerItemEntry<R> runerItem = new RunnerItemEntry<R>(ability, businessSpec, runner);
-        runtimeCache.doCacheExtensionRunner(ability, key, Lists.newArrayList(runerItem));
+        AbilityCache.getInstance().doCacheExtensionRunner(ability.getClass(), key, Lists.newArrayList(runerItem));
         return Lists.newArrayList(runerItem);
     }
 
@@ -218,7 +220,7 @@ public class BaseLatticeAbilityDelegate {
         ExtensionRunnerCacheKey key = new ExtensionRunnerCacheKey(
                 extCode, bizCode, scenario, supportCustomization, isHorizontal);
 
-        Object result = runtimeCache.getCachedExtensionRunner(ability, key);
+        Object result = AbilityCache.getInstance().getCachedExtensionRunner(ability.getClass(), key);
         if (result != null) {
             if (result == NULL_OBJECT) {
                 return null;
@@ -231,7 +233,7 @@ public class BaseLatticeAbilityDelegate {
                 .filter(p -> StringUtils.equals(p.getExtCode(), extCode))
                 .findFirst().orElse(null);
         if (null == priorityConfig) {
-            runtimeCache.doCacheExtensionRunner(ability, key, NULL_OBJECT);
+            AbilityCache.getInstance().doCacheExtensionRunner(ability.getClass(), key, NULL_OBJECT);
             return null;
         }
 
@@ -256,7 +258,7 @@ public class BaseLatticeAbilityDelegate {
                 extensionRunners.add(runnerItemEntry);
             }
         }
-        runtimeCache.doCacheExtensionRunner(ability, key, extensionRunners);
+        AbilityCache.getInstance().doCacheExtensionRunner(ability.getClass(), key, extensionRunners);
         return extensionRunners;
     }
 
@@ -378,7 +380,7 @@ public class BaseLatticeAbilityDelegate {
             ExtensionInvokeCacheKey cacheKey, String bizCode, String scenario, TemplateSpec template, String extPointCode) {
 
         IBusinessExt extImpl = ExtensionInvokeCache.getInstance().getCachedExtensionRealization(cacheKey);
-        if (extImpl instanceof NotExistedExtensionPointRealization)
+        if (extImpl instanceof NotExistedRealization)
             return null;
         if (extImpl != null) {
             return extImpl;
@@ -403,7 +405,7 @@ public class BaseLatticeAbilityDelegate {
         }
 
         if (null == extImpl) {
-            ExtensionInvokeCache.getInstance().doCacheExtensionRealization(cacheKey, new NotExistedExtensionPointRealization());
+            ExtensionInvokeCache.getInstance().doCacheExtensionRealization(cacheKey, new NotExistedRealization());
             return null;
         }
         return ExtensionInvokeCache.getInstance().doCacheExtensionRealization(cacheKey, extImpl);

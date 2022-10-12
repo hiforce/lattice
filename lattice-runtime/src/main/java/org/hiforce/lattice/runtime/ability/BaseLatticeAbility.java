@@ -14,13 +14,14 @@ import org.hiforce.lattice.model.ability.execute.ExtensionCallback;
 import org.hiforce.lattice.model.ability.execute.Reducer;
 import org.hiforce.lattice.model.business.IBizObject;
 import org.hiforce.lattice.model.context.AbilityContext;
-import org.hiforce.lattice.model.register.ExtensionPointSpec;
-import org.hiforce.lattice.utils.LatticeAnnotationUtils;
+import org.hiforce.lattice.model.register.ExtensionSpec;
 import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.runtime.ability.delegate.BaseLatticeAbilityDelegate;
 import org.hiforce.lattice.runtime.ability.execute.ExecuteResult;
 import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 import org.hiforce.lattice.runtime.ability.execute.filter.ExtensionFilter;
+import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
+import org.hiforce.lattice.utils.LatticeAnnotationUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
@@ -48,6 +49,9 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
     private final BaseLatticeAbilityDelegate delegate;
 
     private AbilityContext context;
+
+    @Getter
+    private final LatticeRuntimeCache runtimeCache = Lattice.getInstance().getLatticeRuntimeCache();
 
     public BaseLatticeAbility(IBizObject bizObject) {
         this.bizObject = bizObject;
@@ -91,7 +95,7 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
 
     @Override
     public <T, R> R reduceExecute(ExtensionCallback<BusinessExt, T> callback, @NotNull Reducer<T, R> reducer) {
-        if( !Lattice.getInstance().isInitialized()){
+        if (!Lattice.getInstance().isInitialized()) {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0023");
         }
         enrichAbilityInvokeContext(callback);
@@ -111,7 +115,7 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
     public final <T, R> R reduceExecute(String extensionCode,
                                         ExtensionCallback<BusinessExt, T> callback,
                                         @Nonnull Reducer<T, R> reducer) {
-        if( !Lattice.getInstance().isInitialized()){
+        if (!Lattice.getInstance().isInitialized()) {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0023");
         }
         return reduceExecute(extensionCode, callback, reducer, DEFAULT_FILTER);
@@ -122,7 +126,7 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
                                         ExtensionCallback<BusinessExt, T> callback,
                                         @Nonnull Reducer<T, R> reducer, ExtensionFilter filter) {
 
-        if( !Lattice.getInstance().isInitialized()){
+        if (!Lattice.getInstance().isInitialized()) {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0023");
         }
         ExecuteResult<R> result = reduceExecuteWithDetailResult(
@@ -141,7 +145,7 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
     public final <T, R> ExecuteResult<R> reduceExecuteWithDetailResult(
             String extCode, ExtensionCallback<BusinessExt, T> callback,
             @Nonnull Reducer<T, R> reducer, ExtensionFilter filter) {
-        if( !Lattice.getInstance().isInitialized()){
+        if (!Lattice.getInstance().isInitialized()) {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0023");
         }
 
@@ -167,14 +171,13 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
 
         enrichAbilityInvokeContext(callback);
 
-        ExtensionPointSpec extensionPointSpec =
-                Lattice.getInstance().getLatticeRuntimeCache().getExtensionPointSpecByCode(extCode);
-        if (null == extensionPointSpec && !Lattice.getInstance().isSimpleMode()) {
+        ExtensionSpec extensionSpec = getRuntimeCache().getExtensionCache().getExtensionSpecByCode(extCode);
+        if (null == extensionSpec && !Lattice.getInstance().isSimpleMode()) {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0016", extCode);
         }
-        if (null != extensionPointSpec && !reducer.reducerType().equals(extensionPointSpec.getReduceType())) {
+        if (null != extensionSpec && !reducer.reducerType().equals(extensionSpec.getReduceType())) {
             log.warn(Message.code("LATTICE-CORE-RT-0017", extCode, reducer.reducerType(),
-                    extensionPointSpec.getReduceType()).getText());
+                    extensionSpec.getReduceType()).getText());
         }
 
         String bizCode = getContext().getBizObject().getBizCode();

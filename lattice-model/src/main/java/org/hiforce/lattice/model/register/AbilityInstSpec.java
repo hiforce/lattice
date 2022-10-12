@@ -26,7 +26,7 @@ public class AbilityInstSpec extends BaseSpec {
     private int priority = 1000;
 
     @Getter
-    private final Set<ExtensionPointSpec> extensions = Sets.newHashSet();
+    private final Set<ExtensionSpec> extensions = Sets.newHashSet();
 
     @Override
     public boolean equals(Object obj) {

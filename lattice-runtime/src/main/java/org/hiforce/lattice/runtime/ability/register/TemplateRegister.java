@@ -109,29 +109,29 @@ public class TemplateRegister {
     }
 
     @SuppressWarnings("all")
-    private Set<ExtensionPointSpec> scanBusinessExtensions(Class<? extends IBusinessExt> businessExt) {
-        Set<ExtensionPointSpec> extensionPointSpecList = Sets.newHashSet();
+    private Set<ExtensionSpec> scanBusinessExtensions(Class<? extends IBusinessExt> businessExt) {
+        Set<ExtensionSpec> extensionSpecList = Sets.newHashSet();
 
         Method[] methods = businessExt.getMethods();
         for (Method method : methods) {
             ExtensionAnnotation annotation = getExtensionAnnotation(method);
             if (null == annotation) {
                 if (ClassUtils.isAssignable(method.getReturnType(), IBusiness.class)) {
-                    extensionPointSpecList.addAll(scanBusinessExtensions(
+                    extensionSpecList.addAll(scanBusinessExtensions(
                             (Class<? extends IBusinessExt>) method.getReturnType()));
                 }
                 continue;
             }
-            ExtensionPointSpec extensionPointSpec = buildExtensionPointSpec(annotation, method);
-            if (null != extensionPointSpec) {
-                extensionPointSpecList.add(extensionPointSpec);
+            ExtensionSpec extensionSpec = buildExtensionPointSpec(annotation, method);
+            if (null != extensionSpec) {
+                extensionSpecList.add(extensionSpec);
             }
         }
-        return extensionPointSpecList;
+        return extensionSpecList;
     }
 
-    private ExtensionPointSpec buildExtensionPointSpec(ExtensionAnnotation annotation, Method invokeMethod) {
-        ExtensionPointSpec spec = new ExtensionPointSpec(invokeMethod);
+    private ExtensionSpec buildExtensionPointSpec(ExtensionAnnotation annotation, Method invokeMethod) {
+        ExtensionSpec spec = new ExtensionSpec(invokeMethod);
         spec.setProtocolType(annotation.getProtocolType());
         spec.setCode(annotation.getCode());
         spec.setName(StringUtils.isEmpty(annotation.getName()) ? invokeMethod.getName() : annotation.getName());
