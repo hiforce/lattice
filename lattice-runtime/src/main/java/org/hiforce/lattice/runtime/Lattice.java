@@ -363,7 +363,6 @@ public class Lattice {
                 while (enumeration.hasMoreElements()) {
                     URL url = enumeration.nextElement();
                     classNames.addAll(loadSpiFileContent(url));
-
                 }
             }
         } catch (IOException e) {

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>lattice-tools</artifactId>
         <groupId>org.hiforce.lattice</groupId>
-        <version>1.0.10.2</version>
+        <version>1.0.11-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -24,6 +24,10 @@
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-io</artifactId>
         </dependency>
     </dependencies>
 </project>
