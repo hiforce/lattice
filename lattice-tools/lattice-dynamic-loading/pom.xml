@@ -18,6 +18,10 @@
             <artifactId>lattice-model</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.hiforce.lattice</groupId>
+            <artifactId>lattice-runtime</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-configuration2</artifactId>
         </dependency>
@@ -26,7 +30,7 @@
             <artifactId>commons-beanutils</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
+            <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
     </dependencies>

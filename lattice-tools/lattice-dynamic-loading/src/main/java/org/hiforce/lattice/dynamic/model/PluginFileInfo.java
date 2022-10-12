@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.Serializable;
 import java.security.MessageDigest;
+import java.util.Objects;
 
 /**
  * @author Rocky Yu
@@ -21,7 +22,7 @@ public class PluginFileInfo implements Serializable {
 
     @Getter
     @Setter
-    private String md5;
+    private String id;
 
     @Getter
     private final File file;
@@ -45,9 +46,24 @@ public class PluginFileInfo implements Serializable {
                 int d2 = d % 16;
                 sb.append(strHex[d1]).append(strHex[d2]);
             }
-            md5 = sb.toString();
+            id = sb.toString();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PluginFileInfo that = (PluginFileInfo) o;
+
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }

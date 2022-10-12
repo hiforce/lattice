@@ -19,17 +19,17 @@ import org.hiforce.lattice.model.config.*;
 import org.hiforce.lattice.model.config.builder.BusinessConfigBuilder;
 import org.hiforce.lattice.model.register.*;
 import org.hiforce.lattice.model.scenario.ScenarioRequest;
-import org.hiforce.lattice.runtime.spi.LatticeRuntimeSpiFactory;
-import org.hiforce.lattice.spi.classloader.CustomClassLoaderSpi;
-import org.hiforce.lattice.spi.classloader.LatticeClassLoader;
-import org.hiforce.lattice.utils.BizCodeUtils;
 import org.hiforce.lattice.runtime.ability.register.AbilityBuildRequest;
 import org.hiforce.lattice.runtime.ability.register.AbilityRegister;
 import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
+import org.hiforce.lattice.runtime.spi.LatticeRuntimeSpiFactory;
 import org.hiforce.lattice.runtime.template.LatticeTemplateManager;
 import org.hiforce.lattice.runtime.utils.ClassLoaderUtil;
 import org.hiforce.lattice.runtime.utils.ClassPathScanHandler;
+import org.hiforce.lattice.spi.classloader.CustomClassLoaderSpi;
+import org.hiforce.lattice.spi.classloader.LatticeClassLoader;
+import org.hiforce.lattice.utils.BizCodeUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -117,7 +117,7 @@ public class Lattice {
         Thread.currentThread().setContextClassLoader(latticeClassLoader);
     }
 
-    public final void clear(){
+    public final void clear() {
         latticeRuntimeCache.clear();
         registeredAbilities.clear();
         TemplateRegister.getInstance().clear();
@@ -383,13 +383,19 @@ public class Lattice {
     }
 
     @SuppressWarnings("rawtypes")
-    public static Set<Class> getServiceProviderClasses(String spiClassName) {
+    public static Set<Class> getServiceProviderClasses(String spiClassName, ClassLoader classLoader) {
         ClassLoader originLoader = Lattice.getInstance().getLatticeClassLoader();
-        ClassLoader classLoader = null == originLoader ? Thread.currentThread().getContextClassLoader() : originLoader;
         List<String> classNames = getServiceProviderValues(spiClassName, originLoader);
         return classNames.stream().filter(StringUtils::isNotEmpty)
                 .map(p -> loadClass(p, classLoader))
                 .collect(Collectors.toSet());
+    }
+
+    @SuppressWarnings("all")
+    public static Set<Class> getServiceProviderClasses(String spiClassName) {
+        ClassLoader originLoader = Lattice.getInstance().getLatticeClassLoader();
+        ClassLoader classLoader = null == originLoader ? Thread.currentThread().getContextClassLoader() : originLoader;
+        return getServiceProviderClasses(spiClassName, classLoader);
     }
 
     private static List<String> loadSpiFileContent(URL url) {
