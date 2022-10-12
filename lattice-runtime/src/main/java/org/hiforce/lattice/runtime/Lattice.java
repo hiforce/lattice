@@ -78,7 +78,7 @@ public class Lattice {
 
 
     @Getter
-    private final LatticeRuntimeCache latticeRuntimeCache = (LatticeRuntimeCache) LatticeCacheFactory.getInstance()
+    private final LatticeRuntimeCache runtimeCache = (LatticeRuntimeCache) LatticeCacheFactory.getInstance()
             .getRuntimeCache(new LatticeRuntimeCache());
 
     private Lattice() {
@@ -117,7 +117,7 @@ public class Lattice {
     }
 
     public final void clear() {
-        latticeRuntimeCache.clear();
+        runtimeCache.clear();
         registeredAbilities.clear();
         TemplateRegister.getInstance().clear();
         initialized = false;
@@ -129,7 +129,7 @@ public class Lattice {
     }
 
     private void initLatticeCache() {
-        getLatticeRuntimeCache().init();
+        getRuntimeCache().init();
         initErrorMessageCode();
         ClassPathScanHandler.clearCache();
     }
@@ -299,7 +299,7 @@ public class Lattice {
 
 
     public Collection<AbilitySpec> getAllRegisteredAbilities() {
-        return getLatticeRuntimeCache().getAbilityCache().getAllCachedAbilities();
+        return getRuntimeCache().getAbilityCache().getAllCachedAbilities();
     }
 
     public List<UseCaseSpec> getAllRegisteredUseCases() {

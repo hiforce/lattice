@@ -152,7 +152,7 @@ public class AbilityRegister {
         if (result.isSuccess()) {
             AbilityInstSpec abilityInstanceSpec = result.getInstanceSpec();
             if (null != abilityInstanceSpec) {
-                Lattice.getInstance().getLatticeRuntimeCache()
+                Lattice.getInstance().getRuntimeCache()
                         .getExtensionCache()
                         .doCacheExtensionSpec(abilityInstanceSpec.getExtensions());
             }

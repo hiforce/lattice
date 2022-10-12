@@ -51,7 +51,7 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
     private AbilityContext context;
 
     @Getter
-    private final LatticeRuntimeCache runtimeCache = Lattice.getInstance().getLatticeRuntimeCache();
+    private final LatticeRuntimeCache runtimeCache = Lattice.getInstance().getRuntimeCache();
 
     public BaseLatticeAbility(IBizObject bizObject) {
         this.bizObject = bizObject;

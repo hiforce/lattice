@@ -75,7 +75,7 @@ public class BaseLatticeAbilityDelegate {
         boolean onlyProduct = !filter.isLoadBusinessExt();
 
         List<RunnerItemEntry<R>> cachedRunners = null;
-        LatticeRuntimeCache runtimeCache = Lattice.getInstance().getLatticeRuntimeCache();
+        LatticeRuntimeCache runtimeCache = Lattice.getInstance().getRuntimeCache();
         ExtensionSpec extensionSpec = runtimeCache.getExtensionCache().getExtensionIndex().getKey1Only(extCode);
         if (null == extensionSpec) {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0006", extCode);
@@ -172,7 +172,7 @@ public class BaseLatticeAbilityDelegate {
     private <R> List<RunnerItemEntry<R>> getCachedRemoteRunners(String extCode, BusinessConfig businessConfig) {
         String scenario = ability.getContext().getScenario();
         String bizCode = ability.getContext().getBizCode();
-        LatticeRuntimeCache runtimeCache = Lattice.getInstance().getLatticeRuntimeCache();
+        LatticeRuntimeCache runtimeCache = Lattice.getInstance().getRuntimeCache();
         ExtensionRunnerCacheKey key = new ExtensionRunnerCacheKey(
                 extCode, bizCode, scenario, true, false);
 
@@ -215,7 +215,7 @@ public class BaseLatticeAbilityDelegate {
 
         boolean supportCustomization = ability.supportCustomization();
         boolean isHorizontal = !filter.isLoadBusinessExt();
-        LatticeRuntimeCache runtimeCache = Lattice.getInstance().getLatticeRuntimeCache();
+        LatticeRuntimeCache runtimeCache = Lattice.getInstance().getRuntimeCache();
         // cache
         ExtensionRunnerCacheKey key = new ExtensionRunnerCacheKey(
                 extCode, bizCode, scenario, supportCustomization, isHorizontal);
@@ -414,7 +414,7 @@ public class BaseLatticeAbilityDelegate {
     public IBusinessExt findIExtensionPointsFacadeViaScenario(String scenario, TemplateSpec template, String extPointCode) {
         IBusinessExt extFacade = null;
 
-        ITemplateCache templateCache = Lattice.getInstance().getLatticeRuntimeCache().getTemplateCache();
+        ITemplateCache templateCache = Lattice.getInstance().getRuntimeCache().getTemplateCache();
 
         List<RealizationSpec> realizationSpecs = Lattice.getInstance().getAllRegisteredRealizations();
 

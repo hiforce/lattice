@@ -109,7 +109,7 @@ public abstract class BaseObjectCacheKey {
     protected void buildObjectCacheUniqueId() {
         if (getUniqueId() != null && getUniqueId().longValue() > 0)
             return;
-        LatticeRuntimeCache runtimeCache = Lattice.getInstance().getLatticeRuntimeCache();
+        LatticeRuntimeCache runtimeCache = Lattice.getInstance().getRuntimeCache();
         if (null == bizCodeIndex) {
             bizCodeIndex = null == getBizCode() ? null : runtimeCache.getTemplateCodeCache()
                     .getCodeIndex(getBizCode());
