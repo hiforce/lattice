@@ -162,8 +162,12 @@ public class BaseLatticeAbilityDelegate {
             }
             BizSessionContext bizSessionContext =
                     InvokeCache.instance().get(BizSessionContext.class, BizSessionContext.class);
-            List<TemplateSpec<? extends ITemplate>> effective =
-                    bizSessionContext.getEffectiveTemplates().get(ability.getContext().getBizCode());
+            if (!Lattice.getInstance().isSimpleMode() && null == bizSessionContext) {
+                throw new LatticeRuntimeException("LATTICE-CORE-RT-0024", ability.getContext().getExtCode());
+            }
+            List<TemplateSpec<? extends ITemplate>> effective = (null == bizSessionContext) ? Lists.newArrayList()
+                    : bizSessionContext.getEffectiveTemplates()
+                    .get(ability.getContext().getBizCode());
 
             if (effective.stream().noneMatch(p -> StringUtils.equals(p.getCode(), runner.getTemplate().getCode()))) {
                 continue;
