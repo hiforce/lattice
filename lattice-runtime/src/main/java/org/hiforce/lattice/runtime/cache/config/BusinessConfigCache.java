@@ -46,7 +46,8 @@ public class BusinessConfigCache implements LatticeCache {
     }
 
     public void removeBusinessConfig(String bizCode) {
-        businessConfigs.removeIf(p -> StringUtils.equals(bizCode, p.getBizCode()));
+        businessConfigs.removeIf(p ->
+                !p.isAutoBuild() && StringUtils.equals(bizCode, p.getBizCode()));
     }
 
     public BusinessConfig getBusinessConfigByBizCode(String bizCode) {

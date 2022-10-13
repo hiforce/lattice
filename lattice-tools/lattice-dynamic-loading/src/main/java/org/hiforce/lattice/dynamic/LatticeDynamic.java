@@ -10,13 +10,16 @@ import org.hiforce.lattice.dynamic.classloader.LatticeClassLoader;
 import org.hiforce.lattice.dynamic.destroy.BusinessUninstaller;
 import org.hiforce.lattice.dynamic.destroy.DestroyResult;
 import org.hiforce.lattice.dynamic.destroy.LatticeUninstaller;
+import org.hiforce.lattice.dynamic.destroy.ProductUninstaller;
 import org.hiforce.lattice.dynamic.installer.BusinessInstaller;
 import org.hiforce.lattice.dynamic.installer.InstallResult;
 import org.hiforce.lattice.dynamic.installer.LatticeInstaller;
+import org.hiforce.lattice.dynamic.installer.ProductInstaller;
 import org.hiforce.lattice.dynamic.model.PluginFileInfo;
 import org.hiforce.lattice.dynamic.properties.LatticeDynamicProperties;
 import org.hiforce.lattice.exception.LatticeRuntimeException;
 import org.hiforce.lattice.message.Message;
+import org.hiforce.lattice.runtime.cache.ability.AbilityCache;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +39,7 @@ public class LatticeDynamic {
     private static LatticeDynamic instance;
 
     @Getter
-    private final Set<PluginFileInfo> currentFiles = Sets.newHashSet();
+    private final Set<PluginFileInfo> currentFiles = Sets.newConcurrentHashSet();
 
 
     private LatticeDynamic() {
@@ -88,7 +91,8 @@ public class LatticeDynamic {
         log.info("Lattice dynamic install plugin: " + pluginFile.getFile().getName());
 
         List<LatticeInstaller> installers = Lists.newArrayList(
-                new BusinessInstaller()
+                new BusinessInstaller(),
+                new ProductInstaller()
         );
 
         try {
@@ -102,6 +106,7 @@ public class LatticeDynamic {
                     throw new LatticeRuntimeException(Message.of(result.getErrCode(), result.getErrText()));
                 }
                 currentFiles.add(pluginFile);
+                AbilityCache.getInstance().clear();
                 log.info("....... Lattice plugin " + pluginFile.getFile().getName() + "...installed successfully.");
             }
         } catch (LatticeRuntimeException ex) {
@@ -119,7 +124,8 @@ public class LatticeDynamic {
         }
 
         List<LatticeUninstaller> uninstallers = Lists.newArrayList(
-                new BusinessUninstaller()
+                new BusinessUninstaller(),
+                new ProductUninstaller()
         );
 
         try {

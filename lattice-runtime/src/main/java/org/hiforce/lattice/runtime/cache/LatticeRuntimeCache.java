@@ -38,6 +38,14 @@ public class LatticeRuntimeCache implements ILatticeRuntimeCache, LatticeCache {
     @Getter
     private final BusinessExtCache businessExtCache = BusinessExtCache.getInstance();
 
+    public synchronized void clearProductCache(String code) {
+        TemplateRegister.getInstance().getProducts().removeIf(p -> StringUtils.equals(p.getCode(), code));
+        TemplateRegister.getInstance().getRealizations().removeIf(p -> StringUtils.equals(p.getCode(), code));
+        TemplateIndex.getInstance().remove(code);
+        ExtensionInvokeCache.getInstance().clear();
+        BusinessExtCache.getInstance().clear();
+        AbilityCache.getInstance().clear();
+    }
 
     public synchronized void clearBusinessCache(String bizCode) {
         TemplateRegister.getInstance().getBusinesses().removeIf(p -> StringUtils.equals(p.getCode(), bizCode));
@@ -46,6 +54,7 @@ public class LatticeRuntimeCache implements ILatticeRuntimeCache, LatticeCache {
         ExtensionInvokeCache.getInstance().clear();
         BusinessConfigCache.getInstance().removeBusinessConfig(bizCode);
         BusinessExtCache.getInstance().clear();
+        AbilityCache.getInstance().clear();
     }
 
 

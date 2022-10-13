@@ -63,55 +63,63 @@ public class TemplateRegister {
     }
 
     @SuppressWarnings("rawtypes")
-    public List<BusinessSpec> registerBusinesses(Set<Class> classSet) {
-        for (Class clz : classSet) {
-            BusinessAnnotation annotation = getBusinessAnnotation(clz);
-            if (null == annotation) {
-                continue;
+    public synchronized List<BusinessSpec> registerBusinesses(Set<Class> classSet) {
+        List<BusinessSpec> businessSpecs = Lists.newArrayList();
+        synchronized (TemplateRegister.class) {
+            for (Class clz : classSet) {
+                BusinessAnnotation annotation = getBusinessAnnotation(clz);
+                if (null == annotation) {
+                    continue;
+                }
+                BusinessSpec businessSpec = new BusinessSpec();
+                businessSpec.setBusinessClass(clz);
+                businessSpec.setCode(annotation.getCode());
+                businessSpec.setName(annotation.getName());
+                businessSpec.setDescription(annotation.getDesc());
+                businessSpec.setPriority(annotation.getPriority());
+                businessSpec.getRealizations().addAll(realizations.stream()
+                        .filter(p -> BizCodeUtils.isCodesMatched(p.getCode(), businessSpec.getCode()))
+                        .collect(Collectors.toList()));
+                TemplateIndex.getInstance().addTemplateIndex(businessSpec);
+                businesses.add(businessSpec);
+                businessSpecs.add(businessSpec);
             }
-            BusinessSpec businessSpec = new BusinessSpec();
-            businessSpec.setBusinessClass(clz);
-            businessSpec.setCode(annotation.getCode());
-            businessSpec.setName(annotation.getName());
-            businessSpec.setDescription(annotation.getDesc());
-            businessSpec.setPriority(annotation.getPriority());
-            businessSpec.getRealizations().addAll(realizations.stream()
-                    .filter(p -> BizCodeUtils.isCodesMatched(p.getCode(), businessSpec.getCode()))
-                    .collect(Collectors.toList()));
-            TemplateIndex.getInstance().addTemplateIndex(businessSpec);
-            businesses.add(businessSpec);
         }
-        return businesses;
+        return businessSpecs;
     }
 
     @SuppressWarnings("rawtypes")
-    public List<UseCaseSpec> registerUseCases(Set<Class> classSet) {
-        for (Class clz : classSet) {
-            UseCaseAnnotation annotation = getUseCaseAnnotation(clz);
-            if (null == annotation) {
-                continue;
+    public synchronized List<UseCaseSpec> registerUseCases(Set<Class> classSet) {
+        List<UseCaseSpec> useCaseSpecs = Lists.newArrayList();
+        synchronized (TemplateRegister.class) {
+            for (Class clz : classSet) {
+                UseCaseAnnotation annotation = getUseCaseAnnotation(clz);
+                if (null == annotation) {
+                    continue;
+                }
+                UseCaseSpec spec = new UseCaseSpec();
+                spec.setUseCaseClass(clz);
+                spec.setCode(annotation.getCode());
+                spec.setName(annotation.getName());
+                spec.setDescription(annotation.getDesc());
+                spec.setPriority(annotation.getPriority());
+                spec.setSdk(annotation.getSdk());
+
+                spec.getRealizations().addAll(realizations.stream()
+                        .filter(p -> StringUtils.equals(p.getCode(), spec.getCode()))
+                        .collect(Collectors.toList()));
+
+                spec.getExtensions().addAll(scanBusinessExtensions(annotation.getSdk()));
+                useCases.add(spec);
+                useCaseSpecs.add(spec);
             }
-            UseCaseSpec spec = new UseCaseSpec();
-            spec.setUseCaseClass(clz);
-            spec.setCode(annotation.getCode());
-            spec.setName(annotation.getName());
-            spec.setDescription(annotation.getDesc());
-            spec.setPriority(annotation.getPriority());
-            spec.setSdk(annotation.getSdk());
-
-            spec.getRealizations().addAll(realizations.stream()
-                    .filter(p -> StringUtils.equals(p.getCode(), spec.getCode()))
-                    .collect(Collectors.toList()));
-
-            spec.getExtensions().addAll(scanBusinessExtensions(annotation.getSdk()));
-            useCases.add(spec);
+            useCases.sort(Comparator.comparingInt(UseCaseSpec::getPriority));
         }
-        useCases.sort(Comparator.comparingInt(UseCaseSpec::getPriority));
-        return useCases;
+        return useCaseSpecs;
     }
 
     @SuppressWarnings("all")
-    private Set<ExtensionSpec> scanBusinessExtensions(Class<? extends IBusinessExt> businessExt) {
+    private synchronized Set<ExtensionSpec> scanBusinessExtensions(Class<? extends IBusinessExt> businessExt) {
         Set<ExtensionSpec> extensionSpecList = Sets.newHashSet();
 
         Method[] methods = businessExt.getMethods();
@@ -132,7 +140,7 @@ public class TemplateRegister {
         return extensionSpecList;
     }
 
-    private ExtensionSpec buildExtensionPointSpec(ExtensionAnnotation annotation, Method invokeMethod) {
+    private synchronized ExtensionSpec buildExtensionPointSpec(ExtensionAnnotation annotation, Method invokeMethod) {
         ExtensionSpec spec = new ExtensionSpec(invokeMethod);
         spec.setProtocolType(annotation.getProtocolType());
         spec.setCode(annotation.getCode());
@@ -143,55 +151,65 @@ public class TemplateRegister {
     }
 
     @SuppressWarnings("rawtypes")
-    public List<ProductSpec> registerProducts(Set<Class> classSet) {
-        for (Class clz : classSet) {
-            ProductAnnotation annotation = getProductAnnotation(clz);
-            if (null == annotation) {
-                continue;
+    public synchronized List<ProductSpec> registerProducts(Set<Class> classSet) {
+        List<ProductSpec> productSpecs = Lists.newArrayList();
+        synchronized (TemplateRegister.class) {
+            for (Class clz : classSet) {
+                ProductAnnotation annotation = getProductAnnotation(clz);
+                if (null == annotation) {
+                    continue;
+                }
+                ProductSpec productSpec = new ProductSpec();
+                productSpec.setProductClass(clz);
+                productSpec.setCode(annotation.getCode());
+                productSpec.setName(annotation.getName());
+                productSpec.setDescription(annotation.getDesc());
+                productSpec.setPriority(annotation.getPriority());
+                productSpec.getRealizations().addAll(realizations.stream()
+                        .filter(p -> StringUtils.equals(p.getCode(), productSpec.getCode()))
+                        .collect(Collectors.toList()));
+                products.add(productSpec);
+                productSpecs.add(productSpec);
             }
-            ProductSpec productSpec = new ProductSpec();
-            productSpec.setProductClass(clz);
-            productSpec.setCode(annotation.getCode());
-            productSpec.setName(annotation.getName());
-            productSpec.setDescription(annotation.getDesc());
-            productSpec.setPriority(annotation.getPriority());
-            productSpec.getRealizations().addAll(realizations.stream()
-                    .filter(p -> StringUtils.equals(p.getCode(), productSpec.getCode()))
-                    .collect(Collectors.toList()));
-            products.add(productSpec);
+            products.sort(Comparator.comparingInt(ProductSpec::getPriority));
         }
-        products.sort(Comparator.comparingInt(ProductSpec::getPriority));
-        return products;
+        return productSpecs;
     }
 
     @SuppressWarnings("rawtypes")
-    public List<RealizationSpec> registerRealizations(Set<Class> classSet) {
-        for (Class clz : classSet) {
-            RealizationAnnotation annotation = getRealizationAnnotation(clz);
-            if (null == annotation) {
-                continue;
-            }
-            for (String code : annotation.getCodes()) {
-                RealizationSpec spec = new RealizationSpec();
-                spec.setCode(code);
-                spec.setScenario(annotation.getScenario());
-                spec.setBusinessExtClass(annotation.getBusinessExtClass());
-                try {
-                    spec.setBusinessExt(annotation.getBusinessExtClass().newInstance());
-                } catch (Exception e) {
-                    throw new LatticeRuntimeException("LATTICE-CORE-RT-0005", clz.getName());
+    public synchronized List<RealizationSpec> registerRealizations(Set<Class> classSet) {
+        List<RealizationSpec> realizationSpecs = Lists.newArrayList();
+        synchronized (TemplateRegister.class) {
+            for (Class clz : classSet) {
+                RealizationAnnotation annotation = getRealizationAnnotation(clz);
+                if (null == annotation) {
+                    continue;
                 }
-                spec.getExtensionCodes().addAll(BusinessExtUtils.supportedExtCodes(spec.getBusinessExt()));
-                realizations.add(spec);
+                for (String code : annotation.getCodes()) {
+                    RealizationSpec spec = new RealizationSpec();
+                    spec.setCode(code);
+                    spec.setScenario(annotation.getScenario());
+                    spec.setBusinessExtClass(annotation.getBusinessExtClass());
+                    try {
+                        spec.setBusinessExt(annotation.getBusinessExtClass().newInstance());
+                    } catch (Exception e) {
+                        throw new LatticeRuntimeException("LATTICE-CORE-RT-0005", clz.getName());
+                    }
+                    spec.getExtensionCodes().addAll(BusinessExtUtils.supportedExtCodes(spec.getBusinessExt()));
+                    realizations.add(spec);
+                    realizationSpecs.add(spec);
+                }
             }
         }
-        return realizations;
+        return realizationSpecs;
     }
 
-    public void clear() {
-        realizations.clear();
-        products.clear();
-        useCases.clear();
-        businesses.clear();
+    public synchronized void clear() {
+        synchronized (TemplateRegister.class) {
+            realizations.clear();
+            products.clear();
+            useCases.clear();
+            businesses.clear();
+        }
     }
 }

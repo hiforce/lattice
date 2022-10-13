@@ -310,6 +310,9 @@ public class BaseLatticeAbilityDelegate {
         }
         TemplateSpec template = config.getType().isVertical() ?
                 getBusinessSpec(config.getCode()) : getHorizontalTemplateSpec(config.getCode());
+        if (null == template) {
+            return null;
+        }
 
         if (supportCustomization) {
             if (extension.getProtocolType() == ProtocolType.LOCAL) {

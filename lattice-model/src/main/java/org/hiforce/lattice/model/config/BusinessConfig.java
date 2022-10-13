@@ -31,6 +31,10 @@ public class BusinessConfig implements Serializable {
     private int priority = 1000;
 
     @Getter
+    @Setter
+    private boolean autoBuild;
+
+    @Getter
     private final Set<ProductConfig> products = Sets.newHashSet();
 
     @Getter

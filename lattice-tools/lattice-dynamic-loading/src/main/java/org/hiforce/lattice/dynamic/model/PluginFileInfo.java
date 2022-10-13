@@ -1,5 +1,6 @@
 package org.hiforce.lattice.dynamic.model;
 
+import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.io.FileUtils;
@@ -8,6 +9,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author Rocky Yu
@@ -19,13 +21,18 @@ public class PluginFileInfo implements Serializable {
 
     private final static String[] strHex = {"0", "1", "2", "3", "4", "5",
             "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"};
-
     @Getter
     @Setter
     private String id;
 
     @Getter
     private final File file;
+
+    @Getter
+    private final Set<String> productCodes = Sets.newHashSet();
+
+    @Getter
+    private final Set<String> bizCodes = Sets.newHashSet();
 
     public PluginFileInfo(File file) {
         this.file = file;

@@ -235,6 +235,7 @@ public class Lattice {
                 .install(productConfigs)
                 .extension(priorityConfigs)
                 .build();
+        businessConfig.setAutoBuild(true);
         BusinessConfigCache.getInstance().getBusinessConfigs().add(businessConfig);
 
         BusinessConfigCache.getInstance().getBusinessConfigs().forEach(p -> autoBuildUseCaseExtPriorityConfig(p, buildUseCaseExtPriorityConfigMap()));
@@ -385,7 +386,7 @@ public class Lattice {
         try {
             return classLoader.loadClass(className);
         } catch (ClassNotFoundException e) {
-            throw new LatticeRuntimeException(e);
+            return null;
         }
     }
 
@@ -395,6 +396,7 @@ public class Lattice {
         List<String> classNames = getServiceProviderValues(spiClassName, originLoader);
         return classNames.stream().filter(StringUtils::isNotEmpty)
                 .map(p -> loadClass(p, classLoader))
+                .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
 
