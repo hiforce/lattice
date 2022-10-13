@@ -7,7 +7,6 @@ import org.hiforce.lattice.annotation.model.ProtocolType;
 import org.hiforce.lattice.cache.ITemplateCache;
 import org.hiforce.lattice.cache.invoke.InvokeCache;
 import org.hiforce.lattice.exception.LatticeRuntimeException;
-import org.hiforce.lattice.extension.ExtensionRemoteRunner;
 import org.hiforce.lattice.extension.ExtensionRunner;
 import org.hiforce.lattice.extension.RemoteExtensionRunnerBuilderBean;
 import org.hiforce.lattice.extension.RunnerItemEntry;
@@ -30,10 +29,12 @@ import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 import org.hiforce.lattice.runtime.ability.execute.filter.ExtensionFilter;
 import org.hiforce.lattice.runtime.ability.execute.filter.ProductFilter;
 import org.hiforce.lattice.runtime.ability.execute.runner.ExtensionJavaRunner;
+import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
-import org.hiforce.lattice.runtime.cache.exension.NotExistedRealization;
 import org.hiforce.lattice.runtime.cache.ability.AbilityCache;
 import org.hiforce.lattice.runtime.cache.exension.ExtensionInvokeCache;
+import org.hiforce.lattice.runtime.cache.exension.NotExistedRealization;
+import org.hiforce.lattice.runtime.cache.index.TemplateIndex;
 import org.hiforce.lattice.runtime.cache.key.ExtensionInvokeCacheKey;
 import org.hiforce.lattice.runtime.cache.key.ExtensionRunnerCacheKey;
 import org.hiforce.lattice.runtime.spi.IRunnerCollectionBuilder;
@@ -44,7 +45,9 @@ import org.hiforce.lattice.utils.BizCodeUtils;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static org.hiforce.lattice.runtime.ability.execute.RunnerCollection.ACCEPT_ALL;
 import static org.hiforce.lattice.utils.BizCodeUtils.isCodeMatched;
@@ -67,6 +70,45 @@ public class BaseLatticeAbilityDelegate {
         this.ability = ability;
     }
 
+
+    private BusinessConfig loadBusinessConfig(String bizCode, ExtensionSpec extension) {
+        BusinessConfig businessConfig = Lattice.getInstance().getBusinessConfigByBizCode(bizCode);
+        if (null != businessConfig) {
+            return businessConfig;
+        }
+        if (extension.getProtocolType() == ProtocolType.LOCAL) {
+            return businessConfig;
+        }
+        if (!Lattice.getInstance().isSimpleMode()) {
+            return businessConfig;
+        }
+        BusinessSpec businessSpec = TemplateRegister.getInstance().getBusinesses().stream()
+                .filter(p -> StringUtils.equals(p.getCode(), bizCode))
+                .findFirst().orElse(null);
+        if (null == businessConfig) {
+            businessSpec = new BusinessSpec();
+            businessSpec.setCode(bizCode);
+            businessSpec.setRemote(true);
+            businessSpec.setName("Remote Business [" + bizCode + "]");
+            TemplateIndex.getInstance().addTemplateIndex(businessSpec);
+            TemplateRegister.getInstance().getBusinesses().add(businessSpec);
+        }
+
+        Set<ExtensionSpec> remoteExtensionSet = Lattice.getInstance().getAllRegisteredAbilities().stream()
+                .flatMap(p -> p.getAbilityInstances().stream())
+                .flatMap(p -> p.getExtensions().stream())
+                .filter(p -> p.getProtocolType() == ProtocolType.REMOTE)
+                .collect(Collectors.toSet());
+
+        RealizationSpec realization = new RealizationSpec();
+        realization.setCode(businessSpec.getCode());
+        realization.setRemote(true);
+        businessSpec.getRealizations().add(realization);
+
+        remoteExtensionSet.forEach(p -> realization.getExtensionCodes().add(p.getCode()));
+        return Lattice.getInstance().autoAddAndBuildBusinessConfig(businessSpec);
+    }
+
     public <R> RunnerCollection<R> loadExtensionRunners(
             @Nonnull String extCode, ExtensionFilter filter) {
         String bizCode = ability.getContext().getBizCode();
@@ -81,26 +123,15 @@ public class BaseLatticeAbilityDelegate {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0006", extCode);
         }
 
-        BusinessConfig businessConfig = Lattice.getInstance().getBusinessConfigByBizCode(bizCode);
+        BusinessConfig businessConfig = loadBusinessConfig(bizCode, extensionSpec);
         if (null == businessConfig) {
             if (Lattice.getInstance().isSimpleMode()) {
-                if (extensionSpec.getProtocolType() == ProtocolType.LOCAL) {
-                    return buildDefaultRunnerCollection(extCode, onlyProduct);
-                }
-                cachedRunners = getCachedRemoteRunners(extCode, businessConfig);
-                if (null != cachedRunners) {
-                    return RunnerCollection.of(bizObject, cachedRunners, ACCEPT_ALL);
-                }
                 return buildDefaultRunnerCollection(extCode, onlyProduct);
             }
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0012", bizCode);
         }
 
-        if (extensionSpec.getProtocolType() == ProtocolType.REMOTE) {
-            cachedRunners = getCachedRemoteRunners(extCode, businessConfig);
-        } else {
-            cachedRunners = getCachedLocalRunners(extCode, businessConfig, filter);
-        }
+        cachedRunners = getCachedExtensionRunners(extensionSpec, businessConfig, filter);
         if (cachedRunners == null) {
             return buildDefaultRunnerCollection(extCode, onlyProduct);
         }
@@ -169,46 +200,8 @@ public class BaseLatticeAbilityDelegate {
         return true;
     }
 
-    private <R> List<RunnerItemEntry<R>> getCachedRemoteRunners(String extCode, BusinessConfig businessConfig) {
-        String scenario = ability.getContext().getScenario();
-        String bizCode = ability.getContext().getBizCode();
-        LatticeRuntimeCache runtimeCache = Lattice.getInstance().getRuntimeCache();
-        ExtensionRunnerCacheKey key = new ExtensionRunnerCacheKey(
-                extCode, bizCode, scenario, true, false);
-
-        Object result = AbilityCache.getInstance().getCachedExtensionRunner(ability.getClass(), key);
-        if (result != null) {
-            if (result == NULL_OBJECT) {
-                return null;
-            } else {
-                return (List<RunnerItemEntry<R>>) result;
-            }
-        }
-        RemoteExtensionRunnerBuilderBean builderBean =
-                SpringApplicationContextHolder.getSpringBean(RemoteExtensionRunnerBuilderBean.class);
-        if (null == builderBean) {
-            throw new LatticeRuntimeException("LATTICE-CORE-RT-0021", extCode);
-        }
-
-        BusinessSpec businessSpec = null;
-
-        if (null == businessConfig) {
-            businessSpec = new BusinessSpec();
-            businessSpec.setType(TemplateType.BUSINESS);
-            businessSpec.setCode(ability.getContext().getBizCode());
-        } else {
-            businessSpec = Lattice.getInstance()
-                    .getRegisteredBusinessByCode(businessConfig.getBizCode());
-        }
-
-        ExtensionRemoteRunner<R> runner = builderBean.build(ability, businessSpec, extCode, scenario);
-        RunnerItemEntry<R> runerItem = new RunnerItemEntry<R>(ability, businessSpec, runner);
-        AbilityCache.getInstance().doCacheExtensionRunner(ability.getClass(), key, Lists.newArrayList(runerItem));
-        return Lists.newArrayList(runerItem);
-    }
-
-    private <R> List<RunnerItemEntry<R>> getCachedLocalRunners(
-            String extCode, BusinessConfig businessConfig, ExtensionFilter filter) {
+    private <R> List<RunnerItemEntry<R>> getCachedExtensionRunners(
+            ExtensionSpec extension, BusinessConfig businessConfig, ExtensionFilter filter) {
 
         String scenario = ability.getContext().getScenario();
         String bizCode = ability.getContext().getBizCode();
@@ -218,7 +211,7 @@ public class BaseLatticeAbilityDelegate {
         LatticeRuntimeCache runtimeCache = Lattice.getInstance().getRuntimeCache();
         // cache
         ExtensionRunnerCacheKey key = new ExtensionRunnerCacheKey(
-                extCode, bizCode, scenario, supportCustomization, isHorizontal);
+                extension.getCode(), bizCode, scenario, supportCustomization, isHorizontal);
 
         Object result = AbilityCache.getInstance().getCachedExtensionRunner(ability.getClass(), key);
         if (result != null) {
@@ -230,7 +223,7 @@ public class BaseLatticeAbilityDelegate {
         }
 
         ExtPriorityConfig priorityConfig = businessConfig.getExtensions().stream()
-                .filter(p -> StringUtils.equals(p.getExtCode(), extCode))
+                .filter(p -> StringUtils.equals(p.getExtCode(), extension.getCode()))
                 .findFirst().orElse(null);
         if (null == priorityConfig) {
             AbilityCache.getInstance().doCacheExtensionRunner(ability.getClass(), key, NULL_OBJECT);
@@ -238,22 +231,27 @@ public class BaseLatticeAbilityDelegate {
         }
 
         List<RunnerItemEntry<R>> extensionRunners = new ArrayList<>();
-        for (ExtPriority config : businessConfig.getExtPriorityByCode(extCode, isHorizontal)) {
+        for (ExtPriority config : businessConfig.getExtPriorityByCode(extension.getCode(), isHorizontal)) {
             if (null == config)
                 continue;
             BizSessionContext bizSessionContext =
                     InvokeCache.instance().get(BizSessionContext.class, BizSessionContext.class);
             if (null == bizSessionContext) {
+                RunnerItemEntry<R> runnerItemEntry =
+                        buildExtensionRunnerItemEntry(extension, config, bizCode, scenario);
+                if (null != runnerItemEntry) {
+                    extensionRunners.add(runnerItemEntry);
+                }
                 continue;
             }
+
             if (config.getType().isHorizontal() && config.getType().needInstall()) {
                 if (!businessConfig.productInstalled(config.getCode())) {
                     continue;
                 }
             }
-
             RunnerItemEntry<R> runnerItemEntry =
-                    buildExtensionJavaRunnerItemEntry(extCode, config, bizCode, scenario);
+                    buildExtensionRunnerItemEntry(extension, config, bizCode, scenario);
             if (null != runnerItemEntry) {
                 extensionRunners.add(runnerItemEntry);
             }
@@ -262,15 +260,47 @@ public class BaseLatticeAbilityDelegate {
         return extensionRunners;
     }
 
-    private <R> RunnerItemEntry<R> buildExtensionJavaRunnerItemEntry(
-            String extensionCode, ExtPriority config, String bizCode, String scenario) {
+    private <R> ExtensionRunner<R> buildRemoteExtensionRunner(
+            TemplateSpec template, ExtensionSpec extension, String bizCode, String scenario) {
+        if (!template.isRemote()) {
+            return buildLocalExtensionRunner(template, extension, bizCode, scenario);
+        }
+
+        RemoteExtensionRunnerBuilderBean builderBean =
+                SpringApplicationContextHolder.getSpringBean(RemoteExtensionRunnerBuilderBean.class);
+        if (null == builderBean) {
+            throw new LatticeRuntimeException("LATTICE-CORE-RT-0021", extension.getCode());
+        }
+        return builderBean.build(ability, template, extension.getCode(), scenario);
+    }
+
+    private <R> ExtensionRunner<R> buildLocalExtensionRunner(
+            TemplateSpec template, ExtensionSpec extension, String bizCode, String scenario) {
+
+        ExtensionRunner extensionJavaRunner = null;
+
+        IBusinessExt extImpl = loadExtensionRealization(bizCode, scenario, template, extension.getCode());
+        if (null == extImpl) {
+            if (log.isInfoEnabled()) {
+                log.info("[Lattice]The ExtensionFacade or ExtensionImplement is null. bizCode: [{}], extCode: [{}]",
+                        bizCode, extension.getCode());
+            }
+            extensionJavaRunner = null;
+        } else {
+            extensionJavaRunner = new ExtensionJavaRunner(extension.getCode(), extImpl);
+        }
+        return extensionJavaRunner;
+    }
+
+    private <R> RunnerItemEntry<R> buildExtensionRunnerItemEntry(
+            ExtensionSpec extension, ExtPriority config, String bizCode, String scenario) {
 
         boolean supportCustomization = ability.supportCustomization();
 
-        ExtensionRunner extensionJavaRunner = null;
+        ExtensionRunner runner = null;
         if (null == config) {
             if (log.isInfoEnabled()) {
-                log.info(Message.code("LATTICE-CORE-RT-0013", extensionCode, bizCode).getText());
+                log.info(Message.code("LATTICE-CORE-RT-0013", extension.getCode(), bizCode).getText());
             }
             return null;
         }
@@ -278,22 +308,17 @@ public class BaseLatticeAbilityDelegate {
                 getBusinessSpec(config.getCode()) : getHorizontalTemplateSpec(config.getCode());
 
         if (supportCustomization) {
-            IBusinessExt extImpl = loadExtensionRealization(bizCode, scenario, template, extensionCode);
-            if (null == extImpl) {
-                if (log.isInfoEnabled()) {
-                    log.info("[Lattice]The ExtensionFacade or ExtensionImplement is null. bizCode: [{}], extCode: [{}]",
-                            bizCode, extensionCode);
-                }
-                extensionJavaRunner = null;
-            } else {
-                extensionJavaRunner = new ExtensionJavaRunner(extensionCode, extImpl);
+            if (extension.getProtocolType() == ProtocolType.LOCAL) {
+                runner = buildLocalExtensionRunner(template, extension, bizCode, scenario);
+            } else if (extension.getProtocolType() == ProtocolType.REMOTE) {
+                runner = buildRemoteExtensionRunner(template, extension, bizCode, scenario);
             }
         } else {
-            extensionJavaRunner = new ExtensionJavaRunner(extensionCode, ability.getDefaultRealization());
+            runner = new ExtensionJavaRunner(extension.getCode(), ability.getDefaultRealization());
         }
 
-        if (extensionJavaRunner != null) {
-            return new RunnerItemEntry<>(ability, template, extensionJavaRunner);
+        if (runner != null) {
+            return new RunnerItemEntry<>(ability, template, runner);
         }
         return null;
     }
@@ -414,7 +439,7 @@ public class BaseLatticeAbilityDelegate {
     public IBusinessExt findIExtensionPointsFacadeViaScenario(String scenario, TemplateSpec template, String extPointCode) {
         IBusinessExt extFacade = null;
 
-        ITemplateCache templateCache = Lattice.getInstance().getRuntimeCache().getTemplateCache();
+        ITemplateCache templateCache = Lattice.getInstance().getRuntimeCache().getTemplateIndex();
 
         List<RealizationSpec> realizationSpecs = Lattice.getInstance().getAllRegisteredRealizations();
 

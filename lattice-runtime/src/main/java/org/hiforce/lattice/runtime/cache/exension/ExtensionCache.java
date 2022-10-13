@@ -1,10 +1,11 @@
-package org.hiforce.lattice.runtime.cache.spec;
+package org.hiforce.lattice.runtime.cache.exension;
 
 import com.google.common.collect.Maps;
 import lombok.Getter;
 import org.hiforce.lattice.model.register.ExtensionSpec;
 import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.runtime.cache.LatticeCache;
+import org.hiforce.lattice.runtime.cache.index.ExtensionIndex;
 
 import java.util.List;
 import java.util.Map;

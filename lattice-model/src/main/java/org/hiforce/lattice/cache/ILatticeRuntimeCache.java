@@ -10,5 +10,5 @@ public interface ILatticeRuntimeCache {
 
     IBusinessExtCache getBusinessExtCache();
 
-    ITemplateCache getTemplateCache();
+    ITemplateCache getTemplateIndex();
 }

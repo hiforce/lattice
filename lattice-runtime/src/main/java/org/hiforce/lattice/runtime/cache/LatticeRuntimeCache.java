@@ -7,9 +7,8 @@ import org.hiforce.lattice.runtime.ability.cache.BusinessExtCache;
 import org.hiforce.lattice.runtime.cache.ability.AbilityCache;
 import org.hiforce.lattice.runtime.cache.config.BusinessConfigCache;
 import org.hiforce.lattice.runtime.cache.exension.ExtensionInvokeCache;
-import org.hiforce.lattice.runtime.cache.spec.ExtensionCache;
-import org.hiforce.lattice.runtime.cache.template.TemplateCache;
-import org.hiforce.lattice.runtime.cache.template.TemplateCodeCache;
+import org.hiforce.lattice.runtime.cache.exension.ExtensionCache;
+import org.hiforce.lattice.runtime.cache.index.TemplateIndex;
 
 /**
  * @author Rocky Yu
@@ -20,10 +19,7 @@ import org.hiforce.lattice.runtime.cache.template.TemplateCodeCache;
 public class LatticeRuntimeCache implements ILatticeRuntimeCache, LatticeCache {
 
     @Getter
-    private final TemplateCodeCache templateCodeCache = TemplateCodeCache.getInstance();
-
-    @Getter
-    private final TemplateCache templateCache = TemplateCache.getInstance();
+    private final TemplateIndex templateIndex = TemplateIndex.getInstance();
 
     @Getter
     private final ExtensionCache extensionCache = ExtensionCache.getInstance();
@@ -45,16 +41,14 @@ public class LatticeRuntimeCache implements ILatticeRuntimeCache, LatticeCache {
     public synchronized void init() {
         getAbilityCache().init();
         getExtensionCache().init();
-        getTemplateCodeCache().init();
-        getTemplateCache().init();
+        getTemplateIndex().init();
         getInvokeCache().init();
         getBusinessConfigCache().init();
         getBusinessExtCache().init();
     }
 
     public void clear() {
-        getTemplateCodeCache().clear();
-        getTemplateCache().clear();
+        getTemplateIndex().clear();
         getExtensionCache().clear();
         getAbilityCache().clear();
         getInvokeCache().clear();

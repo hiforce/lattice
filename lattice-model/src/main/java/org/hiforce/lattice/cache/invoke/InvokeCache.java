@@ -154,7 +154,7 @@ public final class InvokeCache {
     @Nullable
     private <T> Object get0(Class<T> klass, Object id, @Nullable Callable<? extends T> callbackOnMiss) {
         if (!isThreadLocalInit()) {
-            throw new LatticeRuntimeException("LATTICE-CORE-006");
+            return null;
         }
         Map<Object, Object> idToInstanceCache = cache.get(klass);
         Object ret = idToInstanceCache == null ? null : idToInstanceCache.get(id);

@@ -27,12 +27,16 @@ public abstract class TemplateSpec<T extends ITemplate> extends BaseSpec {
     @Getter
     private final List<RealizationSpec> realizations = Lists.newArrayList();
 
+    @Getter
+    @Setter
+    private boolean remote;
+
     @Setter
     private Long internalId;
 
     public Long getInternalId() {
         if (null == internalId) {
-            ITemplateCache templateCache = LatticeCacheFactory.getInstance().getRuntimeCache().getTemplateCache();
+            ITemplateCache templateCache = LatticeCacheFactory.getInstance().getRuntimeCache().getTemplateIndex();
             internalId = templateCache.getSecondKeyViaFirstKey(getCode());
         }
         return internalId;

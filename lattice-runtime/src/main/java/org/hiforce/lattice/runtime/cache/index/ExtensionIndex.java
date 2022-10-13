@@ -1,4 +1,4 @@
-package org.hiforce.lattice.runtime.cache.spec;
+package org.hiforce.lattice.runtime.cache.index;
 
 import org.hiforce.lattice.model.register.ExtensionSpec;
 import org.hiforce.lattice.runtime.cache.LatticeCache;

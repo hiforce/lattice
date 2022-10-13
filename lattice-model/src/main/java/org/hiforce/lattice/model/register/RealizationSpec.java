@@ -25,6 +25,10 @@ public class RealizationSpec extends BaseSpec {
     @Setter
     private Class<IBusinessExt> businessExtClass;
 
+    @Getter
+    @Setter
+    private boolean remote;
+
     /**
      * The extension points current realization supported.
      */

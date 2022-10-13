@@ -12,6 +12,7 @@ import org.hiforce.lattice.model.business.BusinessTemplate;
 import org.hiforce.lattice.model.business.IBusiness;
 import org.hiforce.lattice.model.register.*;
 import org.hiforce.lattice.model.scenario.ScenarioRequest;
+import org.hiforce.lattice.runtime.cache.index.TemplateIndex;
 import org.hiforce.lattice.utils.BizCodeUtils;
 import org.hiforce.lattice.utils.BusinessExtUtils;
 
@@ -77,6 +78,7 @@ public class TemplateRegister {
             businessSpec.getRealizations().addAll(realizations.stream()
                     .filter(p -> BizCodeUtils.isCodesMatched(p.getCode(), businessSpec.getCode()))
                     .collect(Collectors.toList()));
+            TemplateIndex.getInstance().addTemplateIndex(businessSpec);
             businesses.add(businessSpec);
         }
         return businesses;

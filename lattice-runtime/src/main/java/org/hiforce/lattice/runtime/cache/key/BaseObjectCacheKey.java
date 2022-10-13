@@ -111,8 +111,8 @@ public abstract class BaseObjectCacheKey {
             return;
         LatticeRuntimeCache runtimeCache = Lattice.getInstance().getRuntimeCache();
         if (null == bizCodeIndex) {
-            bizCodeIndex = null == getBizCode() ? null : runtimeCache.getTemplateCodeCache()
-                    .getCodeIndex(getBizCode());
+            bizCodeIndex = null == getBizCode() ? null : runtimeCache.getTemplateIndex()
+                    .getSecondKeyViaFirstKey(getBizCode());
         }
         if (null == extCodeIndex) {
             extCodeIndex = null == getExtensionCode() ? null : runtimeCache
@@ -129,7 +129,7 @@ public abstract class BaseObjectCacheKey {
         }
         if (null == templateIndex || templateIndex <= 0) {
             templateIndex = null == getTemplateCode() ? null : runtimeCache
-                    .getTemplateCache().getSecondKeyViaFirstKey(getTemplateCode());
+                    .getTemplateIndex().getSecondKeyViaFirstKey(getTemplateCode());
         }
         generateUniqueId();
     }

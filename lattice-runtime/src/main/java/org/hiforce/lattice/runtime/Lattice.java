@@ -161,8 +161,6 @@ public class Lattice {
             //auto-config business and products.
             autoBuildBusinessConfig();
         }
-        BusinessConfigCache.getInstance().getBusinessConfigs().forEach(p -> autoBuildUseCaseExtPriorityConfig(p, buildUseCaseExtPriorityConfigMap()));
-        BusinessConfigCache.getInstance().getBusinessConfigs().sort(Comparator.comparingInt(BusinessConfig::getPriority));
     }
 
     private void autoBuildUseCaseExtPriorityConfig(BusinessConfig businessConfig, Map<String, ExtPriorityConfig> priorityMap) {
@@ -220,27 +218,39 @@ public class Lattice {
         return null;
     }
 
-    private void autoBuildBusinessConfig() {
+    public BusinessConfig autoAddAndBuildBusinessConfig(BusinessSpec businessSpec) {
         List<ProductConfig> productConfigs = getAllRegisteredProducts().stream()
                 .map(this::buildProductConfig)
                 .collect(Collectors.toList());
-        for (BusinessSpec businessSpec : getAllRegisteredBusinesses()) {
-            if (BusinessConfigCache.getInstance().getBusinessConfigs().stream()
-                    .anyMatch(p -> StringUtils.equals(p.getBizCode(), businessSpec.getCode()))) {
-                continue; //不重复构建
-            }
 
-            List<ExtPriorityConfig> priorityConfigs = businessSpec.getRealizations().stream()
-                    .flatMap(p -> autoBuildPriorityConfig(businessSpec, p).stream())
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-            BusinessConfig businessConfig = BusinessConfigBuilder.builder()
-                    .priority(businessSpec.getPriority())
-                    .bizCode(businessSpec.getCode())
-                    .install(productConfigs)
-                    .extension(priorityConfigs)
-                    .build();
-            BusinessConfigCache.getInstance().getBusinessConfigs().add(businessConfig);
+        BusinessConfig businessConfig = BusinessConfigCache.getInstance().getBusinessConfigs().stream()
+                .filter(p -> StringUtils.equals(p.getBizCode(), businessSpec.getCode()))
+                .findFirst().orElse(null);
+        if (null != businessConfig) {
+            return businessConfig;
+        }
+
+        List<ExtPriorityConfig> priorityConfigs = businessSpec.getRealizations().stream()
+                .flatMap(p -> autoBuildPriorityConfig(businessSpec, p).stream())
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        businessConfig = BusinessConfigBuilder.builder()
+                .priority(businessSpec.getPriority())
+                .bizCode(businessSpec.getCode())
+                .install(productConfigs)
+                .extension(priorityConfigs)
+                .build();
+        BusinessConfigCache.getInstance().getBusinessConfigs().add(businessConfig);
+
+        BusinessConfigCache.getInstance().getBusinessConfigs().forEach(p -> autoBuildUseCaseExtPriorityConfig(p, buildUseCaseExtPriorityConfigMap()));
+        BusinessConfigCache.getInstance().getBusinessConfigs().sort(Comparator.comparingInt(BusinessConfig::getPriority));
+
+        return businessConfig;
+    }
+
+    private void autoBuildBusinessConfig() {
+        for (BusinessSpec businessSpec : getAllRegisteredBusinesses()) {
+            autoAddAndBuildBusinessConfig(businessSpec);
         }
     }
 
@@ -269,22 +279,23 @@ public class Lattice {
 
     private List<ExtPriorityConfig> autoBuildPriorityConfig(BusinessSpec business, RealizationSpec realization) {
         List<ExtPriorityConfig> configs = Lists.newArrayList();
+
+
         for (String extCode : realization.getExtensionCodes()) {
             List<ProductSpec> products = getAllRegisteredProducts().stream()
                     .filter(p -> p.getRealizations().stream().
                             anyMatch(real -> real.getExtensionCodes().contains(extCode)))
                     .collect(Collectors.toList());
+            ExtPriorityConfig config = new ExtPriorityConfig();
+            config.setExtCode(extCode);
+            config.getPriorities().add(ExtPriority.of(business.getCode(), TemplateType.BUSINESS));
+            configs.add(config);
+
             if (CollectionUtils.isEmpty(products)) {
                 continue;
             }
-            List<ExtPriority> extPriorities = Lists.newArrayList();
-            extPriorities.addAll(products.stream()
+            config.getPriorities().addAll(0, products.stream()
                     .map(this::buildExtPriority).collect(Collectors.toList()));
-            extPriorities.add(ExtPriority.of(business.getCode(), TemplateType.BUSINESS));
-            ExtPriorityConfig priorityConfig = new ExtPriorityConfig();
-            priorityConfig.setExtCode(extCode);
-            priorityConfig.getPriorities().addAll(extPriorities);
-            configs.add(priorityConfig);
         }
         return configs;
     }

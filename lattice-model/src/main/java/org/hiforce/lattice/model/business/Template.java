@@ -25,7 +25,7 @@ public abstract class Template implements ITemplate {
     public Long getInternalId() {
         if (null == internalId) {
             ITemplateCache templateCache = LatticeCacheFactory.getInstance()
-                    .getRuntimeCache().getTemplateCache();
+                    .getRuntimeCache().getTemplateIndex();
             internalId = templateCache.getSecondKeyViaFirstKey(getCode());
         }
         return internalId;
