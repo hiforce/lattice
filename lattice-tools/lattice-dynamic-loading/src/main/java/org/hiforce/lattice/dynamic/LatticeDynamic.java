@@ -19,9 +19,7 @@ import org.hiforce.lattice.dynamic.model.PluginFileInfo;
 import org.hiforce.lattice.dynamic.properties.LatticeDynamicProperties;
 import org.hiforce.lattice.exception.LatticeRuntimeException;
 import org.hiforce.lattice.message.Message;
-import org.hiforce.lattice.model.register.BusinessSpec;
 import org.hiforce.lattice.runtime.Lattice;
-import org.hiforce.lattice.runtime.cache.ability.AbilityCache;
 
 import java.io.File;
 import java.io.IOException;
