@@ -8,9 +8,7 @@ import org.hiforce.lattice.model.ability.IBusinessExt;
 import org.hiforce.lattice.model.business.IBusiness;
 import org.hiforce.lattice.model.register.BusinessSpec;
 import org.hiforce.lattice.model.register.RealizationSpec;
-import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
-import org.hiforce.lattice.runtime.cache.ability.AbilityCache;
 
 import java.util.List;
 import java.util.Set;
@@ -62,8 +60,6 @@ public class BusinessInstaller implements LatticeInstaller {
             log.info("---> business installed: " + businessSpecs.stream()
                     .map(p -> String.format("[%s]-%s", p.getCode(), p.getName()))
                     .collect(Collectors.joining(",")));
-
-            businessSpecs.forEach(p -> Lattice.getInstance().autoAddAndBuildBusinessConfig(p));
         }
         return InstallResult.success(fileInfo);
     }

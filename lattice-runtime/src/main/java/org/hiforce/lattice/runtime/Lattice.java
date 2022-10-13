@@ -23,6 +23,7 @@ import org.hiforce.lattice.runtime.ability.register.AbilityBuildRequest;
 import org.hiforce.lattice.runtime.ability.register.AbilityRegister;
 import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
+import org.hiforce.lattice.runtime.cache.ability.AbilityCache;
 import org.hiforce.lattice.runtime.cache.config.BusinessConfigCache;
 import org.hiforce.lattice.runtime.spi.LatticeRuntimeSpiFactory;
 import org.hiforce.lattice.runtime.utils.ClassLoaderUtil;
@@ -99,7 +100,7 @@ public class Lattice {
         initialized = true;
     }
 
-    private void initLatticeClassLoader() {
+    public void initLatticeClassLoader() {
         latticeClassLoader = new LatticeClassLoader(Lattice.class.getClassLoader());
         List<CustomClassLoaderSpi> customClassLoaders =
                 LatticeRuntimeSpiFactory.getInstance().getCustomClassLoaders();
@@ -115,6 +116,7 @@ public class Lattice {
         runtimeCache.clear();
         registeredAbilities.clear();
         TemplateRegister.getInstance().clear();
+        AbilityCache.getInstance().clear();
         initialized = false;
     }
 

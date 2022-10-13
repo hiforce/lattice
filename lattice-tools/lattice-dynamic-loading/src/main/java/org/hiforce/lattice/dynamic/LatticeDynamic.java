@@ -19,6 +19,8 @@ import org.hiforce.lattice.dynamic.model.PluginFileInfo;
 import org.hiforce.lattice.dynamic.properties.LatticeDynamicProperties;
 import org.hiforce.lattice.exception.LatticeRuntimeException;
 import org.hiforce.lattice.message.Message;
+import org.hiforce.lattice.model.register.BusinessSpec;
+import org.hiforce.lattice.runtime.Lattice;
 import org.hiforce.lattice.runtime.cache.ability.AbilityCache;
 
 import java.io.File;
@@ -82,7 +84,7 @@ public class LatticeDynamic {
         }
     }
 
-    public void installPlugin(PluginFileInfo originFile) {
+    public synchronized void installPlugin(PluginFileInfo originFile) {
         if (null == LatticeDynamicProperties.getInstance().getPluginDirs()
                 || 0 == LatticeDynamicProperties.getInstance().getPluginDirs().length)
             return;
@@ -106,7 +108,7 @@ public class LatticeDynamic {
                     throw new LatticeRuntimeException(Message.of(result.getErrCode(), result.getErrText()));
                 }
                 currentFiles.add(pluginFile);
-                AbilityCache.getInstance().clear();
+                Lattice.getInstance().reload();
                 log.info("....... Lattice plugin " + pluginFile.getFile().getName() + "...installed successfully.");
             }
         } catch (LatticeRuntimeException ex) {
@@ -116,7 +118,7 @@ public class LatticeDynamic {
         }
     }
 
-    public void uninstallPlugin(String id) {
+    public synchronized void uninstallPlugin(String id) {
         PluginFileInfo info = currentFiles.stream().filter(p -> StringUtils.equals(id, p.getId()))
                 .findFirst().orElse(null);
         if (null == info) {

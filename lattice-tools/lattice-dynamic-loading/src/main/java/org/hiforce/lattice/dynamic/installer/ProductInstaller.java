@@ -62,10 +62,6 @@ public class ProductInstaller implements LatticeInstaller {
             log.info("---> product installed: " + productSpecs.stream()
                     .map(p -> String.format("[%s]-%s", p.getCode(), p.getName()))
                     .collect(Collectors.joining(",")));
-
-            List<BusinessSpec> businessSpecs = Lattice.getInstance().getAllRegisteredBusinesses();
-            businessSpecs.forEach(p -> BusinessConfigCache.getInstance().removeBusinessConfig(p.getCode()));
-            businessSpecs.forEach(p -> Lattice.getInstance().autoAddAndBuildBusinessConfig(p));
         }
 
         return InstallResult.success(fileInfo);
