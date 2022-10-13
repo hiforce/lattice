@@ -25,7 +25,6 @@ import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
 import org.hiforce.lattice.runtime.cache.config.BusinessConfigCache;
 import org.hiforce.lattice.runtime.spi.LatticeRuntimeSpiFactory;
-import org.hiforce.lattice.runtime.template.LatticeTemplateManager;
 import org.hiforce.lattice.runtime.utils.ClassLoaderUtil;
 import org.hiforce.lattice.runtime.utils.ClassPathScanHandler;
 import org.hiforce.lattice.spi.classloader.CustomClassLoaderSpi;
@@ -68,10 +67,6 @@ public class Lattice {
     @Getter
     @Setter
     private LatticeClassLoader latticeClassLoader;
-
-
-    @Getter
-    private final LatticeTemplateManager templateManager = new LatticeTemplateManager();
 
     @Getter
     private final List<AbilitySpec> registeredAbilities = Lists.newArrayList();
@@ -246,6 +241,10 @@ public class Lattice {
         BusinessConfigCache.getInstance().getBusinessConfigs().sort(Comparator.comparingInt(BusinessConfig::getPriority));
 
         return businessConfig;
+    }
+
+    public List<BusinessConfig> getBusinessConfigs() {
+        return BusinessConfigCache.getInstance().getBusinessConfigs();
     }
 
     private void autoBuildBusinessConfig() {

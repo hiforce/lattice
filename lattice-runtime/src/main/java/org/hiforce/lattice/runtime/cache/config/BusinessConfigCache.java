@@ -41,8 +41,12 @@ public class BusinessConfigCache implements LatticeCache {
         businessConfigs.clear();
     }
 
-    public void addBusinessConfigs(List<BusinessConfig> configs){
+    public void addBusinessConfigs(List<BusinessConfig> configs) {
         businessConfigs.addAll(configs);
+    }
+
+    public void removeBusinessConfig(String bizCode) {
+        businessConfigs.removeIf(p -> StringUtils.equals(bizCode, p.getBizCode()));
     }
 
     public BusinessConfig getBusinessConfigByBizCode(String bizCode) {

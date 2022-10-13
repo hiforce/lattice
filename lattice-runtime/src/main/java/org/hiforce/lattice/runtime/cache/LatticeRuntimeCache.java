@@ -2,12 +2,14 @@ package org.hiforce.lattice.runtime.cache;
 
 import com.google.auto.service.AutoService;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 import org.hiforce.lattice.cache.ILatticeRuntimeCache;
 import org.hiforce.lattice.runtime.ability.cache.BusinessExtCache;
+import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
 import org.hiforce.lattice.runtime.cache.ability.AbilityCache;
 import org.hiforce.lattice.runtime.cache.config.BusinessConfigCache;
-import org.hiforce.lattice.runtime.cache.exension.ExtensionInvokeCache;
 import org.hiforce.lattice.runtime.cache.exension.ExtensionCache;
+import org.hiforce.lattice.runtime.cache.exension.ExtensionInvokeCache;
 import org.hiforce.lattice.runtime.cache.index.TemplateIndex;
 
 /**
@@ -37,6 +39,16 @@ public class LatticeRuntimeCache implements ILatticeRuntimeCache, LatticeCache {
     private final BusinessExtCache businessExtCache = BusinessExtCache.getInstance();
 
 
+    public synchronized void clearBusinessCache(String bizCode) {
+        TemplateRegister.getInstance().getBusinesses().removeIf(p -> StringUtils.equals(p.getCode(), bizCode));
+        TemplateRegister.getInstance().getRealizations().removeIf(p -> StringUtils.equals(p.getCode(), bizCode));
+        TemplateIndex.getInstance().remove(bizCode);
+        ExtensionInvokeCache.getInstance().clear();
+        BusinessConfigCache.getInstance().removeBusinessConfig(bizCode);
+        BusinessExtCache.getInstance().clear();
+    }
+
+
     @Override
     public synchronized void init() {
         getAbilityCache().init();
@@ -47,7 +59,7 @@ public class LatticeRuntimeCache implements ILatticeRuntimeCache, LatticeCache {
         getBusinessExtCache().init();
     }
 
-    public void clear() {
+    public synchronized void clear() {
         getTemplateIndex().clear();
         getExtensionCache().clear();
         getAbilityCache().clear();
