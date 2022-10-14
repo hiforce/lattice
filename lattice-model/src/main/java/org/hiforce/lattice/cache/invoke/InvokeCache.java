@@ -21,12 +21,11 @@ import static java.util.Collections.emptyList;
  */
 @Slf4j
 public final class InvokeCache {
-    /**
-     * 我们特殊对待 null。防止因为远程返回 null 而反复调用远程。
-     */
     private static final Null NULL = new Null();
 
     private static final InvokeCacheThreadLocal INSTANCE = new InvokeCacheThreadLocal();
+
+    private static final ThreadLocal<Boolean> INIT = new ThreadLocal<>();
 
     private final Map<Class<?>, Map<Object, Object>> cache = Maps.newHashMap();
     private final boolean needHoldRemoteCache = false;
@@ -45,11 +44,13 @@ public final class InvokeCache {
     }
 
     public static void initInvokeCache() {
+        INIT.set(true);
         InvokeCache.INSTANCE.get();
     }
 
     public static boolean isThreadLocalInit() {
-        return INSTANCE.isInit();
+        Boolean initialized = INIT.get();
+        return (null != initialized && initialized);
     }
 
     public static InvokeCache instance() {
