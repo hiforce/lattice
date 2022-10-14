@@ -317,7 +317,7 @@ public final class InvokeCache {
                 break;
             }
 
-            builder.append(template.substring(templateStart, placeholderStart));
+            builder.append(template, templateStart, placeholderStart);
             builder.append(args[i++]);
         }
 
