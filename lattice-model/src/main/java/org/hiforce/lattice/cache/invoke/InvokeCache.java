@@ -62,6 +62,7 @@ public final class InvokeCache {
 
     public static void forceClear() {
         INSTANCE.remove();
+        INIT.remove();
     }
 
     /**
