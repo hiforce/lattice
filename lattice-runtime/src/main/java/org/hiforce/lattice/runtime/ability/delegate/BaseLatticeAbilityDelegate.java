@@ -8,7 +8,7 @@ import org.hiforce.lattice.cache.ITemplateCache;
 import org.hiforce.lattice.cache.invoke.InvokeCache;
 import org.hiforce.lattice.exception.LatticeRuntimeException;
 import org.hiforce.lattice.extension.ExtensionRunner;
-import org.hiforce.lattice.extension.RemoteExtensionRunnerBuilderBean;
+import org.hiforce.lattice.extension.RemoteExtensionRunnerBuilder;
 import org.hiforce.lattice.extension.RunnerItemEntry;
 import org.hiforce.lattice.message.Message;
 import org.hiforce.lattice.model.ability.IBusinessExt;
@@ -270,8 +270,8 @@ public class BaseLatticeAbilityDelegate {
             return buildLocalExtensionRunner(template, extension, bizCode, scenario);
         }
 
-        RemoteExtensionRunnerBuilderBean builderBean =
-                SpringApplicationContextHolder.getSpringBean(RemoteExtensionRunnerBuilderBean.class);
+        RemoteExtensionRunnerBuilder builderBean =
+                SpringApplicationContextHolder.getSpringBean(RemoteExtensionRunnerBuilder.class);
         if (null == builderBean) {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0021", extension.getCode());
         }
@@ -315,10 +315,11 @@ public class BaseLatticeAbilityDelegate {
         }
 
         if (supportCustomization) {
-            if (extension.getProtocolType() == ProtocolType.LOCAL) {
-                runner = buildLocalExtensionRunner(template, extension, bizCode, scenario);
-            } else if (extension.getProtocolType() == ProtocolType.REMOTE) {
+            if (extension.getProtocolType() == ProtocolType.REMOTE) {
                 runner = buildRemoteExtensionRunner(template, extension, bizCode, scenario);
+            }
+            if (null == runner || extension.getProtocolType() == ProtocolType.LOCAL) {
+                runner = buildLocalExtensionRunner(template, extension, bizCode, scenario);
             }
         } else {
             runner = new ExtensionJavaRunner(extension.getCode(), ability.getDefaultRealization());

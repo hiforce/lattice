@@ -16,6 +16,7 @@ import org.hiforce.lattice.model.ability.execute.ExtensionCallback;
 import org.hiforce.lattice.model.business.IBizObject;
 import org.hiforce.lattice.model.register.TemplateSpec;
 import org.hiforce.lattice.remote.client.LatticeRemoteInvoker;
+import org.hiforce.lattice.remote.client.model.RemoteExtension;
 import org.hiforce.lattice.remote.runner.init.LatticeDubboRunnerEnv;
 import org.hiforce.lattice.remote.runner.key.DubboInvokeCacheKey;
 import org.jetbrains.annotations.NotNull;
@@ -47,6 +48,10 @@ public class DubboExtensionRunner<R> extends ExtensionRemoteRunner<R> {
     @Setter
     private String scenario;
 
+    @Getter
+    @Setter
+    private RemoteExtension remoteExtension;
+
     public DubboExtensionRunner(String extensionCode) {
         super(extensionCode);
     }
@@ -65,7 +70,10 @@ public class DubboExtensionRunner<R> extends ExtensionRemoteRunner<R> {
             return invoke(extParams);
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
-            throw new LatticeRuntimeException("LATTICE-RMI-DUBBO-0001", ex.getMessage());
+            if (remoteExtension.isStrongDependency()) {
+                throw new LatticeRuntimeException("LATTICE-RMI-DUBBO-0001", ex.getMessage());
+            }
+            return null;
         } finally {
             executeResult.setExecute(true);
         }

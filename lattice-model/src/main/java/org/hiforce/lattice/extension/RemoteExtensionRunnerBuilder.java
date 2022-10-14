@@ -7,7 +7,8 @@ import org.hiforce.lattice.model.register.TemplateSpec;
  * @author Rocky Yu
  * @since 2022/10/1
  */
-public interface RemoteExtensionRunnerBuilderBean {
+@SuppressWarnings("all")
+public interface RemoteExtensionRunnerBuilder {
 
     <R> ExtensionRemoteRunner<R> build(
             IAbility ability, TemplateSpec templateSpec, String extCode, String scenario);
