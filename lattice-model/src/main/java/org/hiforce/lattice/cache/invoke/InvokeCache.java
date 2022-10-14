@@ -75,7 +75,7 @@ public final class InvokeCache {
      */
     public <T> void put(Class<? super T> klass, Object id, @Nullable T instance) {
         if (!isThreadLocalInit()) {
-            throw new LatticeRuntimeException("LATTICE-CORE-006");
+            return;
         }
         if (instance != null)
             checkArgument(klass.isInstance(instance), "incompatible class and instance");
