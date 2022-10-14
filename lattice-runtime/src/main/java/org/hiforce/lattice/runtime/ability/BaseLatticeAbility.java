@@ -193,10 +193,10 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
 
     @SuppressWarnings("all")
     private <T> void enrichAbilityInvokeContext(ExtensionCallback<BusinessExt, T> callback) {
-        if (null != this.getContext().getExtMethod() &&
-                null != this.getContext().getInvokeParams()) {
-            return;
-        }
+//        if (null != this.getContext().getExtMethod() &&
+//                null != this.getContext().getInvokeParams()) {
+//            return;
+//        }
         BusinessExt businessExt = this.getDefaultRealization();
         List<Object> extParams = Lists.newArrayList();
         Enhancer enhancer = new Enhancer();
@@ -209,12 +209,12 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
                 }
             }
             this.getContext().setInvokeParams(extParams);
-            if (StringUtils.isEmpty(getContext().getExtCode())) {
-                ExtensionAnnotation annotation =
-                        LatticeAnnotationUtils.getExtensionAnnotation(method);
-                if (null != annotation) {
-                    this.getContext().setExtCode(annotation.getCode());
-                }
+//            if (StringUtils.isEmpty(getContext().getExtCode())) {
+//            }
+            ExtensionAnnotation annotation =
+                    LatticeAnnotationUtils.getExtensionAnnotation(method);
+            if (null != annotation) {
+                this.getContext().setExtCode(annotation.getCode());
             }
             return null;
         });
