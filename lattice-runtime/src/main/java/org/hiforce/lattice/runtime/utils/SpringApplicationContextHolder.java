@@ -5,6 +5,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -22,7 +23,7 @@ public class SpringApplicationContextHolder implements ApplicationContextAware {
     private static ApplicationContext context;
 
     @Override
-    public void setApplicationContext(ApplicationContext context) throws BeansException {
+    public void setApplicationContext(@NotNull ApplicationContext context) throws BeansException {
         SpringApplicationContextHolder.context = context;
     }
 
@@ -33,6 +34,7 @@ public class SpringApplicationContextHolder implements ApplicationContextAware {
      * @param <T>      the generic create the spring bean.
      * @return the found spring bean.
      */
+    @SuppressWarnings("unchecked")
     public static <T> T getSpringBean(String beanName) {
         Validate.notEmpty(beanName, "bean name is required");
         if (null == context) {
@@ -70,14 +72,5 @@ public class SpringApplicationContextHolder implements ApplicationContextAware {
             }
         }
         return bean;
-    }
-
-    /**
-     * get spring bean names.
-     *
-     * @return
-     */
-    public static String[] getBeanDefinitionNames() {
-        return context.getBeanDefinitionNames();
     }
 }

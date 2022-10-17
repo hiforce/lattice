@@ -1,15 +1,19 @@
 package org.hiforce.lattice.dynamic.model;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.security.MessageDigest;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.jar.JarFile;
 
 /**
  * @author Rocky Yu
@@ -34,9 +38,20 @@ public class PluginFileInfo implements Serializable {
     @Getter
     private final Set<String> bizCodes = Sets.newHashSet();
 
+    @Getter
+    private final JarFile jarFile;
+
+    @Getter
+    private final List<SpringBeanInfo> beans = Lists.newArrayList();
+
     public PluginFileInfo(File file) {
         this.file = file;
         buildMD5Value();
+        try {
+            jarFile = new JarFile(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void buildMD5Value() {

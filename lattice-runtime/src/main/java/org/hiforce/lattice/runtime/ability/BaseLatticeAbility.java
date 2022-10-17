@@ -98,38 +98,19 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
         if (!Lattice.getInstance().isInitialized()) {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0023");
         }
-        String extCode = getContext().getExtCode();
-        return reduceExecute(extCode, callback, reducer);
+        return reduceExecute(callback, reducer, DEFAULT_FILTER);
     }
 
-    /**
-     * The ability will execute the extension's realization with reducer
-     * When multi extension realization found.
-     *
-     * @param extensionCode the code of extension point.
-     * @param callback      extension point's callback.
-     * @param reducer       The result's reduce policy for multi-realization.
-     * @return The result of extension point execution.
-     */
-    public final <T, R> R reduceExecute(String extensionCode,
-                                        ExtensionCallback<BusinessExt, T> callback,
-                                        @Nonnull Reducer<T, R> reducer) {
-        if (!Lattice.getInstance().isInitialized()) {
-            throw new LatticeRuntimeException("LATTICE-CORE-RT-0023");
-        }
-        return reduceExecute(extensionCode, callback, reducer, DEFAULT_FILTER);
-    }
 
     @SuppressWarnings("unused")
-    public final <T, R> R reduceExecute(String extensionCode,
-                                        ExtensionCallback<BusinessExt, T> callback,
+    @Deprecated
+    public final <T, R> R reduceExecute(ExtensionCallback<BusinessExt, T> callback,
                                         @Nonnull Reducer<T, R> reducer, ExtensionFilter filter) {
 
         if (!Lattice.getInstance().isInitialized()) {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0023");
         }
-        ExecuteResult<R> result = reduceExecuteWithDetailResult(
-                extensionCode, callback, reducer, filter);
+        ExecuteResult<R> result = reduceExecuteWithDetailResult(callback, reducer, filter);
         if (null == result || null == result.getResult()) {
             return null;
         }
@@ -140,8 +121,18 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
         return result.getResult();
     }
 
+    private final <T, R> ExecuteResult<R> reduceExecuteWithDetailResult(
+            ExtensionCallback<BusinessExt, T> callback,
+            @Nonnull Reducer<T, R> reducer, ExtensionFilter filter) {
+        if (!Lattice.getInstance().isInitialized()) {
+            throw new LatticeRuntimeException("LATTICE-CORE-RT-0023");
+        }
+        enrichAbilityInvokeContext(callback);
+        return reduceExecuteWithDetailResult(context.getExtCode(), callback, reducer, filter);
+    }
+
     @SuppressWarnings("all")
-    public final <T, R> ExecuteResult<R> reduceExecuteWithDetailResult(
+    private final <T, R> ExecuteResult<R> reduceExecuteWithDetailResult(
             String extCode, ExtensionCallback<BusinessExt, T> callback,
             @Nonnull Reducer<T, R> reducer, ExtensionFilter filter) {
         if (!Lattice.getInstance().isInitialized()) {
@@ -204,8 +195,6 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
                 }
             }
             this.getContext().setInvokeParams(extParams);
-//            if (StringUtils.isEmpty(getContext().getExtCode())) {
-//            }
             ExtensionAnnotation annotation =
                     LatticeAnnotationUtils.getExtensionAnnotation(method);
             if (null != annotation) {
