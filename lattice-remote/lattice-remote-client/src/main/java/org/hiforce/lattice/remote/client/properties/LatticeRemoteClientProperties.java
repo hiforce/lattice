@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 /**
@@ -20,6 +22,8 @@ public class LatticeRemoteClientProperties implements InitializingBean {
     @Setter
     private String registryAddress;
 
+    @Autowired
+    private Environment environment;
 
     private LatticeRemoteClientProperties() {
 
@@ -28,18 +32,12 @@ public class LatticeRemoteClientProperties implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         instance = this;
-        registryAddress = ApplicationProperties.getValueString("lattice.remote.registry.address");
+        registryAddress = environment.getProperty("lattice.remote.registry.address");
         if (StringUtils.isEmpty(registryAddress)) {
-            registryAddress = ApplicationProperties.getValueString("dubbo.registry.address");
+            registryAddress = environment.getProperty("dubbo.registry.address");
         }
         if (StringUtils.isEmpty(registryAddress)) {
-            String value = ApplicationProperties.getValueString("spring.cloud.nacos.config.server-addr");
-            if (StringUtils.isNotEmpty(value)) {
-                registryAddress = "nacos://" + value;
-            }
-        }
-        if (StringUtils.isEmpty(registryAddress)) {
-            String value = BootstrapProperties.getValueString("spring.cloud.nacos.config.server-addr");
+            String value = environment.getProperty("spring.cloud.nacos.config.server-addr");
             if (StringUtils.isNotEmpty(value)) {
                 registryAddress = "nacos://" + value;
             }
