@@ -16,9 +16,9 @@
     <url>https://github.com/hiforce/lattice</url>
     <inceptionYear>2022</inceptionYear>
 
-    <version>1.0.12.1-SNAPSHOT</version>
+    <version>1.0.12.2</version>
     <properties>
-        <version.lattice>1.0.12.1-SNAPSHOT</version.lattice>
+        <version.lattice>1.0.12.2</version.lattice>
         <version.spring>5.3.23</version.spring>
         <version.spring.boot>2.7.4</version.spring.boot>
         <springext-plugin-version>1.2</springext-plugin-version>
@@ -180,18 +180,18 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <distributionManagement>
-        <repository>
-            <id>quadtalent-quadtalent-release</id>
-            <name>release</name>
-            <url>https://quadtalent-maven.pkg.coding.net/repository/quadtalent/release/</url>
-        </repository>
-        <snapshotRepository>
-            <id>quadtalent-quadtalent-snapshot</id>
-            <name>snapshot</name>
-            <url>https://quadtalent-maven.pkg.coding.net/repository/quadtalent/snapshot/</url>
-        </snapshotRepository>
-    </distributionManagement>
+<!--    <distributionManagement>-->
+<!--        <repository>-->
+<!--            <id>quadtalent-quadtalent-release</id>-->
+<!--            <name>release</name>-->
+<!--            <url>https://quadtalent-maven.pkg.coding.net/repository/quadtalent/release/</url>-->
+<!--        </repository>-->
+<!--        <snapshotRepository>-->
+<!--            <id>quadtalent-quadtalent-snapshot</id>-->
+<!--            <name>snapshot</name>-->
+<!--            <url>https://quadtalent-maven.pkg.coding.net/repository/quadtalent/snapshot/</url>-->
+<!--        </snapshotRepository>-->
+<!--    </distributionManagement>-->
     <profiles>
         <profile>
             <id>hiforce</id>
