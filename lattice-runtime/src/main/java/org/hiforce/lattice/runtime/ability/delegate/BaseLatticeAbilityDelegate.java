@@ -222,7 +222,11 @@ public class BaseLatticeAbilityDelegate {
             if (result == NULL_OBJECT) {
                 return null;
             } else {
-                return (List<RunnerItemEntry<R>>) result;
+                List<RunnerItemEntry<R>>  runnerItemEntryList = (List<RunnerItemEntry<R>>) result;
+                runnerItemEntryList.forEach(r->{
+                    r.setAbility(ability);
+                    r.getRunner().setAbility(ability);
+                });
             }
         }
 

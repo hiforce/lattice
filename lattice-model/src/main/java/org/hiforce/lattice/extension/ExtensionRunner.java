@@ -3,6 +3,7 @@ package org.hiforce.lattice.extension;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hiforce.lattice.model.ability.IAbility;
 import org.hiforce.lattice.model.ability.IBusinessExt;
 import org.hiforce.lattice.model.ability.execute.ExtensionCallback;
 import org.hiforce.lattice.model.business.IBizObject;
@@ -23,6 +24,8 @@ public abstract class ExtensionRunner<R> {
     @Getter
     @Setter
     private IBusinessExt model;
+
+    public abstract void setAbility(IAbility ability);
 
     public ExtensionRunner(String extensionCode) {
         this.extensionCode = extensionCode;

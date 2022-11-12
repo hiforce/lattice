@@ -13,6 +13,7 @@ import org.hiforce.lattice.model.register.TemplateSpec;
 public class RunnerItemEntry<R> {
 
     @Getter
+    @Setter
     private IAbility ability;
 
     @Getter
