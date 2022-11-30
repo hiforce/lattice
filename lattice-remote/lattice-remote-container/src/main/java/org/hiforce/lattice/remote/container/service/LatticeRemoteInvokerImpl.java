@@ -1,6 +1,8 @@
 package org.hiforce.lattice.remote.container.service;
 
+import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hiforce.lattice.model.ability.IBusinessExt;
 import org.hiforce.lattice.model.register.RealizationSpec;
 import org.hiforce.lattice.remote.client.LatticeRemoteInvoker;
 import org.hiforce.lattice.runtime.Lattice;
@@ -26,8 +28,9 @@ public class LatticeRemoteInvokerImpl implements LatticeRemoteInvoker {
         if (null == realizationSpec) {
             return null;
         }
-        Method method = BusinessExtUtils.getExtensionMethod(realizationSpec.getBusinessExt(), extCode, scenario);
         try {
+            IBusinessExt businessExt = realizationSpec.getBusinessExt().getBusinessExtByCode(extCode, scenario);
+            Method method = BusinessExtUtils.getExtensionMethod(businessExt, extCode, scenario);
             return (Serializable) method.invoke(realizationSpec.getBusinessExt(), params);
         } catch (Exception e) {
             throw new RuntimeException(e);

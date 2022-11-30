@@ -6,6 +6,7 @@ import com.google.common.collect.Table;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.hiforce.lattice.annotation.model.ExtensionAnnotation;
 import org.hiforce.lattice.model.ability.IBusinessExt;
 
@@ -58,7 +59,8 @@ public class BusinessExtUtils {
                     continue;
                 }
                 if (StringUtils.isNotEmpty(annotation.getCode())) {
-                    EXT_METHOD_MAP.put(key, annotation.getCode(), method);
+                    EXT_METHOD_MAP.put(key, annotation.getCode(),
+                            MethodUtils.getAccessibleMethod(method));
                     supportedCodes.add(annotation.getCode());
                 }
 
