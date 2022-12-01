@@ -17,3 +17,9 @@ The main ideas of Lattice's architecture design are:
 * [Reduce Strategy](https://github.com/hiforce/lattice/wiki/Reduce-Strategy)
 * [UseCase Precipitation and Reuse](https://github.com/hiforce/lattice/wiki/UseCase-Precipitation-and-Reuse)
 * [RPC Invoke Extension](https://github.com/hiforce/lattice/wiki/RPC-Invoke-Extension)
+
+
+------------
+Answer group in DingTalk （https://www.dingtalk.com/）
+
+![](http://www.ryu.xin/wp-content/uploads/2022/12/20221201-160802.jpeg)
