@@ -1,7 +1,7 @@
 package org.hiforce.lattice.remote.container.service;
 
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hiforce.lattice.model.ability.IBusinessExt;
 import org.hiforce.lattice.model.register.RealizationSpec;
@@ -11,6 +11,8 @@ import org.hiforce.lattice.utils.BusinessExtUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.List;
 
 /**
  * @author Rocky Yu
@@ -34,13 +36,22 @@ public class LatticeRemoteInvokerImpl implements LatticeRemoteInvoker {
         }
         try {
             IBusinessExt businessExt = realizationSpec.getBusinessExt().getBusinessExtByCode(extCode, scenario);
+            log.info("[Lattice] The BusinessExt={}, bizCode={}, scenario={}, extCode={}",
+                    businessExt, bizCode, scenario, extCode);
+
             Method method = BusinessExtUtils.getExtensionMethod(businessExt, extCode, scenario);
-            Serializable value = (Serializable) method.invoke(realizationSpec.getBusinessExt(), params);
-            log.debug("[Lattice] Remote invoke result={}", null == value ? null : value.toString());
+            log.info("[Lattice] The BusinessExt Method={}, bizCode={}, scenario={}, extCode={}",
+                    method.getName(), bizCode, scenario, extCode);
+
+            Serializable value = (Serializable) method.invoke(businessExt, params);
+            log.info("[Lattice] Remote invoke bizCode={}, scenario={}, extCode={}, result={}",
+                    bizCode, scenario, extCode,
+                    null == value ? null : value.toString());
             return value;
         } catch (Exception e) {
             log.info("[Lattice] Remote invoke runtime exception occurred. ex=bizCode={}, scenario={}, extCode={}, ex={}",
                     bizCode, scenario, extCode, e.getMessage());
+            log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
