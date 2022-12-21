@@ -129,7 +129,6 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
         if (!Lattice.getInstance().isInitialized()) {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0023");
         }
-        enrichAbilityInvokeContext(callback);
         return reduceExecuteWithDetailResult(context.getExtCode(), callback, reducer, filter);
     }
 

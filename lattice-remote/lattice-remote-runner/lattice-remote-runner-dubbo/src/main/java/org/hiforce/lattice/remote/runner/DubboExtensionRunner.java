@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.RegistryConfig;
@@ -19,6 +20,7 @@ import org.hiforce.lattice.remote.client.LatticeRemoteInvoker;
 import org.hiforce.lattice.remote.client.model.RemoteExtension;
 import org.hiforce.lattice.remote.runner.init.LatticeDubboRunnerEnv;
 import org.hiforce.lattice.remote.runner.key.DubboInvokeCacheKey;
+import org.hiforce.lattice.utils.JacksonUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -100,6 +102,9 @@ public class DubboExtensionRunner<R> extends ExtensionRemoteRunner<R> {
             remoteInvoker = reference.get();
             INVOKE_CACHE.put(key, remoteInvoker);
         }
+        String paramStr = null == params ? null : JacksonUtils.serializeWithoutException(params);
+        log.info("[Lattice-Remote] remote invoke bizCode: {}, extCode: {}, params: {} ",
+                bizCode, getExtensionCode(), paramStr);
         return remoteInvoker.invoke(bizCode, scenario,
                 getExtensionCode(), (Object[]) params.toArray());
     }
