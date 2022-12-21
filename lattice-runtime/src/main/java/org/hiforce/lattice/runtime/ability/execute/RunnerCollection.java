@@ -181,7 +181,7 @@ public class RunnerCollection<R> {
     public <T, R> ExecuteResult<R> reduceExecute(String extCode, Reducer<T, R> reducer, ExtensionCallback<IBusinessExt, T> callback, List<T> results) {
         List<InstantItem<T>> list = this.generateInstantItem();
         if (list.isEmpty()) {
-            return ExecuteResult.success(extCode, reducer.reduceName(), reducer.reduce(results), null, null);
+            return ExecuteResult.success(bizInstance.getBizCode(), extCode, reducer.reduceName(), reducer.reduce(results), null, null);
         }
 
         List<ExtensionRunner.CollectionRunnerExecuteResult> executeResults = new ArrayList<>(list.size() * 2);
@@ -191,7 +191,7 @@ public class RunnerCollection<R> {
             executeResult.setResults(itemResult);
             executeResults.add(executeResult);
             if (reducer.willBreak(itemResult)) {
-                return ExecuteResult.success(extCode, reducer.reduceName(),
+                return ExecuteResult.success(bizInstance.getBizCode(), extCode, reducer.reduceName(),
                         reducer.reduce(itemResult), convertToTemplateList(list), executeResults);
             } else {
                 if (itemResult.size() == 1) {
@@ -201,7 +201,7 @@ public class RunnerCollection<R> {
                 }
             }
         }
-        return ExecuteResult.success(extCode, reducer.reduceName(),
+        return ExecuteResult.success(bizInstance.getBizCode(), extCode, reducer.reduceName(),
                 reducer.reduce(results), convertToTemplateList(list), executeResults);
     }
 

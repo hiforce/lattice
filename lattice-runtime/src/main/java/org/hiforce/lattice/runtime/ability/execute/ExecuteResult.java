@@ -7,6 +7,7 @@ import org.hiforce.lattice.message.Message;
 import org.hiforce.lattice.model.register.TemplateSpec;
 import org.hiforce.lattice.extension.ExtensionRunner;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,7 +16,13 @@ import java.util.List;
  * @author Rocky Yu
  * @since 2022/9/18
  */
-public class ExecuteResult<R> {
+public class ExecuteResult<R> implements Serializable {
+
+    private static final long serialVersionUID = 8041855663092714954L;
+
+    @Getter
+    @Setter
+    private String bizCode;
 
     @Getter
     @Setter
@@ -52,9 +59,10 @@ public class ExecuteResult<R> {
         DUMMY.setResults(Collections.emptyList());
     }
 
-    public static <T> ExecuteResult<T> failed(String extCode, Message message) {
+    public static <T> ExecuteResult<T> failed(String bizCode, String extCode, Message message) {
         ExecuteResult<T> result = new ExecuteResult<>();
         result.extCode = extCode;
+        result.bizCode = bizCode;
         result.errCode = message.getCode();
         result.errLogText = message.getText();
         result.errText = message.getDisplayText();
@@ -62,11 +70,12 @@ public class ExecuteResult<R> {
     }
 
     public static <T> ExecuteResult<T> success(
-            String extCode,
+            String bizCode, String extCode,
             String reduceName, Message message) {
 
         ExecuteResult<T> result = new ExecuteResult<>();
         result.extCode = extCode;
+        result.bizCode = bizCode;
         result.success = true;
         result.reduceName = reduceName;
         result.setResult(null);
@@ -79,13 +88,14 @@ public class ExecuteResult<R> {
 
 
     public static <T> ExecuteResult<T> success(
-            String extCode,
+            String bizCode, String extCode,
             String reduceName,
             T model, List<TemplateSpec> runners,
             List<ExtensionRunner.CollectionRunnerExecuteResult> executeResults) {
 
         ExecuteResult<T> result = new ExecuteResult<>();
         result.extCode = extCode;
+        result.bizCode = bizCode;
         result.success = true;
         result.reduceName = reduceName;
         result.setResult(model);

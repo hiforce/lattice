@@ -21,6 +21,7 @@ import org.hiforce.lattice.runtime.ability.execute.ExecuteResult;
 import org.hiforce.lattice.runtime.ability.execute.RunnerCollection;
 import org.hiforce.lattice.runtime.ability.execute.filter.ExtensionFilter;
 import org.hiforce.lattice.runtime.cache.LatticeRuntimeCache;
+import org.hiforce.lattice.utils.JacksonUtils;
 import org.hiforce.lattice.utils.LatticeAnnotationUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.cglib.proxy.Enhancer;
@@ -114,6 +115,7 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
         if (null == result || null == result.getResult()) {
             return null;
         }
+        log.debug("[Lattice] invoke result: {}", JacksonUtils.serializeWithoutException(result));
         if (!result.isSuccess()) {
             handleReduceExecuteFailed(result);
             return null;
@@ -145,14 +147,14 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
         getContext().setExtCode(extCode);
 
         if (null == getContext().getBizObject()) {
-            return ExecuteResult.failed(extCode, Message.code("LATTICE-CORE-RT-0018"));
+            return ExecuteResult.failed(bizObject.getBizCode(), extCode, Message.code("LATTICE-CORE-RT-0018"));
         }
         if (getContext().getBizObject().getBizContext().getBizId() == null) {
-            return ExecuteResult.failed(extCode, Message.code("LATTICE-CORE-RT-0019"));
+            return ExecuteResult.failed(bizObject.getBizCode(), extCode, Message.code("LATTICE-CORE-RT-0019"));
         }
 
         if (!supportChecking()) {
-            return ExecuteResult.success(extCode, reducer.reduceName(),
+            return ExecuteResult.success(context.getBizCode(), extCode, reducer.reduceName(),
                     Message.code("LATTICE-CORE-RT-0020", this.getClass().getName(),
                             Optional.ofNullable(getContext().getBizObject())
                                     .map(p -> p.getBizContext())
