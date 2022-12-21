@@ -123,67 +123,65 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
         return result.getResult();
     }
 
+    @SuppressWarnings("all")
     private final <T, R> ExecuteResult<R> reduceExecuteWithDetailResult(
             ExtensionCallback<BusinessExt, T> callback,
             @Nonnull Reducer<T, R> reducer, ExtensionFilter filter) {
-        if (!Lattice.getInstance().isInitialized()) {
-            throw new LatticeRuntimeException("LATTICE-CORE-RT-0023");
-        }
-        return reduceExecuteWithDetailResult(context.getExtCode(), callback, reducer, filter);
-    }
 
-    @SuppressWarnings("all")
-    private final <T, R> ExecuteResult<R> reduceExecuteWithDetailResult(
-            String extCode, ExtensionCallback<BusinessExt, T> callback,
-            @Nonnull Reducer<T, R> reducer, ExtensionFilter filter) {
         if (!Lattice.getInstance().isInitialized()) {
             throw new LatticeRuntimeException("LATTICE-CORE-RT-0023");
         }
 
-        if (StringUtils.isEmpty(extCode)) {
-            throw new LatticeRuntimeException("LATTICE-CORE-RT-0007");
-        }
-        getContext().setExtCode(extCode);
+        try {
+            initAbiliinittyInvokeContext(callback);//init the ability context.
+            String extCode = getContext().getExtCode();
 
-        if (null == getContext().getBizObject()) {
-            return ExecuteResult.failed(bizObject.getBizCode(), extCode, Message.code("LATTICE-CORE-RT-0018"));
-        }
-        if (getContext().getBizObject().getBizContext().getBizId() == null) {
-            return ExecuteResult.failed(bizObject.getBizCode(), extCode, Message.code("LATTICE-CORE-RT-0019"));
-        }
+            if (StringUtils.isEmpty(extCode)) {
+                throw new LatticeRuntimeException("LATTICE-CORE-RT-0007");
+            }
+            getContext().setExtCode(extCode);
 
-        if (!supportChecking()) {
-            return ExecuteResult.success(context.getBizCode(), extCode, reducer.reduceName(),
-                    Message.code("LATTICE-CORE-RT-0020", this.getClass().getName(),
-                            Optional.ofNullable(getContext().getBizObject())
-                                    .map(p -> p.getBizContext())
-                                    .map(p -> p.getBizInfo()).orElse(getContext().getBizObject().getBizId().toString()), extCode));
-        }
+            if (null == getContext().getBizObject()) {
+                return ExecuteResult.failed(bizObject.getBizCode(), extCode, Message.code("LATTICE-CORE-RT-0018"));
+            }
+            if (getContext().getBizObject().getBizContext().getBizId() == null) {
+                return ExecuteResult.failed(bizObject.getBizCode(), extCode, Message.code("LATTICE-CORE-RT-0019"));
+            }
 
-        enrichAbilityInvokeContext(callback);
+            if (!supportChecking()) {
+                return ExecuteResult.success(getContext().getBizCode(), extCode, reducer.reduceName(),
+                        Message.code("LATTICE-CORE-RT-0020", this.getClass().getName(),
+                                Optional.ofNullable(getContext().getBizObject())
+                                        .map(p -> p.getBizContext())
+                                        .map(p -> p.getBizInfo()).orElse(getContext().getBizObject().getBizId().toString()), extCode));
+            }
 
-        ExtensionSpec extensionSpec = getRuntimeCache().getExtensionCache().getExtensionSpecByCode(extCode);
-        if (null == extensionSpec && !Lattice.getInstance().isSimpleMode()) {
-            throw new LatticeRuntimeException("LATTICE-CORE-RT-0016", extCode);
-        }
-        if (null != extensionSpec && !reducer.reducerType().equals(extensionSpec.getReduceType())) {
-            log.warn(Message.code("LATTICE-CORE-RT-0017", extCode, reducer.reducerType(),
-                    extensionSpec.getReduceType()).getText());
-        }
 
-        String bizCode = getContext().getBizObject().getBizCode();
-        if (StringUtils.isEmpty(bizCode)) {
-            throw new LatticeRuntimeException("LATTICE-CORE-RT-0008");
-        }
+            ExtensionSpec extensionSpec = getRuntimeCache().getExtensionCache().getExtensionSpecByCode(extCode);
+            if (null == extensionSpec && !Lattice.getInstance().isSimpleMode()) {
+                throw new LatticeRuntimeException("LATTICE-CORE-RT-0016", extCode);
+            }
+            if (null != extensionSpec && !reducer.reducerType().equals(extensionSpec.getReduceType())) {
+                log.warn(Message.code("LATTICE-CORE-RT-0017", extCode, reducer.reducerType(),
+                        extensionSpec.getReduceType()).getText());
+            }
 
-        List<T> results = new ArrayList<>(16);
-        RunnerCollection<R> runnerCollection = delegate.loadExtensionRunners(extCode, filter);
-        return runnerCollection.distinct()
-                .reduceExecute(extCode, reducer, (ExtensionCallback<IBusinessExt, T>) callback, results);
+            String bizCode = getContext().getBizObject().getBizCode();
+            if (StringUtils.isEmpty(bizCode)) {
+                throw new LatticeRuntimeException("LATTICE-CORE-RT-0008");
+            }
+
+            List<T> results = new ArrayList<>(16);
+            RunnerCollection<R> runnerCollection = delegate.loadExtensionRunners(extCode, filter);
+            return runnerCollection.distinct()
+                    .reduceExecute(extCode, reducer, (ExtensionCallback<IBusinessExt, T>) callback, results);
+        }finally {
+            this.context = null; //destroy the context.
+        }
     }
 
     @SuppressWarnings("all")
-    private <T> void enrichAbilityInvokeContext(ExtensionCallback<BusinessExt, T> callback) {
+    private <T> void initAbiliinittyInvokeContext(ExtensionCallback<BusinessExt, T> callback) {
         BusinessExt businessExt = this.getDefaultRealization();
         List<Object> extParams = Lists.newArrayList();
         Enhancer enhancer = new Enhancer();
