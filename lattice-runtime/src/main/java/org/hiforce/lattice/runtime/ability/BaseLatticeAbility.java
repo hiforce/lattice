@@ -113,6 +113,8 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
         }
         ExecuteResult<R> result = reduceExecuteWithDetailResult(callback, reducer, filter);
         if (null == result || null == result.getResult()) {
+            log.warn("[Lattice] invoke result is null, {}", null == result ? ""
+                    : JacksonUtils.serializeWithoutException(result));
             return null;
         }
         log.debug("[Lattice] invoke result: {}", JacksonUtils.serializeWithoutException(result));
@@ -175,7 +177,7 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
             RunnerCollection<R> runnerCollection = delegate.loadExtensionRunners(extCode, filter);
             return runnerCollection.distinct()
                     .reduceExecute(extCode, reducer, (ExtensionCallback<IBusinessExt, T>) callback, results);
-        }finally {
+        } finally {
             this.context = null; //destroy the context.
         }
     }
@@ -196,9 +198,15 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
             this.getContext().setInvokeParams(extParams);
             ExtensionAnnotation annotation =
                     LatticeAnnotationUtils.getExtensionAnnotation(method);
-            if (null != annotation) {
-                this.getContext().setExtCode(annotation.getCode());
+            if( null == annotation){
+                log.warn("[Lattice] invoke context, failed to get annotation, method={}", method.getName());
             }
+            else {
+                this.getContext().setExtCode(annotation.getCode());
+                this.getContext().setExtName(annotation.getName());
+            }
+            log.debug("[Lattice] invoke context, method={}, annotation=[code={}, name={}]", method.getName(),
+                    getContext().getExtCode(), getContext().getExtName());
             return null;
         });
         businessExt = (BusinessExt) enhancer.create();

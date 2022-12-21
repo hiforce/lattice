@@ -60,7 +60,6 @@ public class LatticeBeanUtils {
             }
             return createSpringBeanInstance(beanClass, values);
         } catch (Throwable th) {
-            log.warn("[Lattice]Failed to Find SpringBean via name: {}", beanClass.getName());
             return createSpringBeanInstance(beanClass, values);
         }
     }
