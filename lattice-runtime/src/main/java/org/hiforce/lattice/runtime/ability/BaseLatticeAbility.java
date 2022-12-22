@@ -137,11 +137,9 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
         try {
             initAbiliinittyInvokeContext(callback);//init the ability context.
             String extCode = getContext().getExtCode();
-
             if (StringUtils.isEmpty(extCode)) {
                 throw new LatticeRuntimeException("LATTICE-CORE-RT-0007");
             }
-            getContext().setExtCode(extCode);
 
             if (null == getContext().getBizObject()) {
                 return ExecuteResult.failed(bizObject.getBizCode(), extCode, Message.code("LATTICE-CORE-RT-0018"));
@@ -198,15 +196,14 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
             this.getContext().setInvokeParams(extParams);
             ExtensionAnnotation annotation =
                     LatticeAnnotationUtils.getExtensionAnnotation(method);
-            if( null == annotation){
+            if (null == annotation) {
                 log.warn("[Lattice] invoke context, failed to get annotation, method={}", method.getName());
-            }
-            else {
+            } else {
                 this.getContext().setExtCode(annotation.getCode());
                 this.getContext().setExtName(annotation.getName());
             }
-            log.debug("[Lattice] invoke context, method={}, annotation=[code={}, name={}]", method.getName(),
-                    getContext().getExtCode(), getContext().getExtName());
+            log.debug("[Lattice] invoke context, method={}, annotation=[code={}, name={}], params={}", method.getName(),
+                    getContext().getExtCode(), getContext().getExtName(), JacksonUtils.serializeWithoutException(extParams));
             return null;
         });
         businessExt = (BusinessExt) enhancer.create();
