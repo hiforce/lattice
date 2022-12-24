@@ -83,7 +83,7 @@ public class Message implements Serializable {
      * @return
      */
     public static Message of(String errorCode, String message) {
-        return of(errorCode, message, null);
+        return of(errorCode, message, message);
     }
 
     /**
