@@ -15,14 +15,14 @@ import java.util.List;
 public abstract class BusinessExt implements IBusinessExt {
 
     @Override
-    public IBusinessExt getBusinessExtByCode(String extCode, String scenario) {
+    public final IBusinessExt getBusinessExtByCode(String extCode, String scenario) {
         IBusinessExtCache businessExtCache =
                 LatticeCacheFactory.getInstance().getRuntimeCache().getBusinessExtCache();
         return businessExtCache.getCachedBusinessExt(this, extCode, scenario);
     }
 
     @Override
-    public @NonNull List<IBusinessExt> getAllSubBusinessExt() {
+    public final @NonNull List<IBusinessExt> getAllSubBusinessExt() {
         IBusinessExtCache invokeCache = LatticeCacheFactory.getInstance().getRuntimeCache().getBusinessExtCache();
         return invokeCache.getAllSubBusinessExt(this);
     }
