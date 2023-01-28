@@ -19,6 +19,7 @@ import org.hiforce.lattice.model.config.*;
 import org.hiforce.lattice.model.config.builder.BusinessConfigBuilder;
 import org.hiforce.lattice.model.register.*;
 import org.hiforce.lattice.model.scenario.ScenarioRequest;
+import org.hiforce.lattice.runtime.ability.creator.DefaultAbilityCreator;
 import org.hiforce.lattice.runtime.ability.register.AbilityBuildRequest;
 import org.hiforce.lattice.runtime.ability.register.AbilityRegister;
 import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
@@ -79,6 +80,12 @@ public class Lattice {
 
     private Lattice() {
 
+    }
+
+    public AbilitySpec getAbilitySpecByCode(String code) {
+        return registeredAbilities.stream()
+                .filter(p -> StringUtils.equals(code, p.getCode()))
+                .findFirst().orElse(null);
     }
 
     public static Lattice getInstance() {
@@ -479,5 +486,56 @@ public class Lattice {
     public BusinessTemplate getFirstMatchedBusiness(ScenarioRequest request) {
         return TemplateRegister.getInstance().getFirstMatchedBusiness(request);
     }
+
+    @SuppressWarnings("all")
+    public static <Ability extends IAbility> List<Ability> getAllAbilities(Class<?> abilityClass, IBizObject target) {
+        if( null == abilityClass ){
+            throw new LatticeRuntimeException("LATTICE-CORE-RT-0025");
+        }
+        return getAllAbilities(abilityClass.getName(), target);
+    }
+
+    @SuppressWarnings("all")
+    public static <Ability extends IAbility> List<Ability> getAllAbilities(String abilityCode, IBizObject target) {
+        DefaultAbilityCreator creator = new DefaultAbilityCreator(abilityCode, target);
+        List<Ability> abilityList = creator.getAllAbilityInstancesWithCache();
+
+        if (abilityList.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<Ability> abilities = new ArrayList<>(abilityList.size());
+        for (Ability ability : abilityList) {
+            boolean supportChecking = ability.supportChecking();
+            if (supportChecking) {
+                abilities.add(ability);
+            }
+        }
+        return abilities;
+    }
+
+    @SuppressWarnings("all")
+    public static <Ability extends IAbility> Ability getFirstMatchedAbility(Class<?> abilityClass, IBizObject target) {
+        if( null == abilityClass ){
+            throw new LatticeRuntimeException("LATTICE-CORE-RT-0025");
+        }
+        return getFirstMatchedAbility(abilityClass.getName(), target);
+    }
+    @SuppressWarnings("all")
+    public static <Ability extends IAbility> Ability getFirstMatchedAbility(String abilityCode, IBizObject target) {
+        DefaultAbilityCreator creator = new DefaultAbilityCreator(abilityCode, target);
+        List<Ability> domainAbilitySet = creator.getAllAbilityInstancesWithCache();
+        if (domainAbilitySet.isEmpty()) {
+            return null;
+        }
+
+        for (Ability ability : domainAbilitySet) {
+            boolean supportChecking = ability.supportChecking();
+            if (supportChecking) {
+                return ability;
+            }
+        }
+        return null;
+    }
+
 
 }

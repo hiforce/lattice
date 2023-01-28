@@ -2,10 +2,7 @@ package org.hiforce.lattice.runtime.ability.register;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
-import org.hiforce.lattice.annotation.model.AbilityAnnotation;
-import org.hiforce.lattice.annotation.model.ExtensionAnnotation;
-import org.hiforce.lattice.annotation.model.ProtocolType;
-import org.hiforce.lattice.annotation.model.ReduceType;
+import org.hiforce.lattice.annotation.model.*;
 import org.hiforce.lattice.exception.LatticeRuntimeException;
 import org.hiforce.lattice.message.Message;
 import org.hiforce.lattice.model.ability.IAbility;
@@ -25,6 +22,7 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 import static org.hiforce.lattice.runtime.utils.LatticeBeanUtils.getAndCreateSpringBeanViaClass;
+import static org.hiforce.lattice.spi.annotation.PriorityAnnotationParser.getPriorityAnnotationInfo;
 import static org.hiforce.lattice.utils.LatticeAnnotationUtils.getExtensionAnnotation;
 
 /**
@@ -174,6 +172,12 @@ public class AbilityRegister {
             instanceDesc.setCode(instance.getInstanceCode());
             instanceDesc.setName(instanceClass.getSimpleName());
             instanceDesc.getExtensions().addAll(scanAbilityExtensions(instance, abilitySpec));
+
+            PriorityAnnotation annotation = getPriorityAnnotationInfo(instanceClass);
+            if (null != annotation) {
+                instanceDesc.setPriority(annotation.getValue());
+            }
+
             abilitySpec.addAbilityInstance(instanceDesc);
             return AbilityInstBuildResult.success(instanceDesc);
         } catch (LatticeRuntimeException ex) {

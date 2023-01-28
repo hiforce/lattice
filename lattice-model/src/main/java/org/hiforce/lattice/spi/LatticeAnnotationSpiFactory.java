@@ -36,6 +36,8 @@ public class LatticeAnnotationSpiFactory {
 
     private List<UseCaseAnnotationParser> useCaseAnnotationParsers;
 
+    private List<PriorityAnnotationParser> priorityAnnotationParsers;
+
     private LatticeAnnotationSpiFactory() {
 
     }
@@ -46,6 +48,13 @@ public class LatticeAnnotationSpiFactory {
             classLoader = LatticeAnnotationSpiFactory.class.getClassLoader();
         }
         return instance;
+    }
+
+    public List<PriorityAnnotationParser> getPriorityAnnotationParsers() {
+        if (null == priorityAnnotationParsers) {
+            priorityAnnotationParsers = getCustomServiceProviders(PriorityAnnotationParser.class);
+        }
+        return priorityAnnotationParsers;
     }
 
     /**

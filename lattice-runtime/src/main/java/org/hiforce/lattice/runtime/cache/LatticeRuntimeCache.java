@@ -4,6 +4,7 @@ import com.google.auto.service.AutoService;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.hiforce.lattice.cache.ILatticeRuntimeCache;
+import org.hiforce.lattice.runtime.ability.cache.AbilityInstCache;
 import org.hiforce.lattice.runtime.ability.cache.BusinessExtCache;
 import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
 import org.hiforce.lattice.runtime.cache.ability.AbilityCache;
@@ -66,6 +67,7 @@ public class LatticeRuntimeCache implements ILatticeRuntimeCache, LatticeCache {
         getInvokeCache().init();
         getBusinessConfigCache().init();
         getBusinessExtCache().init();
+        AbilityInstCache.getInstance().init();
     }
 
     public synchronized void clear() {
@@ -75,5 +77,6 @@ public class LatticeRuntimeCache implements ILatticeRuntimeCache, LatticeCache {
         getInvokeCache().clear();
         getBusinessConfigCache().clear();
         getBusinessExtCache().clear();
+        AbilityInstCache.getInstance().clear();
     }
 }
