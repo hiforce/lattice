@@ -5,7 +5,7 @@
     <parent>
         <artifactId>lattice</artifactId>
         <groupId>org.hiforce.lattice</groupId>
-        <version>1.0.15.1</version>
+        <version>1.0.16-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
@@ -16,6 +16,7 @@
         <module>lattice-load-config-res</module>
         <module>lattice-maven-build</module>
         <module>lattice-dynamic-loading</module>
+        <module>lattice-jar-tools</module>
     </modules>
 
 </project>

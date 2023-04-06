@@ -2,20 +2,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>lattice-tools</artifactId>
         <groupId>org.hiforce.lattice</groupId>
+        <artifactId>lattice-tools</artifactId>
         <version>1.0.16-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>lattice-load-config-res</artifactId>
+    <artifactId>lattice-jar-tools</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>org.hiforce.lattice</groupId>
-            <artifactId>lattice-model</artifactId>
+            <artifactId>lattice-maven-build-model</artifactId>
         </dependency>
     </dependencies>
-
 </project>
