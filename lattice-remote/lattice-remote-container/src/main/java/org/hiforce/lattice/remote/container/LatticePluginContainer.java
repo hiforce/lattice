@@ -1,5 +1,6 @@
 package org.hiforce.lattice.remote.container;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.*;
 import org.hiforce.lattice.model.register.BusinessSpec;
 import org.hiforce.lattice.remote.client.LatticeRemoteInvoker;
@@ -30,6 +31,11 @@ public class LatticePluginContainer {
     public void start() {
         Lattice.getInstance().start();
 
+        String registryAddress = LatticeRemoteClientProperties.getInstance().getRegistryAddress();
+        if(StringUtils.isEmpty(registryAddress)){
+            return;
+        }
+
         ApplicationConfig application = new ApplicationConfig();
         application.setName("lattice-plugin-server");
         application.setId("lattice-plugin-server");
@@ -45,7 +51,7 @@ public class LatticePluginContainer {
 
         RegistryConfig registry = new RegistryConfig();
 
-        registry.setAddress(LatticeRemoteClientProperties.getInstance().getRegistryAddress());
+        registry.setAddress(registryAddress);
         registry.getMetaData().put("report.address",
                 LatticeRemoteClientProperties.getInstance().getRegistryAddress());
 
