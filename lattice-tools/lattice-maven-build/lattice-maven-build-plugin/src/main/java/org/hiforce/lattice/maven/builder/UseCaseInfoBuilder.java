@@ -62,6 +62,7 @@ public class UseCaseInfoBuilder extends LatticeInfoBuilder {
         List<Dependency> dependencies = getPlugin().getMavenProject().getRuntimeDependencies();
         info.setCode(useCaseSpec.getCode());
         info.setName(useCaseSpec.getName());
+        info.setPriority(useCaseSpec.getPriority());
         info.setClassName(useCaseSpec.getUseCaseClass().getName());
         info.setSdk(useCaseSpec.getSdk().getName());
         info.getExtensions().addAll(

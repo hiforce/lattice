@@ -83,10 +83,11 @@ public class AbilityInfoBuilder extends LatticeInfoBuilder {
 
     public static ExtensionInfo buildExtensionInfo(ExtensionSpec spec) {
         ExtensionInfo info = new ExtensionInfo();
-        info.setCode(spec.getCode());
-        info.setName(spec.getName());
+        info.setAbilityCode(spec.getAbilityCode());
         info.setGroupCode(spec.getGroupCode());
         info.setGroupName(spec.getGroupName());
+        info.setCode(spec.getCode());
+        info.setName(spec.getName());
         info.setReduceType(spec.getReduceType());
         info.setProtocolType(spec.getProtocolType());
         if (null != spec.getItfClass()) {

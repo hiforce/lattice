@@ -21,6 +21,10 @@ public class UseCaseInfo extends BaseInfo {
     private String sdk;
 
     @Getter
+    @Setter
+    private int priority;
+
+    @Getter
     private final Set<ExtensionInfo> extensions = Sets.newHashSet();
 
     @Getter
