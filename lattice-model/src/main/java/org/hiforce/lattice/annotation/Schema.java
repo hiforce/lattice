@@ -13,7 +13,7 @@ public @interface Schema {
     /**
      * the schema's name.
      */
-    String name();
+    String name() default "";
 
     /**
      * whether the schema is root
