@@ -19,7 +19,7 @@
     <version>1.0.16</version>
     <properties>
         <version.lattice>1.0.16</version.lattice>
-        <version.spring>5.3.23</version.spring>
+        <version.spring>5.3.26</version.spring>
         <version.spring.boot>2.7.4</version.spring.boot>
         <springext-plugin-version>1.2</springext-plugin-version>
         <dubbo.version>3.1.5</dubbo.version>
