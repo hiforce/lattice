@@ -33,7 +33,6 @@ public class AbilityInfoBuilder extends LatticeInfoBuilder {
     }
 
     public void build() {
-        getLog().info(">> Lattice AbilityInfoBuilder build~~~");
         List<String> definedAbilityNames = getProvidedInfoClassNames();
         List<AbilityInfo> providedAbilities = getLoadAbilityClass(definedAbilityNames);
         getPlugin().getLatticeInfo().getAbility().getProviding().addAll(providedAbilities);

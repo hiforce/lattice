@@ -1,15 +1,19 @@
 package org.hiforce.lattice.maven.builder;
 
 import com.google.common.collect.Lists;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.maven.model.Dependency;
+import org.hiforce.lattice.jar.model.LatticeJarInfo;
+import org.hiforce.lattice.maven.LatticeBuildPlugin;
+import org.hiforce.lattice.maven.model.RealizationInfo;
+import org.hiforce.lattice.maven.model.SDKInfo;
+import org.hiforce.lattice.maven.model.UseCaseInfo;
 import org.hiforce.lattice.model.ability.IBusinessExt;
 import org.hiforce.lattice.model.business.IUseCase;
 import org.hiforce.lattice.model.register.UseCaseSpec;
-import org.hiforce.lattice.maven.LatticeBuildPlugin;
-import org.hiforce.lattice.maven.model.RealizationInfo;
-import org.hiforce.lattice.maven.model.UseCaseInfo;
 import org.hiforce.lattice.runtime.ability.register.AbilityRegister;
 import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
+import org.hiforce.lattice.utils.JacksonUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -30,16 +34,18 @@ public class UseCaseInfoBuilder extends LatticeInfoBuilder {
     }
 
     public void build() {
-        getLog().info(">> Lattice UseCaseInfoBuilder build~~~");
         List<String> providedClassNames = getProvidedInfoClassNames();
-        List<UseCaseInfo> provided = getUseCaseInfo(providedClassNames);
-        getPlugin().getLatticeInfo().getUseCase().getProviding().addAll(provided);
+        if (CollectionUtils.isNotEmpty(providedClassNames)) {
+            List<UseCaseInfo> provided = getUseCaseInfo(providedClassNames);
+            getPlugin().getLatticeInfo().getUseCase().getProviding().addAll(provided);
+        }
 
         TemplateRegister.getInstance().getUseCases().clear();
-
         List<String> importClassNames = getImportInfoClassNames();
-        List<UseCaseInfo> imported = getUseCaseInfo(importClassNames);
-        getPlugin().getLatticeInfo().getUseCase().getUsing().addAll(imported);
+        if (CollectionUtils.isNotEmpty(importClassNames)) {
+            List<UseCaseInfo> imported = getUseCaseInfo(importClassNames);
+            getPlugin().getLatticeInfo().getUseCase().getUsing().addAll(imported);
+        }
     }
 
     @SuppressWarnings("all")
@@ -64,7 +70,18 @@ public class UseCaseInfoBuilder extends LatticeInfoBuilder {
         info.setName(useCaseSpec.getName());
         info.setPriority(useCaseSpec.getPriority());
         info.setClassName(useCaseSpec.getUseCaseClass().getName());
-        info.setSdk(useCaseSpec.getSdk().getName());
+        info.setRootSdkClass(useCaseSpec.getSdk().getName());
+
+        LatticeJarInfo jarInfo = getSdkLatticeJarInfo(false, useCaseSpec.getSdk());
+        if (null != jarInfo && null != jarInfo.getLatticeInfo()) {
+            SDKInfo sdkInfo = new SDKInfo();
+            sdkInfo.setFilename(jarInfo.getFileName());
+            sdkInfo.setGroupId(jarInfo.getLatticeInfo().getGroupId());
+            sdkInfo.setArtifactId(jarInfo.getLatticeInfo().getArtifactId());
+            sdkInfo.setVersion(jarInfo.getLatticeInfo().getVersion());
+            info.setSdkInfo(sdkInfo);
+        }
+
         info.getExtensions().addAll(
                 useCaseSpec.getExtensions().stream()
                         .map(AbilityInfoBuilder::buildExtensionInfo).collect(Collectors.toSet()));

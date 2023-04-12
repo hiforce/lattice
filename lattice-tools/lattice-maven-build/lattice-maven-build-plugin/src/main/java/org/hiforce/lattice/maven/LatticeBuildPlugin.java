@@ -59,10 +59,6 @@ public class LatticeBuildPlugin extends AbstractMojo {
     @Override
     public synchronized void execute() throws MojoExecutionException, MojoFailureException {
         Lattice.getInstance().clear();
-
-        getLog().info(">> LatticeBuildPlugin start....");
-        getLog().info(">> Project: " + mavenProject.getName());
-
         latticeInfo.setGroupId(mavenProject.getGroupId());
         latticeInfo.setArtifactId(mavenProject.getArtifactId());
         latticeInfo.setVersion(mavenProject.getVersion());

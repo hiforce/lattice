@@ -79,6 +79,11 @@
                 <version>${version.lattice}</version>
             </dependency>
             <dependency>
+                <groupId>org.hiforce.lattice</groupId>
+                <artifactId>lattice-jar-tools</artifactId>
+                <version>${version.lattice}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>1.18.24</version>

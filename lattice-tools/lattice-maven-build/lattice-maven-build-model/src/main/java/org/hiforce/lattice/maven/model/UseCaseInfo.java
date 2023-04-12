@@ -18,7 +18,11 @@ public class UseCaseInfo extends BaseInfo {
 
     @Getter
     @Setter
-    private String sdk;
+    private String rootSdkClass;
+
+    @Getter
+    @Setter
+    private SDKInfo sdkInfo;
 
     @Getter
     @Setter

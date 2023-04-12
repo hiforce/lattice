@@ -18,6 +18,10 @@ public class ExtensionInfo extends BaseInfo {
 
     @Getter
     @Setter
+    private SDKInfo sdkInfo;
+
+    @Getter
+    @Setter
     private String abilityCode;
 
     @Getter

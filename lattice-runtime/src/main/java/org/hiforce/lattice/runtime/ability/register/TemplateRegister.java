@@ -3,13 +3,11 @@ package org.hiforce.lattice.runtime.ability.register;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.Getter;
-import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hiforce.lattice.annotation.model.*;
 import org.hiforce.lattice.exception.LatticeRuntimeException;
 import org.hiforce.lattice.model.ability.IBusinessExt;
 import org.hiforce.lattice.model.business.BusinessTemplate;
-import org.hiforce.lattice.model.business.IBusiness;
 import org.hiforce.lattice.model.register.*;
 import org.hiforce.lattice.model.scenario.ScenarioRequest;
 import org.hiforce.lattice.runtime.cache.index.TemplateIndex;
@@ -108,8 +106,13 @@ public class TemplateRegister {
                 spec.getRealizations().addAll(realizations.stream()
                         .filter(p -> StringUtils.equals(p.getCode(), spec.getCode()))
                         .collect(Collectors.toList()));
+                try {
+                    IBusinessExt businessExt = annotation.getSdk().newInstance();
+                    spec.getExtensions().addAll(scanBusinessExtensions(businessExt));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
 
-                spec.getExtensions().addAll(scanBusinessExtensions(annotation.getSdk()));
                 useCases.add(spec);
                 useCaseSpecs.add(spec);
             }
@@ -119,23 +122,22 @@ public class TemplateRegister {
     }
 
     @SuppressWarnings("all")
-    private synchronized Set<ExtensionSpec> scanBusinessExtensions(Class<? extends IBusinessExt> businessExt) {
+    private synchronized Set<ExtensionSpec> scanBusinessExtensions(IBusinessExt businessExt) {
         Set<ExtensionSpec> extensionSpecList = Sets.newHashSet();
 
-        Method[] methods = businessExt.getMethods();
+        Method[] methods = businessExt.getClass().getMethods();
         for (Method method : methods) {
             ExtensionAnnotation annotation = getExtensionAnnotation(method);
             if (null == annotation) {
-                if (ClassUtils.isAssignable(method.getReturnType(), IBusiness.class)) {
-                    extensionSpecList.addAll(scanBusinessExtensions(
-                            (Class<? extends IBusinessExt>) method.getReturnType()));
-                }
                 continue;
             }
             ExtensionSpec extensionSpec = buildExtensionPointSpec(annotation, method);
             if (null != extensionSpec) {
                 extensionSpecList.add(extensionSpec);
             }
+        }
+        for (IBusinessExt subBusinessExt : businessExt.getAllSubBusinessExt()) {
+            extensionSpecList.addAll(scanBusinessExtensions(subBusinessExt));
         }
         return extensionSpecList;
     }

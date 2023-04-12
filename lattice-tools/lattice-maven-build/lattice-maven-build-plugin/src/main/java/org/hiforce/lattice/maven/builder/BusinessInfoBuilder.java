@@ -1,19 +1,21 @@
 package org.hiforce.lattice.maven.builder;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hiforce.lattice.annotation.Schema;
 import org.hiforce.lattice.annotation.model.ExtensionAnnotation;
+import org.hiforce.lattice.jar.LatticeJarUtils;
+import org.hiforce.lattice.jar.model.LatticeJarInfo;
+import org.hiforce.lattice.maven.LatticeBuildPlugin;
+import org.hiforce.lattice.maven.model.*;
 import org.hiforce.lattice.model.ability.IBusinessExt;
 import org.hiforce.lattice.model.business.IBusiness;
 import org.hiforce.lattice.model.register.BusinessSpec;
-import org.hiforce.lattice.maven.LatticeBuildPlugin;
-import org.hiforce.lattice.maven.model.BusinessInfo;
-import org.hiforce.lattice.maven.model.ExtParam;
-import org.hiforce.lattice.maven.model.ExtensionInfo;
-import org.hiforce.lattice.maven.model.RealizationInfo;
 import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -93,6 +95,15 @@ public class BusinessInfoBuilder extends LatticeInfoBuilder {
         info.setProtocolType(annotation.getProtocolType());
         if (null != facadeClass) {
             info.setClassName(facadeClass.getName());
+            LatticeJarInfo jarInfo = getSdkLatticeJarInfo(true, facadeClass);
+            if( null != jarInfo && null != jarInfo.getLatticeInfo()){
+                SDKInfo sdkInfo = new SDKInfo();
+                sdkInfo.setFilename(jarInfo.getFileName());
+                sdkInfo.setGroupId(jarInfo.getLatticeInfo().getGroupId());
+                sdkInfo.setArtifactId(jarInfo.getLatticeInfo().getArtifactId());
+                sdkInfo.setVersion(jarInfo.getLatticeInfo().getVersion());
+                info.setSdkInfo(sdkInfo);
+            }
         }
         info.setReturnTypeName(method.getReturnType().getName());
         info.setMethodName(method.getName());
@@ -106,4 +117,5 @@ public class BusinessInfoBuilder extends LatticeInfoBuilder {
         }
         return info;
     }
+
 }
