@@ -154,10 +154,10 @@ public class BaseLatticeAbilityDelegate {
 
     private <R> List<RunnerItemEntry<R>> filterEffectiveRunners(
             List<RunnerItemEntry<R>> runners) {
-        List<RunnerItemEntry<R>> output = Lists.newArrayList();
+        List<RunnerItemEntry<R>> effectiveRunners = Lists.newArrayList();
         for (RunnerItemEntry<R> runner : runners) {
             if (runner.getTemplate().getType().isVertical()) {
-                output.add(runner);
+                effectiveRunners.add(runner);
                 continue;
             }
             BizSessionContext bizSessionContext =
@@ -172,9 +172,9 @@ public class BaseLatticeAbilityDelegate {
             if (effective.stream().noneMatch(p -> StringUtils.equals(p.getCode(), runner.getTemplate().getCode()))) {
                 continue;
             }
-            output.add(runner);
+            effectiveRunners.add(runner);
         }
-        return runners;
+        return effectiveRunners;
     }
 
     private <R> RunnerCollection<R> buildCustomRunnerCollection(
