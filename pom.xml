@@ -16,10 +16,10 @@
     <url>https://github.com/hiforce/lattice</url>
     <inceptionYear>2022</inceptionYear>
 
-    <version>1.0.18-SNAPSHOT</version>
+    <version>1.0.18</version>
     <properties>
-        <version.lattice>1.0.18-SNAPSHOT</version.lattice>
-        <version.spring>5.3.26</version.spring>
+        <version.lattice>1.0.18</version.lattice>
+        <version.spring>5.3.27</version.spring>
         <version.spring.boot>2.7.4</version.spring.boot>
         <springext-plugin-version>1.2</springext-plugin-version>
         <dubbo.version>3.1.5</dubbo.version>
