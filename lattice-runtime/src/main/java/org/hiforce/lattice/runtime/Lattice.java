@@ -165,6 +165,14 @@ public class Lattice {
             //auto-config business and products.
             autoBuildBusinessConfig();
         }
+
+        //非simple模式下，因为业务不会对间接依赖的扩展点做定义，所以这里要注入一下
+        injectIndirectDependencyExtensions();
+    }
+
+    private void injectIndirectDependencyExtensions(){
+        BusinessConfigCache.getInstance().getBusinessConfigs().forEach(p -> autoBuildUseCaseExtPriorityConfig(p, buildUseCaseExtPriorityConfigMap()));
+        BusinessConfigCache.getInstance().getBusinessConfigs().sort(Comparator.comparingInt(BusinessConfig::getPriority));
     }
 
     private void autoBuildUseCaseExtPriorityConfig(BusinessConfig businessConfig, Map<String, ExtPriorityConfig> priorityMap) {
@@ -247,8 +255,8 @@ public class Lattice {
         businessConfig.setAutoBuild(true);
         BusinessConfigCache.getInstance().getBusinessConfigs().add(businessConfig);
 
-        BusinessConfigCache.getInstance().getBusinessConfigs().forEach(p -> autoBuildUseCaseExtPriorityConfig(p, buildUseCaseExtPriorityConfigMap()));
-        BusinessConfigCache.getInstance().getBusinessConfigs().sort(Comparator.comparingInt(BusinessConfig::getPriority));
+//        BusinessConfigCache.getInstance().getBusinessConfigs().forEach(p -> autoBuildUseCaseExtPriorityConfig(p, buildUseCaseExtPriorityConfigMap()));
+//        BusinessConfigCache.getInstance().getBusinessConfigs().sort(Comparator.comparingInt(BusinessConfig::getPriority));
 
         return businessConfig;
     }
