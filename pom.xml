@@ -204,12 +204,12 @@
                 <repository>
                     <id>quadtalent-quadtalent-release</id>
                     <name>release</name>
-                    <url>https://quadtalent-maven.pkg.coding.net/repository/quadtalent/release/</url>
+                    <url>http://maven.hiforce.net/repository/maven-releases/</url>
                 </repository>
                 <snapshotRepository>
                     <id>quadtalent-quadtalent-snapshot</id>
                     <name>snapshot</name>
-                    <url>https://quadtalent-maven.pkg.coding.net/repository/quadtalent/snapshot/</url>
+                    <url>http://maven.hiforce.net/repository/maven-snapshots/</url>
                 </snapshotRepository>
             </distributionManagement>
         </profile>
