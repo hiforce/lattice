@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hiforce.lattice.annotation.model.ProtocolType;
 import org.hiforce.lattice.cache.LatticeCacheFactory;
 import org.hiforce.lattice.exception.LatticeRuntimeException;
 import org.hiforce.lattice.message.Message;
@@ -20,6 +21,7 @@ import org.hiforce.lattice.model.config.builder.BusinessConfigBuilder;
 import org.hiforce.lattice.model.register.*;
 import org.hiforce.lattice.model.scenario.ScenarioRequest;
 import org.hiforce.lattice.runtime.ability.creator.DefaultAbilityCreator;
+import org.hiforce.lattice.runtime.ability.delegate.BaseLatticeAbilityDelegate;
 import org.hiforce.lattice.runtime.ability.register.AbilityBuildRequest;
 import org.hiforce.lattice.runtime.ability.register.AbilityRegister;
 import org.hiforce.lattice.runtime.ability.register.TemplateRegister;
@@ -230,7 +232,7 @@ public class Lattice {
         return null;
     }
 
-    public BusinessConfig autoAddAndBuildBusinessConfig(BusinessSpec businessSpec) {
+    public BusinessConfig autoAddAndBuildBusinessConfig(BusinessSpec businessSpec, ProtocolType protocolType) {
         List<ProductConfig> productConfigs = getAllRegisteredProducts().stream()
                 .map(this::buildProductConfig)
                 .collect(Collectors.toList());
@@ -238,7 +240,12 @@ public class Lattice {
         BusinessConfig businessConfig = BusinessConfigCache.getInstance().getBusinessConfigs().stream()
                 .filter(p -> StringUtils.equals(p.getBizCode(), businessSpec.getCode()))
                 .findFirst().orElse(null);
-        if (null != businessConfig) {
+        if (null != businessConfig && protocolType == ProtocolType.LOCAL) {
+            return businessConfig;
+        }
+
+        // In remote mode, since ExtPriorityConfig is calculated at runtime, the cache is not read for the first time
+        if (null != businessConfig && BaseLatticeAbilityDelegate.remoteExtensionInitFlag) {
             return businessConfig;
         }
 
@@ -253,11 +260,12 @@ public class Lattice {
                 .extension(priorityConfigs)
                 .build();
         businessConfig.setAutoBuild(true);
-        BusinessConfigCache.getInstance().getBusinessConfigs().add(businessConfig);
 
-//        BusinessConfigCache.getInstance().getBusinessConfigs().forEach(p -> autoBuildUseCaseExtPriorityConfig(p, buildUseCaseExtPriorityConfigMap()));
-//        BusinessConfigCache.getInstance().getBusinessConfigs().sort(Comparator.comparingInt(BusinessConfig::getPriority));
-
+        // Remote mode, clear the cache information during engine startup, replace it at runtime
+        if (protocolType == ProtocolType.REMOTE) {
+            BusinessConfigCache.getInstance().removeBusinessConfig(businessConfig.getBizCode());
+            BusinessConfigCache.getInstance().getBusinessConfigs().add(businessConfig);
+        }
         return businessConfig;
     }
 
@@ -267,7 +275,7 @@ public class Lattice {
 
     private void autoBuildBusinessConfig() {
         for (BusinessSpec businessSpec : getAllRegisteredBusinesses()) {
-            autoAddAndBuildBusinessConfig(businessSpec);
+            autoAddAndBuildBusinessConfig(businessSpec, ProtocolType.LOCAL);
         }
     }
 
