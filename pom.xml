@@ -16,9 +16,9 @@
     <url>https://github.com/hiforce/lattice</url>
     <inceptionYear>2022</inceptionYear>
 
-    <version>1.0.18</version>
+    <version>${revision}</version>
     <properties>
-        <version.lattice>1.0.18</version.lattice>
+        <revision>1.0.19-SNAPSHOT</revision>
         <version.spring>5.3.27</version.spring>
         <version.spring.boot>2.7.4</version.spring.boot>
         <springext-plugin-version>1.2</springext-plugin-version>
@@ -56,32 +56,32 @@
             <dependency>
                 <groupId>org.hiforce.lattice</groupId>
                 <artifactId>lattice-model</artifactId>
-                <version>${version.lattice}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>org.hiforce.lattice</groupId>
                 <artifactId>lattice-runtime</artifactId>
-                <version>${version.lattice}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>org.hiforce.lattice</groupId>
                 <artifactId>lattice-remote-client</artifactId>
-                <version>${version.lattice}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>org.hiforce.lattice</groupId>
                 <artifactId>lattice-remote-container</artifactId>
-                <version>${version.lattice}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>org.hiforce.lattice</groupId>
                 <artifactId>lattice-maven-build-model</artifactId>
-                <version>${version.lattice}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>org.hiforce.lattice</groupId>
                 <artifactId>lattice-jar-tools</artifactId>
-                <version>${version.lattice}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>
@@ -266,6 +266,31 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
 
