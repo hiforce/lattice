@@ -78,7 +78,7 @@ public class BaseLatticeAbilityDelegate {
         if (extension.getProtocolType() == ProtocolType.LOCAL) {
             return businessConfig;
         } else if (extension.getProtocolType() == ProtocolType.REMOTE) {
-            if (!Lattice.getInstance().isSimpleMode() || remoteExtensionInitFlag) {
+            if (!Lattice.getInstance().isSimpleMode()) {
                 return businessConfig;
             }
             BusinessSpec businessSpec = TemplateRegister.getInstance().getBusinesses().stream()
@@ -91,21 +91,23 @@ public class BaseLatticeAbilityDelegate {
                         TemplateRegister.getInstance().getBusinesses().add(spec);
                         return spec;
                     });
-            Set<ExtensionSpec> remoteExtensionSet = Lattice.getInstance().getAllRegisteredAbilities().stream()
-                    .flatMap(p -> p.getAbilityInstances().stream())
-                    .flatMap(p -> p.getExtensions().stream())
-                    .filter(p -> p.getProtocolType() == ProtocolType.REMOTE)
-                    .collect(Collectors.toSet());
+            if (!remoteExtensionInitFlag) {
+                // Avoid adding implementations repeatedly.
+                Set<ExtensionSpec> remoteExtensionSet = Lattice.getInstance().getAllRegisteredAbilities().stream()
+                        .flatMap(p -> p.getAbilityInstances().stream())
+                        .flatMap(p -> p.getExtensions().stream())
+                        .filter(p -> p.getProtocolType() == ProtocolType.REMOTE)
+                        .collect(Collectors.toSet());
 
-            RealizationSpec realization = new RealizationSpec();
-            realization.setCode(bizCode);
-            realization.setRemote(true);
-            businessSpec.getRealizations().add(realization);
+                RealizationSpec realization = new RealizationSpec();
+                realization.setCode(bizCode);
+                realization.setRemote(true);
+                businessSpec.getRealizations().add(realization);
 
-            TemplateRegister.getInstance().getProducts()
-                    .forEach(p -> p.getRealizations().add(realization));
-
-            remoteExtensionSet.forEach(p -> realization.getExtensionCodes().add(p.getCode()));
+                TemplateRegister.getInstance().getProducts()
+                        .forEach(p -> p.getRealizations().add(realization));
+                remoteExtensionSet.forEach(p -> realization.getExtensionCodes().add(p.getCode()));
+            }
             businessConfig = Lattice.getInstance().autoAddAndBuildBusinessConfig(businessSpec, ProtocolType.REMOTE);
             remoteExtensionInitFlag = true;
         }

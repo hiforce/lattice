@@ -244,11 +244,6 @@ public class Lattice {
             return businessConfig;
         }
 
-        // In remote mode, since ExtPriorityConfig is calculated at runtime, the cache is not read for the first time
-        if (null != businessConfig && BaseLatticeAbilityDelegate.remoteExtensionInitFlag) {
-            return businessConfig;
-        }
-
         List<ExtPriorityConfig> priorityConfigs = businessSpec.getRealizations().stream()
                 .flatMap(p -> autoBuildPriorityConfig(businessSpec, p).stream())
                 .filter(Objects::nonNull)
@@ -266,7 +261,7 @@ public class Lattice {
             BusinessConfigCache.getInstance().removeBusinessConfig(businessConfig.getBizCode());
         }
         BusinessConfigCache.getInstance().getBusinessConfigs().add(businessConfig);
-        
+
         return businessConfig;
     }
 
