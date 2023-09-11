@@ -264,8 +264,9 @@ public class Lattice {
         // Remote mode, clear the cache information during engine startup, replace it at runtime
         if (protocolType == ProtocolType.REMOTE) {
             BusinessConfigCache.getInstance().removeBusinessConfig(businessConfig.getBizCode());
-            BusinessConfigCache.getInstance().getBusinessConfigs().add(businessConfig);
         }
+        BusinessConfigCache.getInstance().getBusinessConfigs().add(businessConfig);
+        
         return businessConfig;
     }
 
