@@ -97,17 +97,18 @@ public class Message implements Serializable {
     public static Message code(@PropertyKey(resourceBundle = MessageCode.BUNDLE) String key,
                                Object... params) {
 
-        if (params != null && params.length > 0) {
-            return MessageCode.toErrorMessage(key, params);
-        } else {  //没有参数的才可以cache
-            Message message = cachedMessages.get(key);
-            if (message == null) {
-                message = MessageCode.toErrorMessage(key, params);
-                cachedMessages.put(key, message);
-            }
-            return Message.of(message.getCode(), message.getText(), message.getDisplayText(),
-                message.getReadableCode());
-        }
+        return MessageCode.toErrorMessage(key, params);
+        //因为支持动态语言，暂时放弃缓存
+//        if (params != null && params.length > 0) {
+//        } else {  //没有参数的才可以cache
+//            Message message = cachedMessages.get(key);
+//            if (message == null) {
+//                message = MessageCode.toErrorMessage(key, params);
+//                cachedMessages.put(key, message);
+//            }
+//            return Message.of(message.getCode(), message.getText(), message.getDisplayText(),
+//                message.getReadableCode());
+//        }
     }
 
     /**

@@ -42,7 +42,7 @@ public class MessageCode {
 
     private static final Map<String, String> cachedLogMessage = new ConcurrentHashMap<>();
 
-
+    private static ThreadLocal<String> dynamicI18n = new ThreadLocal();
     static {
         init();
     }
@@ -100,7 +100,20 @@ public class MessageCode {
     }
 
     public static String displayMessage(@PropertyKey(resourceBundle = BUNDLE) String key, Object... params) {
-        return searchKeyInAllResourceFile(displayErrorCodes, key, DEFAULT_DISPLAY_ERROR_MESSAGE, params);
+        Map<Object,Object> props = new HashMap<>();
+        String i18nCode = dynamicI18n.get();
+        if (StringUtils.isEmpty(i18nCode)){
+            props = displayErrorCodes;
+        }
+        else {
+            if (allDisplayErrorCodes.containsKey(i18nCode)) {
+                props = (Map<Object, Object>) allDisplayErrorCodes.get(i18nCode);
+            } else {
+                props = extractContextErrorCodes("i18n/infos_" + i18nCode + ".properties", false, DEFAULT_DISPLAY_ERROR_MESSAGE);
+                allDisplayErrorCodes.put(i18nCode, displayErrorCodes);
+            }
+        }
+        return searchKeyInAllResourceFile(props, key, DEFAULT_DISPLAY_ERROR_MESSAGE, params);
     }
 
 
@@ -204,5 +217,9 @@ public class MessageCode {
             displayErrorCodes = extractContextErrorCodes("i18n/infos_" + i18nCode + ".properties", false, DEFAULT_DISPLAY_ERROR_MESSAGE);
             allDisplayErrorCodes.put(i18nCode, displayErrorCodes);
         }
+    }
+
+    public static void setDynamicI18n(String i18nCode){
+        dynamicI18n.set(i18nCode);
     }
 }
