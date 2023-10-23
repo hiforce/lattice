@@ -110,7 +110,7 @@ public class MessageCode {
                 props = (Map<Object, Object>) allDisplayErrorCodes.get(i18nCode);
             } else {
                 props = extractContextErrorCodes("i18n/infos_" + i18nCode + ".properties", false, DEFAULT_DISPLAY_ERROR_MESSAGE);
-                allDisplayErrorCodes.put(i18nCode, displayErrorCodes);
+                allDisplayErrorCodes.put(i18nCode, props);
             }
         }
         return searchKeyInAllResourceFile(props, key, DEFAULT_DISPLAY_ERROR_MESSAGE, params);
