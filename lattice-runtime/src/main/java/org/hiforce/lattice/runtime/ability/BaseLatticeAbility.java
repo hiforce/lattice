@@ -113,8 +113,6 @@ public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
         }
         ExecuteResult<R> result = reduceExecuteWithDetailResult(callback, reducer, filter);
         if (null == result || null == result.getResult()) {
-            log.warn("[Lattice] invoke result is null, {}", null == result ? ""
-                    : JacksonUtils.serializeWithoutException(result));
             return null;
         }
         log.debug("[Lattice] invoke result: {}", JacksonUtils.serializeWithoutException(result));

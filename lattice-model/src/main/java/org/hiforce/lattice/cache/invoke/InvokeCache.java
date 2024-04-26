@@ -156,6 +156,15 @@ public final class InvokeCache {
     @Nullable
     private <T> Object get0(Class<T> klass, Object id, @Nullable Callable<? extends T> callbackOnMiss) {
         if (!isThreadLocalInit()) {
+            if (callbackOnMiss != null) {
+                try {
+                    T callbackRet = callbackOnMiss.call();
+                    put(klass, id, callbackRet);
+                    return callbackRet;
+                } catch (Exception ex) {
+                    handleCallException(klass, Lists.newArrayList(id), ex);
+                }
+            }
             return null;
         }
         Map<Object, Object> idToInstanceCache = cache.get(klass);
