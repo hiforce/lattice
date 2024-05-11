@@ -112,7 +112,11 @@ public class MessageCode {
             props = extractContextErrorCodes("i18n/infos_" + i18nCode + ".properties", false, DEFAULT_DISPLAY_ERROR_MESSAGE);
             allDisplayErrorCodes.put(i18nCode, props);
         }
-        return searchKeyInAllResourceFile(props, key, DEFAULT_DISPLAY_ERROR_MESSAGE, params);
+        String value = searchKeyInAllResourceFile(props, key, params);
+        if (StringUtils.isEmpty(value)) {
+            value = displayMessage(Locale.ENGLISH, key, params);
+        }
+        return displayMessage(key, params);
     }
 
     @SuppressWarnings("unchecked")
@@ -135,12 +139,12 @@ public class MessageCode {
 
     private static String searchKeyInAllResourceFile(Map<Object, Object> props,
                                                      String key,
-                                                     String defaultValue, Object... params) {
-        if (!props.containsKey(key)) return defaultValue;
+                                                     Object... params) {
+        if (!props.containsKey(key)) return null;
 
         Object obj = props.get(key);
         String message = buildMessage(obj, params);
-        return StringUtils.isNotBlank(message) ? message : defaultValue;
+        return StringUtils.isNotBlank(message) ? message : null;
     }
 
 
