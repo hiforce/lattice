@@ -90,7 +90,7 @@ public class MessageCode {
         }
         String logMessage = "log message cannot be retrieved properly";
         try {
-            logMessage = searchKeyInAllResourceFile(internalErrorMessage, key, DEFAULT_LOG_ERROR_MESSAGE, params);
+            logMessage = searchKeyInAllResourceFile(internalErrorMessage, key, params);
         } catch (Exception e) {
             log.error(logMessage, e);
         }
@@ -133,7 +133,7 @@ public class MessageCode {
                 allDisplayErrorCodes.put(i18nCode, props);
             }
         }
-        return searchKeyInAllResourceFile(props, key, DEFAULT_DISPLAY_ERROR_MESSAGE, params);
+        return searchKeyInAllResourceFile(props, key, params);
     }
 
 
