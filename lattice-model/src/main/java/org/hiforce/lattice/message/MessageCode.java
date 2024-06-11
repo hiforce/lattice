@@ -95,7 +95,7 @@ public class MessageCode {
             log.error(logMessage, e);
         }
         String result = logMessage;
-        if (!canNotCache) {
+        if (!canNotCache && StringUtils.isNotEmpty(key) && StringUtils.isNotEmpty(result)) {
             cachedLogMessage.put(key, result);
         }
         return result;
