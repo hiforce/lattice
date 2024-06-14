@@ -42,6 +42,7 @@ import static org.hiforce.lattice.runtime.ability.execute.filter.ExtensionFilter
 public abstract class BaseLatticeAbility<BusinessExt extends IBusinessExt>
         implements IAbility<BusinessExt> {
 
+    @Getter
     private final IBizObject bizObject;
 
     @Getter
