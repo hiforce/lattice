@@ -187,14 +187,14 @@
     </dependencyManagement>
     <distributionManagement>
         <repository>
-            <id>quadtalent-quadtalent-release</id>
+            <id>hiforce-inc-hf-release</id>
             <name>release</name>
-            <url>https://quadtalent-maven.pkg.coding.net/repository/quadtalent/release/</url>
+            <url>https://hiforce-inc-maven.pkg.coding.net/repository/hf/release/</url>
         </repository>
         <snapshotRepository>
-            <id>quadtalent-quadtalent-snapshot</id>
+            <id>hiforce-inc-hf-snapshot</id>
             <name>snapshot</name>
-            <url>https://quadtalent-maven.pkg.coding.net/repository/quadtalent/snapshot/</url>
+            <url>https://hiforce-inc-maven.pkg.coding.net/repository/hf/snapshot/</url>
         </snapshotRepository>
     </distributionManagement>
     <profiles>
@@ -202,14 +202,14 @@
             <id>hiforce</id>
             <distributionManagement>
                 <repository>
-                    <id>quadtalent-quadtalent-release</id>
+                    <id>hiforce-inc-hf-release</id>
                     <name>release</name>
-                    <url>http://maven.hiforce.net/repository/maven-releases/</url>
+                    <url>https://hiforce-inc-maven.pkg.coding.net/repository/hf/release/</url>
                 </repository>
                 <snapshotRepository>
-                    <id>quadtalent-quadtalent-snapshot</id>
+                    <id>hiforce-inc-hf-snapshot</id>
                     <name>snapshot</name>
-                    <url>http://maven.hiforce.net/repository/maven-snapshots/</url>
+                    <url>https://hiforce-inc-maven.pkg.coding.net/repository/hf/snapshot/</url>
                 </snapshotRepository>
             </distributionManagement>
         </profile>
