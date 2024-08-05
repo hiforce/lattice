@@ -22,4 +22,4 @@ The main ideas of Lattice's architecture design are:
 ------------
 Answer group in DingTalk （https://www.dingtalk.com/）
 
-![](http://www.ryu.xin/wp-content/uploads/2022/12/20221201-160802.jpeg)
+![1722877540475](https://github.com/user-attachments/assets/970d6c9a-cb3d-46b7-aa17-98ee3c918b00)
