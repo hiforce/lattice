@@ -92,7 +92,7 @@ public abstract class BizSessionScope<Resp, BizObject extends IBizObject>
                     .stream().filter(p -> isTemplateEffective(p, request))
                     .collect(Collectors.toList()));
             templates.sort(Comparator.comparingInt(TemplateSpec::getPriority));
-            context.getEffectiveTemplates().put(request.getBizObject().getBizCode(), templates);
+            context.getEffectiveTemplates().put(request.getBizObject().getBizContext().toString(), templates);
         }
     }
 

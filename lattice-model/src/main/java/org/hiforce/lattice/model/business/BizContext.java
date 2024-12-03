@@ -24,6 +24,10 @@ public abstract class BizContext implements Serializable {
         return String.format("[BizCode: %s, BizId: %s]", getBizCode(), getBizId());
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s-%s", getBizCode(), getBizId());
+    }
 
     private int hashCode;
 
