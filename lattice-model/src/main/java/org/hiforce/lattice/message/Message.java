@@ -9,6 +9,7 @@ import org.jetbrains.annotations.PropertyKey;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -49,6 +50,20 @@ public class Message implements Serializable {
      */
     @Getter
     private String displayText = null;
+
+    /**
+     * the original message key for i18n resolution.
+     */
+    @Getter
+    @Setter
+    private transient String messageKey;
+
+    /**
+     * the original params for i18n resolution.
+     */
+    @Getter
+    @Setter
+    private transient Object[] messageParams;
 
     /**
      * 错误所属的Group
@@ -131,6 +146,22 @@ public class Message implements Serializable {
         return m;
     }
 
+
+    /**
+     * Get the display text for the specified locale.
+     * If the message was created via {@link #code(String, Object...)},
+     * it will re-resolve the display text from the i18n resource files.
+     * Otherwise, falls back to the default displayText.
+     *
+     * @param locale the target locale
+     * @return the display text in the specified locale
+     */
+    public String getDisplayText(Locale locale) {
+        if (messageKey == null) {
+            return displayText;
+        }
+        return MessageCode.displayMessage(locale, messageKey, messageParams);
+    }
 
     @SuppressWarnings("unused")
     public Message addErrorContents(Map<String, Object> errorContents) {

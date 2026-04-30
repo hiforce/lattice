@@ -69,11 +69,28 @@ public class LatticeBeanUtils {
         try {
             ApplicationContext context = SpringApplicationContextHolder.getContext();
             if (context != null) {
+                // If the bean class has no default constructor, skip Spring createBean
+                // to avoid Spring framework printing error logs internally,
+                // and fall through to reflection-based creation directly.
+                if (!hasDefaultConstructor(beanClass)) {
+                    log.debug("[Lattice]Class {} has no default constructor, skip Spring createBean",
+                            beanClass.getName());
+                    return createBeanInstance(beanClass, values);
+                }
                 return (T) context.getAutowireCapableBeanFactory().createBean(beanClass);
             }
             return (T) beanClass.newInstance();
         } catch (Throwable e) {
             return createBeanInstance(beanClass, values);
+        }
+    }
+
+    private static boolean hasDefaultConstructor(Class<?> beanClass) {
+        try {
+            beanClass.getDeclaredConstructor();
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
         }
     }
 

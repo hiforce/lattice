@@ -26,14 +26,17 @@ public class MessageCode {
 
     public static final String DEFAULT_DISPLAY_ERROR_MESSAGE = "对不起，系统繁忙，请稍候再试";
 
+    public static final String DEFAULT_DISPLAY_ERROR_MESSAGE_EN = "Sorry, the system is busy, please try again later";
+
     @NotNull
     public static final String BUNDLE = "i18n.infos";
 
     private static final String DEFAULT_LOG_ERROR_MESSAGE = "ERROR MESSAGE IS MISSING";
 
-    private final static String defaultDisplayFilePath = "i18n/infos_zh_CN.properties";
     private final static String internalErrorMessageFilePath = "i18n/infos_en_AA.properties";
     private final static String readableErrorCodeFilePath = "i18n/infos_en_XA.properties";
+
+    private static String defaultDisplayLocale = "en";
 
     private static final Map<String, Object> allDisplayErrorCodes = new ConcurrentHashMap<>();
     private static Map<Object, Object> displayErrorCodes = new ConcurrentHashMap<>();
@@ -52,7 +55,7 @@ public class MessageCode {
     public static void init() {
         internalErrorMessage = extractErrorCodes(internalErrorMessageFilePath);
         readableErrorCode = extractErrorCodes(readableErrorCodeFilePath);
-        displayErrorCodes = extractErrorCodes(defaultDisplayFilePath);
+        displayErrorCodes = extractErrorCodes("i18n/infos_" + defaultDisplayLocale + ".properties");
         processReadableErrorCode();
     }
 
@@ -115,6 +118,9 @@ public class MessageCode {
         String value = searchKeyInAllResourceFile(props, key, params);
         if (StringUtils.isEmpty(value)) {
             value = displayMessage(Locale.ENGLISH, key, params);
+        }
+        if (StringUtils.isNotEmpty(value)) {
+            return value;
         }
         return displayMessage(key, params);
     }
@@ -227,7 +233,10 @@ public class MessageCode {
         String logMessage = logMessageWithoutCode(key, params);
         String displayMessage = displayMessage(key, params);
         String readableCode = searchKeyInAllResourceFile(readableErrorCode, key, key);
-        return Message.of(key, logMessage, displayMessage, readableCode);
+        Message message = Message.of(key, logMessage, displayMessage, readableCode);
+        message.setMessageKey(key);
+        message.setMessageParams(params != null ? params.clone() : null);
+        return message;
     }
 
     public static void setI18n(String i18nCode) {
@@ -237,6 +246,23 @@ public class MessageCode {
             displayErrorCodes = extractContextErrorCodes("i18n/infos_" + i18nCode + ".properties", false, DEFAULT_DISPLAY_ERROR_MESSAGE);
             allDisplayErrorCodes.put(i18nCode, displayErrorCodes);
         }
+    }
+
+    /**
+     * Set the default display locale used by getDisplayText() (no-arg version).
+     * Must be called before the first Message.code() invocation, or call init() afterwards.
+     *
+     * @param localeCode the locale code matching the resource file suffix, e.g. "en", "zh_CN", "ja"
+     */
+    public static void setDefaultDisplayLocale(String localeCode) {
+        defaultDisplayLocale = localeCode;
+        displayErrorCodes = extractContextErrorCodes(
+                "i18n/infos_" + localeCode + ".properties", false, DEFAULT_DISPLAY_ERROR_MESSAGE);
+        allDisplayErrorCodes.put(localeCode, displayErrorCodes);
+    }
+
+    public static String getDefaultDisplayLocale() {
+        return defaultDisplayLocale;
     }
 
     public static void setDynamicI18n(String i18nCode) {
