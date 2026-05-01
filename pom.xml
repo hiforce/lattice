@@ -40,33 +40,33 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
-                <version>${version.spring.boot}</version>
+                <version>2.7.18</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
-                <version>${version.spring}</version>
+                <version>5.3.27</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
-                <version>${version.spring}</version>
+                <version>5.3.39</version>
             </dependency>
             <dependency>
                 <groupId>org.hiforce.lattice</groupId>
                 <artifactId>lattice-model</artifactId>
-                <version>${version.lattice}</version>
+                <version>1.0.19</version>
             </dependency>
             <dependency>
                 <groupId>org.hiforce.lattice</groupId>
                 <artifactId>lattice-runtime</artifactId>
-                <version>${version.lattice}</version>
+                <version>1.0.19</version>
             </dependency>
             <dependency>
                 <groupId>org.hiforce.lattice</groupId>
                 <artifactId>lattice-remote-client</artifactId>
-                <version>${version.lattice}</version>
+                <version>1.0.19</version>
             </dependency>
             <dependency>
                 <groupId>org.hiforce.lattice</groupId>
@@ -76,12 +76,12 @@
             <dependency>
                 <groupId>org.hiforce.lattice</groupId>
                 <artifactId>lattice-maven-build-model</artifactId>
-                <version>${version.lattice}</version>
+                <version>1.0.19</version>
             </dependency>
             <dependency>
                 <groupId>org.hiforce.lattice</groupId>
                 <artifactId>lattice-jar-tools</artifactId>
-                <version>${version.lattice}</version>
+                <version>1.0.19</version>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>
@@ -91,7 +91,7 @@
             <dependency>
                 <groupId>com.google.auto.service</groupId>
                 <artifactId>auto-service</artifactId>
-                <version>1.0.1</version>
+                <version>1.1.1</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -133,7 +133,7 @@
             <dependency>
                 <groupId>org.apache.dubbo</groupId>
                 <artifactId>dubbo</artifactId>
-                <version>${dubbo.version}</version>
+                <version>3.3.4</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -145,43 +145,43 @@
             <dependency>
                 <groupId>com.alibaba.nacos</groupId>
                 <artifactId>nacos-spring-context</artifactId>
-                <version>0.3.6</version>
+                <version>2.1.1</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-configuration2</artifactId>
-                <version>2.8.0</version>
+                <version>2.10.1</version>
             </dependency>
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>1.9.4</version>
+                <version>1.11.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${version.jackson}</version>
+                <version>2.14.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
-                <version>${version.jackson}</version>
+                <version>2.14.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>${version.jackson}</version>
+                <version>2.14.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
                 <artifactId>jackson-datatype-jsr310</artifactId>
-                <version>${version.jackson}</version>
+                <version>2.14.0</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.11.0</version>
+                <version>2.14.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
