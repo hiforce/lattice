@@ -387,8 +387,20 @@ public class BaseLatticeAbilityDelegate {
     }
 
     private BusinessSpec getBusinessSpec(String bizCode) {
-        return Lattice.getInstance().getAllRegisteredBusinesses().stream()
+        List<BusinessSpec> businesses = Lattice.getInstance().getAllRegisteredBusinesses();
+        // Prefer an exact business-code match; fall back to a wildcard business
+        // template (e.g. code {@code task.*}) that matches the concrete runtime
+        // business identity (e.g. {@code task.101.RECRUITMENT}). Without the
+        // wildcard fallback a dynamic per-tenant/per-type identity resolves to no
+        // template and every ability degrades to its blank default realization.
+        BusinessSpec exact = businesses.stream()
                 .filter(p -> StringUtils.equals(bizCode, p.getCode()))
+                .findFirst().orElse(null);
+        if (null != exact) {
+            return exact;
+        }
+        return businesses.stream()
+                .filter(p -> BizCodeUtils.isCodesMatched(p.getCode(), bizCode))
                 .findFirst().orElse(null);
     }
 

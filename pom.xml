@@ -16,7 +16,7 @@
     <url>https://github.com/hiforce/lattice</url>
     <inceptionYear>2022</inceptionYear>
 
-    <version>1.0.20</version>
+    <version>1.0.20.1</version>
     <properties>
         <version.lattice>1.0.20</version.lattice>
         <version.spring>5.3.27</version.spring>
